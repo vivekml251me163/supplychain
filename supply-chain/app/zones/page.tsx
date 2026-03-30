@@ -1,6 +1,6 @@
 import { db } from '@/db/index'
 import { shipwayResults } from '@/db/schema'
-import AffectedZonesMap from '@/components/AffectedZonesMap'
+import AffectedZonesMapClient from '@/components/AffectedZonesMapClient'
 
 export default async function ZonesPage() {
   const zones = await db.select().from(shipwayResults)
@@ -86,7 +86,7 @@ export default async function ZonesPage() {
             </p>
           </div>
         ) : (
-          <AffectedZonesMap zones={zones} />
+          <AffectedZonesMapClient zones={zones} />
         )}
       </section>
 

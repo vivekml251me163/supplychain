@@ -1,3 +1,5 @@
+'use client'
+
 import ShipRouteMap from '@/components/ShipRouteMap'
 
 export default function ShipsPage() {
