@@ -11,9 +11,9 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // not logged in → redirect to login
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
+  // if (!token) {
+  //   return NextResponse.redirect(new URL('/login', request.url))
+  // }
 
   // not verified and not admin → redirect to home
   // if (!token.isVerified && token.role !== 'admin') {
