@@ -2,9 +2,10 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { db } from '@/db/index'
-import { assignments, ships, roads, users } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { assignments, roads, users } from '@/db/schema'
+import { eq, and } from 'drizzle-orm'
 import WorkDoneButton from '@/components/WorkDoneButton'
+import RouteMapClient from '@/components/RouteMapClient'
 import Link from 'next/link'
 
 export default async function DriverPage() {
@@ -14,175 +15,136 @@ export default async function DriverPage() {
   if (!session || user?.role !== 'driver') redirect('/')
   if (!user?.isVerified) redirect('/')
 
-  // get all assignments for this driver
+  // Get all ROAD assignments for this driver
   const myAssignments = await db
     .select()
     .from(assignments)
-    .where(eq(assignments.driverId, user.id))
+    .where(
+      and(
+        eq(assignments.driverId, user.id),
+        eq(assignments.routeType, 'roads')
+      )
+    )
 
-  // get route details for each assignment
-  const assignmentsWithRoutes = await Promise.all(
-    myAssignments.map(async a => {
-      let route = null
-      if (a.routeType === 'ships' && a.routeId) {
-        const result = await db
-          .select()
-          .from(ships)
-          .where(eq(ships.id, a.routeId))
-        route = result[0] || null
-      } else if (a.routeType === 'roads' && a.routeId) {
-        const result = await db
-          .select()
-          .from(roads)
-          .where(eq(roads.id, a.routeId))
-        route = result[0] || null
-      }
+  // Get route details and manager info for each assignment
+  const assignmentsWithDetails = await Promise.all(
+    myAssignments.map(async (a) => {
+      const roadResult = await db
+        .select()
+        .from(roads)
+        .where(eq(roads.id, a.routeId))
+      const road = roadResult[0] || null
 
-      // get manager info
       const managerResult = await db
         .select()
         .from(users)
         .where(eq(users.id, a.managerId!))
       const manager = managerResult[0] || null
 
-      return { ...a, route, manager }
+      return { ...a, road, manager }
     })
   )
 
-  const pending = assignmentsWithRoutes.filter(a => !a.workDone)
-  const completed = assignmentsWithRoutes.filter(a => a.workDone)
-
   return (
-    <main className="mx-auto min-h-screen max-w-5xl p-8">
-      <h1 className="text-2xl font-semibold text-gray-800">My Routes</h1>
-      <p className="mt-1 text-sm text-gray-500 mb-8">
-        Location: <span className="font-medium text-gray-700">{user?.location}</span>
-      </p>
+    <div className="min-h-screen bg-linear-to-br from-orange-50 to-amber-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Road Driver Dashboard</h1>
+        <p className="text-gray-600 mb-8">
+          View your assigned delivery tasks and mark them as complete.
+        </p>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-          <p className="text-xs text-blue-500 mb-1">Total Assigned</p>
-          <p className="text-2xl font-semibold text-blue-700">
-            {assignmentsWithRoutes.length}
-          </p>
-        </div>
-        <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4">
-          <p className="text-xs text-yellow-500 mb-1">Pending</p>
-          <p className="text-2xl font-semibold text-yellow-700">{pending.length}</p>
-        </div>
-        <div className="bg-green-50 border border-green-100 rounded-xl p-4">
-          <p className="text-xs text-green-500 mb-1">Completed</p>
-          <p className="text-2xl font-semibold text-green-700">{completed.length}</p>
-        </div>
-      </div>
-
-      {/* Pending assignments */}
-      <div className="mb-10">
-        <h2 className="text-lg font-medium text-gray-700 mb-4">
-          Pending Routes
-        </h2>
-        {pending.length === 0 ? (
-          <p className="text-sm text-gray-400">No pending routes — all done! 🎉</p>
+        {assignmentsWithDetails.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <p className="text-gray-500 text-lg">No assignments yet. Check back soon!</p>
+          </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {pending.map(a => (
+          <div className="space-y-6">
+            {assignmentsWithDetails.map((assignment) => (
               <div
-                key={a.id}
-                className="rounded-xl border border-gray-200 bg-white p-4"
+                key={assignment.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">
-                      {(a.route as any)?.origin?.name} →{' '}
-                      {(a.route as any)?.destination?.name}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      Type: {a.routeType === 'ships' ? '🚢 Ship' : '🚛 Road'} · Assigned
-                      by: {a.manager?.name || 'Manager'} ·{' '}
-                      {new Date(a.assignedAt!).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-                      Pending
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                        {(assignment.road as any)?.origin?.name || 'Pickup'} →{' '}
+                        {(assignment.road as any)?.destination?.name || 'Delivery'}
+                      </h2>
+                      <p className="text-gray-600">
+                        Manager: <span className="font-medium">{assignment.manager?.name || 'N/A'}</span>
+                      </p>
+                    </div>
+                    <span
+                      className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                        assignment.workDone
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {assignment.workDone ? '✓ Completed' : 'In Progress'}
                     </span>
-                    <WorkDoneButton
-                      assignmentId={a.id}
-                      workDone={a.workDone ?? false}
-                    />
                   </div>
+
+                  {/* Coordinates Display */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Pickup Location</p>
+                      <p className="text-gray-900 font-semibold">
+                        {(assignment.road as any)?.origin?.lat?.toFixed(4)},{' '}
+                        {(assignment.road as any)?.origin?.lng?.toFixed(4)}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-600 font-medium">Delivery Location</p>
+                      <p className="text-gray-900 font-semibold">
+                        {(assignment.road as any)?.destination?.lat?.toFixed(4)},{' '}
+                        {(assignment.road as any)?.destination?.lng?.toFixed(4)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Route Info */}
+                  {(assignment.road as any)?.bestRoute && (
+                    <div className="bg-blue-50 p-3 rounded-lg mb-4">
+                      <p className="text-sm text-blue-900">
+                        <strong>Route Distance:</strong> {(assignment.road as any).bestRoute.distance_km?.toFixed(2)} km |
+                        <strong className="ml-3">Duration:</strong>{' '}
+                        {(assignment.road as any).bestRoute.duration_hrs?.toFixed(1)} hours
+                      </p>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-500">
+                    Assigned: {assignment.assignedAt ? new Date(assignment.assignedAt).toLocaleDateString() : 'N/A'}{' '}
+                    {assignment.completedAt &&
+                      `| Completed: ${new Date(assignment.completedAt).toLocaleDateString()}`}
+                  </p>
                 </div>
 
-                {/* Reasons why route changed */}
-                {(a.route as any)?.reasons && (
-                  <div className="mt-2 bg-yellow-50 border border-yellow-100 rounded-lg p-3">
-                    <p className="text-xs font-medium text-yellow-700 mb-1">
-                      ⚠️ Why route changed
-                    </p>
-                    {((a.route as any).reasons as any[]).map(
-                      (r: any, i: number) => (
-                        <p key={i} className="text-xs text-yellow-600">
-                          • {r.description || r}
-                        </p>
-                      )
-                    )}
+                {/* Route Map */}
+                {(assignment.road as any)?.bestRoute && (
+                  <div className="bg-gray-50 p-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Assigned Route</h3>
+                    <RouteMapClient
+                      originalRoute={(assignment.road as any).originalRoute?.waypoints || []}
+                      bestRoute={(assignment.road as any).bestRoute?.waypoints || []}
+                      reasons={(assignment.road as any).reasons?.map((r: any) => r.description) || []}
+                    />
                   </div>
                 )}
 
-                {/* <div className="mt-3">
-                  <Link
-                    href={`/driver/route/${a.id}`}
-                    className="text-xs border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50"
-                  >
-                    View on map →
-                  </Link>
-                </div> */}
+                {/* Mark as Done Button */}
+                {!assignment.workDone && (
+                  <div className="bg-gray-50 p-6 border-t border-gray-200">
+                    <WorkDoneButton assignmentId={assignment.id} workDone={assignment.workDone || false} />
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
-
-      {/* Completed assignments */}
-      <div className="mb-10">
-        <h2 className="text-lg font-medium text-gray-700 mb-4">
-          Completed Routes
-        </h2>
-        {completed.length === 0 ? (
-          <p className="text-sm text-gray-400">No completed routes yet</p>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {completed.map(a => (
-              <div
-                key={a.id}
-                className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 opacity-75"
-              >
-                <div>
-                  <p className="text-sm font-medium text-gray-800">
-                    {(a.route as any)?.origin?.name} →{' '}
-                    {(a.route as any)?.destination?.name}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Type: {a.routeType === 'ships' ? '🚢 Ship' : '🚛 Road'} ·
-                    Assigned by: {a.manager?.name || 'Manager'} ·{' '}
-                    {new Date(a.assignedAt!).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                    ✓ Completed
-                  </span>
-                  <WorkDoneButton
-                    assignmentId={a.id}
-                    workDone={a.workDone ?? false}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </main>
+    </div>
   )
 }

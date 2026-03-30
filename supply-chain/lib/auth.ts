@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           role: user.role ?? 'driver',
           isVerified: user.isVerified ?? false,
-          location: user.location ?? '',
+          managerType: user.managerType ?? null,
         }
       },
     }),
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.role = user.role
         token.isVerified = user.isVerified
-        token.location = user.location
+        token.managerType = user.managerType
       }
       return token
     },
@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id
         session.user.role = token.role
         session.user.isVerified = token.isVerified
-        session.user.location = token.location
+        session.user.managerType = token.managerType
       }
       return session
     },

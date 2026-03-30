@@ -7,6 +7,7 @@ import { ne } from 'drizzle-orm'
 import VerifyButton from '@/components/VerifyButton'
 import DeleteButton from '@/components/DeleteButton'
 import RoleSelector from '@/components/RoleSelector'
+import ManagerTypeSelector from '@/components/ManagerTypeSelector'
 import Link from 'next/link'
 
 export default async function AdminPage() {
@@ -72,7 +73,7 @@ export default async function AdminPage() {
                   <p className="text-sm font-medium text-gray-800">{u.name}</p>
                   <p className="text-xs text-gray-500">{u.email}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Location: {u.location || 'Not set'}
+                    Type: {u.managerType ? (u.managerType === 'ship' ? '🚢 Ship' : '🚛 Road') : '—'}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -85,6 +86,7 @@ export default async function AdminPage() {
                       Pending
                     </span>
                   )}
+                  <ManagerTypeSelector userId={u.id} currentManagerType={u.managerType} />
                   <RoleSelector userId={u.id} currentRole={u.role ?? 'driver'} />
                   <VerifyButton userId={u.id} isVerified={u.isVerified ?? false} />
                   <DeleteButton userId={u.id} />
@@ -110,9 +112,6 @@ export default async function AdminPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-800">{u.name}</p>
                   <p className="text-xs text-gray-500">{u.email}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Location: {u.location || 'Not set'}
-                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   {u.isVerified ? (

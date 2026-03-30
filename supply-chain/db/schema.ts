@@ -181,7 +181,7 @@ export const users = pgTable('users', {
   password: text('password').notNull(),
   role: text('role').default('driver'),        // admin / manager / driver
   isVerified: boolean('is_verified').default(false),
-  location: text('location'),                  // region bound for manager + driver
+  managerType: text('manager_type'),           // 'ship' | 'road' | null (for drivers and non-managers)
   workDone: boolean('work_done').default(false), // driver updates this
    longtermMemory: text('longterm_memory'),
   threads: jsonb('threads').default([]),
