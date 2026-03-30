@@ -1,0 +1,82 @@
+'use client'
+
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleLogin() {
+    setLoading(true)
+    setError('')
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (res?.error) {
+      setError('Invalid email or password')
+    } else {
+      router.push('/')
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-md">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-1">Sign in</h1>
+        <p className="text-gray-500 text-sm mb-6">Supply Chain Management</p>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
+
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="text-sm text-gray-600 mb-1 block">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-600 mb-1 block">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+            />
+          </div>
+
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+
+          <p className="text-center text-sm text-gray-500">
+            Don't have an account?{' '}
+            <a href="/register" className="text-blue-600 hover:underline">Register</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
