@@ -77,26 +77,28 @@ export default function RouteMap({ originalRoute, bestRoute, reasons }: RouteMap
           {/* Original route - Red */}
 <Polyline
   positions={originalPositions}
-  color="#ff000015"
-  weight={3}
+  color="#ff0000"
+  weight={4}
+  opacity={0.7}
 />
 <Polyline
   positions={originalPositions}
   color="#ff2222"
-  weight={1}
-  dashArray="10 8"
+  weight={2}
+  dashArray="5, 5"
 />
 
 {/* Best route - Green */}
 <Polyline
   positions={bestPositions}
-  color="#00ff0015"
-  weight={3}
+  color="#00dd44"
+  weight={4}
+  opacity={0.9}
 />
 <Polyline
   positions={bestPositions}
-  color="#00dd44"
-  weight={1}
+  color="#00ff00"
+  weight={2}
 />
 
           {/* Start marker */}
