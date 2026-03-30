@@ -1,6 +1,11 @@
 'use client'
 
-import AffectedZonesMap from '@/components/AffectedZonesMap'
+import dynamic from 'next/dynamic'
+
+const AffectedZonesMap = dynamic(
+  () => import('@/components/AffectedZonesMap'),
+  { ssr: false }
+)
 
 interface Zone {
   id: number

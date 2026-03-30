@@ -1,6 +1,6 @@
 'use client'
 
-import RouteMap from '@/components/RouteMap'
+import RouteMapClient from '@/components/RouteMapClient'
 
 export default function Page() {
   const originalRoute = [
@@ -38,7 +38,7 @@ export default function Page() {
 
   return (
     <div className="p-8">
-      <RouteMap
+      <RouteMapClient
         originalRoute={originalRoute}
         bestRoute={bestRoute}
         reasons={reasons}

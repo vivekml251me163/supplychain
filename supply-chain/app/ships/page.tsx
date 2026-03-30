@@ -1,6 +1,6 @@
 'use client'
 
-import ShipRouteMap from '@/components/ShipRouteMap'
+import ShipRouteMapClient from '@/components/ShipRouteMapClient'
 
 export default function ShipsPage() {
 
@@ -44,7 +44,7 @@ export default function ShipsPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 p-8">
-      <ShipRouteMap
+      <ShipRouteMapClient
         originalRoute={originalRoute}
         bestRoute={bestRoute}
         reasons={reasons}
