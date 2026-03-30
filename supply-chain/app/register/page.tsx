@@ -10,7 +10,7 @@ export default function RegisterPage() {
     email: '',
     password: '',
     role: 'driver',
-    location: '',
+    managerType: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -85,7 +85,7 @@ export default function RegisterPage() {
             <label className="text-sm text-gray-600 mb-1 block">Role</label>
             <select
               value={form.role}
-              onChange={e => setForm({ ...form, role: e.target.value })}
+              onChange={e => setForm({ ...form, role: e.target.value, managerType: '' })}
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             >
               <option value="driver">Driver</option>
@@ -93,16 +93,20 @@ export default function RegisterPage() {
             </select>
           </div>
 
-          <div>
-            <label className="text-sm text-gray-600 mb-1 block">Location / Region</label>
-            <input
-              type="text"
-              value={form.location}
-              onChange={e => setForm({ ...form, location: e.target.value })}
-              placeholder="e.g. Mumbai, Karnataka"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
-            />
-          </div>
+          {form.role === 'manager' && (
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Manager Type</label>
+              <select
+                value={form.managerType}
+                onChange={e => setForm({ ...form, managerType: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              >
+                <option value="">Select Manager Type</option>
+                <option value="ship">Ship Manager</option>
+                <option value="road">Road Manager</option>
+              </select>
+            </div>
+          )}
 
           <button
             onClick={handleRegister}
