@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
-  const { name, email, password, role, location } = await req.json()
+  const { name, email, password, role } = await req.json()
 
   const existing = await db.query.users.findFirst({
     where: eq(users.email, email),
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     email,
     password: hashedPassword,
     role: role || 'driver',
-    location: location || null,
+    managerType: null,
     isVerified: false,
   })
 
