@@ -59,7 +59,7 @@ export default function InfoCards({
         {reasons?.length > 0 ? (
           reasons.map((r, i) => (
             <div key={i} className="mb-1">
-              <p className="text-xs text-yellow-800">• {r.description || r}</p>
+              {/* <p className="text-xs text-yellow-800">• {r.description || r}</p> */}
               {r.severity && (
                 <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                   r.severity === 'high'
