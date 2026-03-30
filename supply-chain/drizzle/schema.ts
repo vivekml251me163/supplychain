@@ -184,6 +184,23 @@ export const shipwayResults = pgTable("shipway_results", {
 		}),
 ]);
 
+export const weatherResults = pgTable("weather_results", {
+	id: serial().primaryKey().notNull(),
+	weatherId: integer("weather_id"),
+	aiSummary: text("ai_summary").notNull(),
+	consequence: text().notNull(),
+	radiusKm: doublePrecision("radius_km").notNull(),
+	severity: integer().notNull(),
+	confidence: doublePrecision().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.weatherId],
+			foreignColumns: [weather.id],
+			name: "weather_results_weather_id_fkey"
+		}),
+]);
+
 export const locations = pgTable("locations", {
 	id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
 	name: varchar({ length: 255 }).notNull(),

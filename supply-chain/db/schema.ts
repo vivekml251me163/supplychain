@@ -1,5 +1,5 @@
 
-import { pgTable, uuid, text, numeric ,  json, timestamp, uniqueIndex, serial, varchar, index, foreignKey, check, integer, date, boolean, unique, bigserial, doublePrecision, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, numeric ,  jsonb,json, timestamp, uniqueIndex, serial, varchar, index, foreignKey, check, integer, date, boolean, unique, bigserial, doublePrecision, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 // Enums from drizzle
@@ -183,6 +183,8 @@ export const users = pgTable('users', {
   isVerified: boolean('is_verified').default(false),
   location: text('location'),                  // region bound for manager + driver
   workDone: boolean('work_done').default(false), // driver updates this
+   longtermMemory: text('longterm_memory'),
+  threads: jsonb('threads').default([]),
   createdAt: timestamp('created_at').defaultNow(),
 })
 
