@@ -130,14 +130,14 @@ export default async function DriverPage() {
                   </div>
                 )}
 
-                <div className="mt-3">
+                {/* <div className="mt-3">
                   <Link
-  href={`/driver/route/${a.id}`}
-  className="text-xs border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50"
->
-  View on map →
-</Link>
-                </div>
+                    href={`/driver/route/${a.id}`}
+                    className="text-xs border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50"
+                  >
+                    View on map →
+                  </Link>
+                </div> */}
               </div>
             ))}
           </div>
