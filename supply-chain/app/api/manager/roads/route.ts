@@ -21,7 +21,11 @@ export async function POST(req: NextRequest) {
     if (typeof srcLat !== 'number' || typeof srcLon !== 'number' || 
         typeof destLat !== 'number' || typeof destLon !== 'number' || 
         typeof goodsAmount !== 'number') {
-      return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid input: all coordinates and amounts must be numbers' }, { status: 400 })
+    }
+
+    if (goodsAmount <= 0) {
+      return NextResponse.json({ error: 'Invalid input: goods amount must be greater than 0' }, { status: 400 })
     }
 
     const result = await db

@@ -125,7 +125,7 @@ export default async function RoadManagerPage() {
         {/* Create New Route Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Create New Delivery Route</h2>
-          <RoadManagerRouteForm managerId={user.id} />
+          <RoadManagerRouteForm />
         </div>
 
         {/* Pending Routes Section */}

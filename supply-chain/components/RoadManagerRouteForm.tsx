@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function RoadManagerRouteForm({ managerId }: { managerId: string }) {
+export default function RoadManagerRouteForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -21,7 +21,7 @@ export default function RoadManagerRouteForm({ managerId }: { managerId: string 
     setError('')
     setSuccess(false)
 
-    // Validate form
+    // Basic required validation
     if (!form.srcLat || !form.srcLon || !form.destLat || !form.destLon || !form.goodsAmount) {
       setError('All fields are required')
       setLoading(false)
@@ -34,13 +34,22 @@ export default function RoadManagerRouteForm({ managerId }: { managerId: string 
     const destLon = parseFloat(form.destLon)
     const goodsAmount = parseFloat(form.goodsAmount)
 
+    // Number validation
     if (isNaN(srcLat) || isNaN(srcLon) || isNaN(destLat) || isNaN(destLon) || isNaN(goodsAmount)) {
       setError('Please enter valid numbers for coordinates and goods amount')
       setLoading(false)
       return
     }
 
+    // Range/Logic validation
+    if (goodsAmount <= 0) {
+      setError('Goods amount must be greater than 0')
+      setLoading(false)
+      return
+    }
+
     try {
+      // 1. Create the route in the database
       const res = await fetch('/api/manager/roads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,22 +65,51 @@ export default function RoadManagerRouteForm({ managerId }: { managerId: string 
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Failed to create route')
-      } else {
-        setSuccess(true)
-        setForm({
-          srcLat: '',
-          srcLon: '',
-          destLat: '',
-          destLon: '',
-          goodsAmount: '',
-        })
-        setTimeout(() => {
-          router.refresh()
-        }, 1000)
+        setError(data.error || 'Failed to create route in database')
+        setLoading(false)
+        return
       }
+
+      // 2. Attempt ML Assignment
+      try {
+        const resk = await fetch('http://127.0.0.1:8000/api/v1/assign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            routeId: data.route.id,
+          }),
+        })
+
+        const data2 = await resk.json()
+
+        if (!resk.ok) {
+          // If ML fails but DB succeeded, we show a partial success/warning
+          setError(data2.error || 'Route created, but driver assignment service is busy. It will be assigned later.')
+        } else {
+          setSuccess(true)
+        }
+      } catch (mlErr) {
+        // ML service might be down, but the route is still in the DB
+        setError('Route created successfully, but the automated assignment service is currently unavailable. Drivers will be assigned manually or during the next cycle.')
+        console.error('ML Assignment Service Error:', mlErr)
+      }
+
+      // Clear form on successful DB creation regardless of ML status (since route exists now)
+      setForm({
+        srcLat: '',
+        srcLon: '',
+        destLat: '',
+        destLon: '',
+        goodsAmount: '',
+      })
+      
+      // If we didn't set a critical error that stopped us earlier, refresh the page
+      setTimeout(() => {
+        router.refresh()
+      }, 2000)
+
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      setError('An unexpected error occurred. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
