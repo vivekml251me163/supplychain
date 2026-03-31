@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
   await db
     .update(drivers)
-    .set({ lat, lon, updatedAt: new Date() })
+    .set({ lat, lon, updatedAt: new Date().toISOString() })
     .where(eq(drivers.userId, user.id))
 
   return NextResponse.json({ message: 'Location updated successfully' })

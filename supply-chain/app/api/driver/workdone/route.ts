@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       if (typeof destLat === 'number' && typeof destLon === 'number') {
         await db
           .update(drivers)
-          .set({ lat: destLat, lon: destLon, updatedAt: new Date() })
+          .set({ lat: destLat, lon: destLon, updatedAt: new Date().toISOString() })
           .where(eq(drivers.userId, user.id as any))
       }
     }
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   await db
     .update(assignments)
-    .set({ workDone, completedAt: workDone ? new Date() : null })
+    .set({ workDone, completedAt: workDone ? new Date().toISOString() : null })
     .where(eq(assignments.id, assignmentId as any))
 
   return NextResponse.json({ message: 'Updated successfully' })
