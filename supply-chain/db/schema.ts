@@ -250,7 +250,7 @@ export const drivers = pgTable('drivers', {
 
 export const routes = pgTable('routes', {
   id: uuid('id').defaultRandom().primaryKey(),
-  assignmentId: uuid('assignment_id').references(() => assignments.id, { onDelete: 'cascade' }),
+  assignmentId: text('assignment_id'),  // stores UUID as text, references assignments.id
   managerId: uuid('manager_id').notNull().references(() => users.id),
   srcLat: doublePrecision('src_lat').notNull(),
   srcLon: doublePrecision('src_lon').notNull(),
