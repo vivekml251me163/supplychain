@@ -31,15 +31,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Assignment not found' }, { status: 404 })
   }
 
-  // Update route with assignment
-  const result = await db
-    .update(routes)
-    .set({ assignmentId, updatedAt: new Date() })
-    .where(eq(routes.id, routeId))
-    .returning()
-
+  // Assignment is already linked to the route via its routeId field
   return NextResponse.json({
     message: 'Driver assigned to route successfully',
-    route: result[0],
+    assignment: assignment[0],
   })
 }
