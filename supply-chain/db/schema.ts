@@ -250,7 +250,8 @@ export const drivers = pgTable('drivers', {
 
 export const routes = pgTable('routes', {
   id: uuid('id').defaultRandom().primaryKey(),
-  driverIds: jsonb('driver_ids').notNull(),     // [driver_id_1, driver_id_2, ...]
+  assignmentId: uuid('assignment_id').references(() => assignments.id, { onDelete: 'cascade' }),
+  managerId: uuid('manager_id').notNull().references(() => users.id),
   srcLat: doublePrecision('src_lat').notNull(),
   srcLon: doublePrecision('src_lon').notNull(),
   destLat: doublePrecision('dest_lat').notNull(),
@@ -258,4 +259,7 @@ export const routes = pgTable('routes', {
   goodsAmount: doublePrecision('goods_amount').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at'),
-})
+}, (table) => [
+  index('idx_routes_assignment_id').on(table.assignmentId),
+  index('idx_routes_manager_id').on(table.managerId),
+])

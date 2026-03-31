@@ -1,15 +1,57 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [requestingLocation, setRequestingLocation] = useState(false)
+
+  // Handle geolocation request for drivers after session is available
+  useEffect(() => {
+    if (session?.user && requestingLocation) {
+      const user = session.user as any
+      if (user.role === 'driver' && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords
+            try {
+              await fetch('/api/driver/location', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lat: latitude, lon: longitude }),
+              })
+            } catch (error) {
+              console.error('Failed to update location:', error)
+            } finally {
+              router.push('/')
+              setLoading(false)
+              setRequestingLocation(false)
+            }
+          },
+          (error) => {
+            console.error('Geolocation error:', error)
+            router.push('/')
+            setLoading(false)
+            setRequestingLocation(false)
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        )
+      } else {
+        // If not a driver, just redirect
+        router.push('/')
+        setLoading(false)
+        setRequestingLocation(false)
+      }
+    }
+  }, [session, requestingLocation, router])
 
   async function handleLogin() {
     setLoading(true)
@@ -24,34 +66,8 @@ export default function LoginPage() {
       setError('Invalid email or password')
       setLoading(false)
     } else {
-      // Request geolocation for drivers
-      if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const { latitude, longitude } = position.coords
-            try {
-              await fetch('/api/driver/location', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lat: latitude, lon: longitude }),
-              })
-            } catch (error) {
-              console.error('Failed to update location:', error)
-            }
-            router.push('/')
-            setLoading(false)
-          },
-          (error) => {
-            console.error('Geolocation error:', error)
-            router.push('/')
-            setLoading(false)
-          },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        )
-      } else {
-        router.push('/')
-        setLoading(false)
-      }
+      // Signal that we should request location once session is available
+      setRequestingLocation(true)
     }
   }
 
@@ -64,6 +80,12 @@ export default function LoginPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg mb-4">
             {error}
+          </div>
+        )}
+
+        {loading && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-600 text-sm p-3 rounded-lg mb-4">
+            {requestingLocation ? 'Requesting your location...' : 'Signing in...'}
           </div>
         )}
 
