@@ -17,11 +17,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Truck capacity is required for drivers' }, { status: 400 })
   }
 
-  const existing = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  })
+  const existing = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
 
-  if (existing) {
+  if (existing.length > 0) {
     return NextResponse.json({ error: 'User already exists' }, { status: 400 })
   }
 
