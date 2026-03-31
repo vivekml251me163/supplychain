@@ -198,3 +198,25 @@ export const assignments = pgTable('assignments', {
   assignedAt: timestamp('assigned_at').defaultNow(),
   completedAt: timestamp('completed_at'),
 })
+
+export const drivers = pgTable('drivers', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').notNull().references(() => users.id),
+  lat: doublePrecision('lat').notNull(),
+  lon: doublePrecision('lon').notNull(),
+  capacity: doublePrecision('capacity').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at'),
+})
+
+export const routes = pgTable('routes', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  driverIds: jsonb('driver_ids').notNull(),     // [driver_id_1, driver_id_2, ...]
+  srcLat: doublePrecision('src_lat').notNull(),
+  srcLon: doublePrecision('src_lon').notNull(),
+  destLat: doublePrecision('dest_lat').notNull(),
+  destLon: doublePrecision('dest_lon').notNull(),
+  goodsAmount: doublePrecision('goods_amount').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at'),
+})

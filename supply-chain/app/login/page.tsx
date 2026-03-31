@@ -22,10 +22,37 @@ export default function LoginPage() {
 
     if (res?.error) {
       setError('Invalid email or password')
+      setLoading(false)
     } else {
-      router.push('/')
+      // Request geolocation for drivers
+      if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords
+            try {
+              await fetch('/api/driver/location', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lat: latitude, lon: longitude }),
+              })
+            } catch (error) {
+              console.error('Failed to update location:', error)
+            }
+            router.push('/')
+            setLoading(false)
+          },
+          (error) => {
+            console.error('Geolocation error:', error)
+            router.push('/')
+            setLoading(false)
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        )
+      } else {
+        router.push('/')
+        setLoading(false)
+      }
     }
-    setLoading(false)
   }
 
   return (

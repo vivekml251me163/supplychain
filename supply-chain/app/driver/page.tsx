@@ -2,11 +2,12 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { db } from '@/db/index'
-import { assignments, roads, users } from '@/db/schema'
+import { assignments, roads, users, drivers } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import WorkDoneButton from '@/components/WorkDoneButton'
 import RouteMapClient from '@/components/RouteMapClient'
 import Link from 'next/link'
+import DriverLocationTracker from '@/components/DriverLocationTracker'
 
 export default async function DriverPage() {
   const session = await getServerSession(authOptions)
@@ -14,6 +15,12 @@ export default async function DriverPage() {
 
   if (!session || user?.role !== 'driver') redirect('/')
   if (!user?.isVerified) redirect('/')
+
+  // Get driver profile
+  const driverProfile = await db
+    .select()
+    .from(drivers)
+    .where(eq(drivers.userId, user.id))
 
   // Get all ROAD assignments for this driver
   const myAssignments = await db
@@ -45,13 +52,40 @@ export default async function DriverPage() {
     })
   )
 
+  const currentDriver = driverProfile[0]
+
   return (
     <div className="min-h-screen bg-linear-to-br from-orange-50 to-amber-100 p-6">
+      <DriverLocationTracker />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Road Driver Dashboard</h1>
         <p className="text-gray-600 mb-8">
           View your assigned delivery tasks and mark them as complete.
         </p>
+
+        {/* Current Location Card */}
+        {currentDriver && (
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-6 mb-8 border border-blue-200">
+            <h2 className="text-lg font-semibold text-blue-900 mb-3">Your Current Location</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg p-4">
+                <p className="text-sm text-gray-600">Latitude</p>
+                <p className="text-2xl font-bold text-blue-600">{currentDriver.lat.toFixed(4)}</p>
+              </div>
+              <div className="bg-white rounded-lg p-4">
+                <p className="text-sm text-gray-600">Longitude</p>
+                <p className="text-2xl font-bold text-blue-600">{currentDriver.lon.toFixed(4)}</p>
+              </div>
+              <div className="bg-white rounded-lg p-4">
+                <p className="text-sm text-gray-600">Truck Capacity</p>
+                <p className="text-2xl font-bold text-blue-600">{currentDriver.capacity.toFixed(2)} units</p>
+              </div>
+            </div>
+            <p className="text-xs text-blue-700 mt-4">
+              Last updated: {currentDriver.updatedAt ? new Date(currentDriver.updatedAt).toLocaleString() : 'N/A'}
+            </p>
+          </div>
+        )}
 
         {assignmentsWithDetails.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
@@ -108,9 +142,20 @@ export default async function DriverPage() {
                   {(assignment.road as any)?.bestRoute && (
                     <div className="bg-blue-50 p-3 rounded-lg mb-4">
                       <p className="text-sm text-blue-900">
-                        <strong>Route Distance:</strong> {(assignment.road as any).bestRoute.distance_km?.toFixed(2)} km |
+                        <strong>Best Route Distance:</strong> {(assignment.road as any).bestRoute.distance_km?.toFixed(2)} km |
                         <strong className="ml-3">Duration:</strong>{' '}
                         {(assignment.road as any).bestRoute.duration_hrs?.toFixed(1)} hours
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Original Route Info */}
+                  {(assignment.road as any)?.originalRoute && (
+                    <div className="bg-amber-50 p-3 rounded-lg mb-4">
+                      <p className="text-sm text-amber-900">
+                        <strong>Original Route Distance:</strong> {(assignment.road as any).originalRoute.distance_km?.toFixed(2)} km |
+                        <strong className="ml-3">Duration:</strong>{' '}
+                        {(assignment.road as any).originalRoute.duration_hrs?.toFixed(1)} hours
                       </p>
                     </div>
                   )}
@@ -137,7 +182,12 @@ export default async function DriverPage() {
                 {/* Mark as Done Button */}
                 {!assignment.workDone && (
                   <div className="bg-gray-50 p-6 border-t border-gray-200">
-                    <WorkDoneButton assignmentId={assignment.id} workDone={assignment.workDone || false} />
+                    <WorkDoneButton 
+                      assignmentId={assignment.id} 
+                      workDone={assignment.workDone || false}
+                      destLat={(assignment.road as any)?.destination?.lat}
+                      destLon={(assignment.road as any)?.destination?.lng}
+                    />
                   </div>
                 )}
               </div>
