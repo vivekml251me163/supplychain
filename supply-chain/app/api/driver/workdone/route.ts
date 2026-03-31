@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db/index'
-import { assignments, drivers, roads } from '@/db/schema'
+import { assignments, drivers, routes } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const assignment = await db
     .select()
     .from(assignments)
-    .where(eq(assignments.id, assignmentId))
+    .where(eq(assignments.id, assignmentId as any))
 
   if (assignment.length === 0) {
     return NextResponse.json({ error: 'Assignment not found' }, { status: 404 })
@@ -29,20 +29,19 @@ export async function POST(req: NextRequest) {
   if (workDone && assignment[0].routeType === 'roads') {
     const route = await db
       .select()
-      .from(roads)
-      .where(eq(roads.id, assignment[0].routeId))
+      .from(routes)
+      .where(eq(routes.id, assignment[0].routeId as any))
 
     if (route.length > 0) {
-      const destination = (route[0].destination as any)
-      const destLat = destination?.lat
-      const destLon = destination?.lng
+      const destLat = route[0].destLat
+      const destLon = route[0].destLon
 
       // Update driver's location to destination
       if (typeof destLat === 'number' && typeof destLon === 'number') {
         await db
           .update(drivers)
           .set({ lat: destLat, lon: destLon, updatedAt: new Date() })
-          .where(eq(drivers.userId, user.id))
+          .where(eq(drivers.userId, user.id as any))
       }
     }
   }
@@ -50,7 +49,7 @@ export async function POST(req: NextRequest) {
   await db
     .update(assignments)
     .set({ workDone, completedAt: workDone ? new Date() : null })
-    .where(eq(assignments.id, assignmentId))
+    .where(eq(assignments.id, assignmentId as any))
 
   return NextResponse.json({ message: 'Updated successfully' })
 }

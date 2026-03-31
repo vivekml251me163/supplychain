@@ -21,58 +21,76 @@ export default async function RoadManagerPage() {
     .from(routes)
     .where(eq(routes.managerId, user.id))
 
-  // Get pending routes (no assignment yet)
-  const pendingRoutes = managerRoutes.filter((r) => !r.assignmentId)
+  // Get all assignments for these routes
+  const routeIds = managerRoutes.map((r) => r.id)
+  const allAssignmentsForRoutes = await db
+    .select()
+    .from(assignments)
+    .where(({ routeId }) => routeIds.includes(routeId as any) as any)
 
-  // Get routes with assignments
-  const assignedRoutes = managerRoutes.filter((r) => r.assignmentId)
+  // Build map of route -> assignments
+  const routeAssignmentsMap = new Map<string, any[]>()
+  managerRoutes.forEach((route) => {
+    routeAssignmentsMap.set(route.id, [])
+  })
+  allAssignmentsForRoutes.forEach((assignment) => {
+    const assignmentsList = routeAssignmentsMap.get(assignment.routeId)
+    if (assignmentsList) {
+      assignmentsList.push(assignment)
+    }
+  })
+
+  // Categorize routes
+  const pendingRoutes = managerRoutes.filter((r) => {
+    const routeAssignments = routeAssignmentsMap.get(r.id) || []
+    return routeAssignments.length === 0
+  })
+
+  const assignedRoutes = managerRoutes.filter((r) => {
+    const routeAssignments = routeAssignmentsMap.get(r.id) || []
+    return routeAssignments.length > 0
+  })
 
   // Get detailed information for assigned routes
   const assignedRoutesWithDetails = await Promise.all(
     assignedRoutes.map(async (route) => {
-      // Get assignment details
-      const assignmentResult = await db
-        .select()
-        .from(assignments)
-        .where(eq(assignments.id, route.assignmentId!))
-      const assignment = assignmentResult[0] || null
+      const routeAssignments = routeAssignmentsMap.get(route.id) || []
 
-      // Get road details
-      const roadResult = await db
-        .select()
-        .from(roads)
-        .where(eq(roads.id, assignment?.routeId || ''))
-      const road = roadResult[0] || null
+      // Fetch details for all assignments
+      const assignmentDetails = await Promise.all(
+        routeAssignments.map(async (assignment) => {
+          const driverUserResult = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, assignment.driverId))
+          const driverUser = driverUserResult[0] || null
 
-      // Get driver details
-      const driverUserResult = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, assignment?.driverId || ''))
-      const driverUser = driverUserResult[0] || null
+          const driverProfileResult = await db
+            .select()
+            .from(drivers)
+            .where(eq(drivers.userId, assignment.driverId))
+          const driverProfile = driverProfileResult[0] || null
 
-      // Get driver profile
-      const driverProfileResult = await db
-        .select()
-        .from(drivers)
-        .where(eq(drivers.userId, assignment?.driverId || ''))
-      const driverProfile = driverProfileResult[0] || null
+          return {
+            assignment,
+            driverUser,
+            driverProfile,
+          }
+        })
+      )
 
       return {
         route,
-        assignment,
-        road,
-        driverUser,
-        driverProfile,
+        assignments: assignmentDetails,
       }
     })
   )
 
   const activeRoutes = assignedRoutesWithDetails.filter(
-    (item) => item.assignment && !item.assignment.workDone
+    (item) => item.assignments && item.assignments.some((a: any) => !a.assignment.workDone)
   )
   const completedRoutes = assignedRoutesWithDetails.filter(
-    (item) => item.assignment && item.assignment.workDone
+    (item) => item.assignments && item.assignments.every((a: any) => a.assignment.workDone)
   )
 
   return (
@@ -189,11 +207,10 @@ export default async function RoadManagerPage() {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-bold text-gray-900">
-                          {(item.road as any)?.origin?.name || 'Pickup'} →{' '}
-                          {(item.road as any)?.destination?.name || 'Delivery'}
+                          Route {item.route.id.slice(0, 8)}...
                         </h3>
                         <p className="text-gray-600 text-sm mt-1">
-                          Driver: <span className="font-semibold text-gray-900">{item.driverUser?.name || 'N/A'}</span>
+                          Assigned to <span className="font-semibold">{item.assignments.length} driver(s)</span>
                         </p>
                       </div>
                       <span className="px-4 py-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">
@@ -202,43 +219,43 @@ export default async function RoadManagerPage() {
                     </div>
                   </div>
 
-                  {/* Driver & Route Info */}
+                  {/* Assigned Drivers */}
                   <div className="p-6 border-b border-gray-200">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                      {/* Driver Current Location */}
-                      <div>
-                        <h4 className="font-semibold text-gray-800 mb-3">Driver Current Location</h4>
-                        <div className="bg-blue-50 p-4 rounded-lg">
-                          <p className="text-sm text-gray-600 mb-2">
-                            <span className="font-medium">Lat:</span> {item.driverProfile?.lat.toFixed(4) || 'N/A'}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Lon:</span> {item.driverProfile?.lon.toFixed(4) || 'N/A'}
-                          </p>
-                          {item.driverProfile?.updatedAt && (
-                            <p className="text-xs text-gray-500 mt-2">
-                              Updated: {new Date(item.driverProfile.updatedAt).toLocaleString()}
-                            </p>
-                          )}
+                    <h4 className="font-semibold text-gray-800 mb-4">Assigned Drivers</h4>
+                    <div className="space-y-4">
+                      {item.assignments.map((driverAssignment: any, idx: number) => (
+                        <div
+                          key={driverAssignment.assignment.id}
+                          className="bg-blue-50 p-4 rounded-lg border border-blue-200"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
+                              <p className="text-sm text-gray-600">
+                                Quantity assigned: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Truck capacity: <span className="font-semibold">{driverAssignment.driverProfile?.capacity.toFixed(2) || 'N/A'} units</span>
+                              </p>
+                              {driverAssignment.assignment.workDone ? (
+                                <p className="text-sm text-green-600 mt-1">✓ Completed</p>
+                              ) : (
+                                <p className="text-sm text-orange-600 mt-1">⏳ In progress</p>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-500 text-right">
+                              Current location: {driverAssignment.driverProfile?.lat.toFixed(4)}, {driverAssignment.driverProfile?.lon.toFixed(4)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Driver Truck Capacity */}
-                      <div>
-                        <h4 className="font-semibold text-gray-800 mb-3">Driver Truck Capacity</h4>
-                        <div className="bg-green-50 p-4 rounded-lg">
-                          <p className="text-2xl font-bold text-green-600">
-                            {item.driverProfile?.capacity.toFixed(2) || 'N/A'} units
-                          </p>
-                          <p className="text-sm text-gray-600 mt-2">
-                            <span className="font-medium">Goods to deliver:</span> {item.route.goodsAmount.toFixed(2)} units
-                          </p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
+                  </div>
 
-                    {/* Route Coordinates */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Route Coordinates */}
+                  <div className="p-6 border-b border-gray-200">
+                    <h4 className="font-semibold text-gray-800 mb-4">Route Details</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Pickup Location</p>
                         <p className="text-gray-900 text-sm">
@@ -251,55 +268,22 @@ export default async function RoadManagerPage() {
                           {item.route.destLat.toFixed(4)}, {item.route.destLon.toFixed(4)}
                         </p>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Route Info */}
-                  {(item.road as any)?.bestRoute && (
-                    <div className="p-6 border-b border-gray-200">
-                      <h4 className="font-semibold text-gray-800 mb-3">Route Information</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-indigo-50 p-4 rounded-lg">
-                          <p className="text-sm text-indigo-900">
-                            <strong>Best Route Distance:</strong> {(item.road as any).bestRoute.distance_km?.toFixed(2)} km
-                          </p>
-                          <p className="text-sm text-indigo-900">
-                            <strong>Duration:</strong> {(item.road as any).bestRoute.duration_hrs?.toFixed(1)} hours
-                          </p>
-                        </div>
-                        {(item.road as any)?.originalRoute && (
-                          <div className="bg-amber-50 p-4 rounded-lg">
-                            <p className="text-sm text-amber-900">
-                              <strong>Original Route Distance:</strong> {(item.road as any).originalRoute.distance_km?.toFixed(2)} km
-                            </p>
-                            <p className="text-sm text-amber-900">
-                              <strong>Duration:</strong> {(item.road as any).originalRoute.duration_hrs?.toFixed(1)} hours
-                            </p>
-                          </div>
-                        )}
+                      <div className="bg-green-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 font-medium mb-2">Total Goods</p>
+                        <p className="text-gray-900 text-lg font-semibold">
+                          {item.route.goodsAmount.toFixed(2)} units
+                        </p>
                       </div>
                     </div>
-                  )}
-
-                  {/* Map */}
-                  {(item.road as any)?.bestRoute && (
-                    <div className="p-6 border-b border-gray-200 bg-gray-50">
-                      <h4 className="font-semibold text-gray-800 mb-4">Route Visualization</h4>
-                      <RouteMapClient
-                        originalRoute={(item.road as any).originalRoute?.waypoints || []}
-                        bestRoute={(item.road as any).bestRoute?.waypoints || []}
-                        reasons={(item.road as any).reasons?.map((r: any) => r.description) || []}
-                      />
-                    </div>
-                  )}
+                  </div>
 
                   {/* Assignment Details */}
                   <div className="p-6 bg-gray-50 text-xs text-gray-500 flex justify-between">
                     <div>
-                      <p>Assigned: {item.assignment?.assignedAt ? new Date(item.assignment.assignedAt).toLocaleDateString() : 'N/A'}</p>
+                      <p>Created: {item.route.createdAt ? new Date(item.route.createdAt).toLocaleDateString() : 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="font-mono">{item.assignment?.id}</p>
+                      <p className="font-mono">{item.route.id}</p>
                     </div>
                   </div>
                 </div>
@@ -316,24 +300,71 @@ export default async function RoadManagerPage() {
               {completedRoutes.map((item) => (
                 <div
                   key={item.route.id}
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition opacity-75 border-l-4 border-green-500"
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition border-l-4 border-green-500"
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        {(item.road as any)?.origin?.name || 'Pickup'} →{' '}
-                        {(item.road as any)?.destination?.name || 'Delivery'}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        Driver: <span className="font-semibold">{item.driverUser?.name || 'N/A'}</span>
-                      </p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Completed: {item.assignment?.completedAt ? new Date(item.assignment.completedAt).toLocaleDateString() : 'N/A'}
-                      </p>
+                  {/* Header */}
+                  <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">
+                          Route {item.route.id.slice(0, 8)}...
+                        </h3>
+                        <p className="text-gray-600 text-sm mt-1">
+                          Delivered by <span className="font-semibold">{item.assignments.length} driver(s)</span>
+                        </p>
+                      </div>
+                      <span className="px-4 py-2 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                        ✓ Completed
+                      </span>
                     </div>
-                    <span className="px-4 py-2 rounded-full text-sm font-semibold bg-green-100 text-green-800">
-                      ✓ Completed
-                    </span>
+                  </div>
+
+                  {/* Drivers Info */}
+                  <div className="p-6 border-b border-gray-200">
+                    <h4 className="font-semibold text-gray-800 mb-4">Delivery Drivers</h4>
+                    <div className="space-y-3">
+                      {item.assignments.map((driverAssignment: any) => (
+                        <div
+                          key={driverAssignment.assignment.id}
+                          className="bg-green-50 p-4 rounded-lg border border-green-200"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
+                              <p className="text-sm text-gray-600">
+                                Quantity delivered: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
+                              </p>
+                              {driverAssignment.assignment.completedAt && (
+                                <p className="text-sm text-green-600 mt-1">
+                                  Completed: {new Date(driverAssignment.assignment.completedAt).toLocaleDateString()}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Route Info */}
+                  <div className="p-6 bg-gray-50">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="bg-white p-4 rounded-lg border border-gray-200">
+                        <p className="text-sm text-gray-600 font-medium mb-2">Pickup</p>
+                        <p className="text-sm text-gray-900">{item.route.srcLat.toFixed(4)}, {item.route.srcLon.toFixed(4)}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg border border-gray-200">
+                        <p className="text-sm text-gray-600 font-medium mb-2">Delivery</p>
+                        <p className="text-sm text-gray-900">{item.route.destLat.toFixed(4)}, {item.route.destLon.toFixed(4)}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg border border-gray-200">
+                        <p className="text-sm text-gray-600 font-medium mb-2">Total Goods</p>
+                        <p className="text-sm font-semibold text-gray-900">{item.route.goodsAmount.toFixed(2)} units</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Route created: {item.route.createdAt ? new Date(item.route.createdAt).toLocaleDateString() : 'N/A'}
+                    </p>
                   </div>
                 </div>
               ))}

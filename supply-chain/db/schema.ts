@@ -233,10 +233,19 @@ export const assignments = pgTable('assignments', {
   driverId: uuid('driver_id').notNull().references(() => users.id),
   routeId: uuid('route_id').notNull(),
   routeType: text('route_type').notNull(), // 'roads' | 'ships'
+  assignedQuantity: doublePrecision('assigned_quantity').notNull().default(0), // how much this driver carries
   workDone: boolean('work_done').default(false),
   assignedAt: timestamp('assigned_at').defaultNow(),
   completedAt: timestamp('completed_at'),
-})
+}, (table) => [
+  foreignKey({
+    columns: [table.routeId],
+    foreignColumns: [routes.id],
+    name: 'fk_assignment_route',
+  }).onDelete('cascade'),
+  index('idx_assignment_route_id').on(table.routeId),
+  index('idx_assignment_driver_id').on(table.driverId),
+])
 
 export const drivers = pgTable('drivers', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -250,7 +259,6 @@ export const drivers = pgTable('drivers', {
 
 export const routes = pgTable('routes', {
   id: uuid('id').defaultRandom().primaryKey(),
-  assignmentId: text('assignment_id'),  // stores UUID as text, references assignments.id
   managerId: uuid('manager_id').notNull().references(() => users.id),
   srcLat: doublePrecision('src_lat').notNull(),
   srcLon: doublePrecision('src_lon').notNull(),
@@ -260,6 +268,5 @@ export const routes = pgTable('routes', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => [
-  index('idx_routes_assignment_id').on(table.assignmentId),
   index('idx_routes_manager_id').on(table.managerId),
 ])
