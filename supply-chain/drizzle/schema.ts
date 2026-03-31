@@ -1,45 +1,14 @@
-import { pgTable, uuid, text, json, timestamp, uniqueIndex, serial, varchar, index, foreignKey, check, integer, date, boolean, unique, bigserial, doublePrecision, jsonb, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, serial, varchar, timestamp, index, foreignKey, check, integer, date, boolean, uuid, json, text, unique, bigserial, doublePrecision, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const locationTypeEnum = pgEnum("location_type_enum", ['port', 'city', 'chokepoint', 'region'])
 
 
-export const roads = pgTable("roads", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	userId: text("user_id").notNull(),
-	origin: json().notNull(),
-	destination: json().notNull(),
-	originalRoute: json("original_route"),
-	bestRoute: json("best_route"),
-	reasons: json(),
-	weatherData: json("weather_data"),
-	newsData: json("news_data"),
-	status: text().default('pending'),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
-	refreshedAt: timestamp("refreshed_at", { mode: 'string' }),
-});
-
-export const ships = pgTable("ships", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	userId: text("user_id").notNull(),
-	origin: json().notNull(),
-	destination: json().notNull(),
-	originalRoute: json("original_route"),
-	bestRoute: json("best_route"),
-	reasons: json(),
-	weatherData: json("weather_data"),
-	newsData: json("news_data"),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
-	refreshedAt: timestamp("refreshed_at", { mode: 'string' }),
-});
-
 export const keywords = pgTable("keywords", {
 	id: serial().primaryKey().notNull(),
 	word: varchar({ length: 120 }).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	uniqueIndex("uq_keywords_word").using("btree", sql`lower((word)::text)`),
-]);
+});
 
 export const keywordRules = pgTable("keyword_rules", {
 	id: serial().primaryKey().notNull(),
@@ -49,9 +18,7 @@ export const keywordRules = pgTable("keyword_rules", {
 	isActive: boolean("is_active").default(true).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
-	index("idx_active_rules").using("btree", table.type.asc().nullsLast().op("text_ops")).where(sql`(is_active = true)`),
-	index("idx_keyword_rules_keyword_id").using("btree", table.keywordId.asc().nullsLast().op("int4_ops")),
-	uniqueIndex("uq_keyword_type_date").using("btree", table.keywordId.asc().nullsLast().op("int4_ops"), table.type.asc().nullsLast().op("int4_ops"), table.date.asc().nullsLast().op("int4_ops")),
+	index("idx_keyword_rules_type_active").using("btree", table.type.asc().nullsLast().op("text_ops"), table.isActive.asc().nullsLast().op("text_ops")),
 	foreignKey({
 			columns: [table.keywordId],
 			foreignColumns: [keywords.id],
@@ -82,28 +49,6 @@ export const shipReroutes = pgTable("ship_reroutes", {
 			columns: [table.userId],
 			foreignColumns: [users.id],
 			name: "ship_reroutes_user_id_fkey"
-		}),
-]);
-
-export const assignments = pgTable("assignments", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	managerId: uuid("manager_id").notNull(),
-	driverId: uuid("driver_id").notNull(),
-	routeId: uuid("route_id").notNull(),
-	routeType: text("route_type").notNull(),
-	workDone: boolean("work_done").default(false),
-	assignedAt: timestamp("assigned_at", { mode: 'string' }).defaultNow(),
-	completedAt: timestamp("completed_at", { mode: 'string' }),
-}, (table) => [
-	foreignKey({
-			columns: [table.managerId],
-			foreignColumns: [users.id],
-			name: "assignments_manager_id_users_id_fk"
-		}),
-	foreignKey({
-			columns: [table.driverId],
-			foreignColumns: [users.id],
-			name: "assignments_driver_id_users_id_fk"
 		}),
 ]);
 
@@ -167,22 +112,6 @@ export const weather = pgTable("weather", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }),
 });
 
-export const users = pgTable("users", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	name: text().notNull(),
-	email: text().notNull(),
-	password: text().notNull(),
-	role: text().default('driver'),
-	managerType: text("manager_type"),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
-	isVerified: boolean("is_verified").default(false),
-	workDone: boolean("work_done").default(false),
-	longtermMemory: text("longterm_memory"),
-	threads: jsonb().default([]),
-}, (table) => [
-	unique("users_email_unique").on(table.email),
-]);
-
 export const weatherResults = pgTable("weather_results", {
 	id: serial().primaryKey().notNull(),
 	weatherId: integer("weather_id"),
@@ -215,6 +144,7 @@ export const shipwayResults = pgTable("shipway_results", {
 	radiusKm: doublePrecision("radius_km").notNull(),
 	severity: integer().notNull(),
 	confidence: doublePrecision().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.newsId],
@@ -236,7 +166,7 @@ export const locations = pgTable("locations", {
 	continent: varchar({ length: 100 }),
 	latitude: doublePrecision(),
 	longitude: doublePrecision(),
-	priority: varchar({ length: 20 }),
+	priority: varchar({ length: 6 }).notNull(),
 	isActive: boolean("is_active"),
 	createdAt: timestamp("created_at", { mode: 'string' }),
 	updatedAt: timestamp("updated_at", { mode: 'string' }),
@@ -244,4 +174,21 @@ export const locations = pgTable("locations", {
 	index("idx_location_priority").using("btree", table.priority.asc().nullsLast().op("text_ops")),
 	index("idx_location_type").using("btree", table.type.asc().nullsLast().op("text_ops")),
 	unique("uq_location_name_country").on(table.name, table.country),
+]);
+
+export const users = pgTable("users", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 255 }).notNull(),
+	password: varchar({ length: 255 }).notNull(),
+	role: varchar({ length: 50 }).default('driver'),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	isVerified: boolean("is_verified").default(false),
+	workDone: boolean("work_done").default(false),
+	longtermMemory: text("longterm_memory"),
+	threads: json().default([]),
+	location: varchar({ length: 255 }),
+	ownedShips: json("owned_ships"),
+}, (table) => [
+	unique("users_email_unique").on(table.email),
 ]);

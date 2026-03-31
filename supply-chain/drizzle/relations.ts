@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { keywords, keywordRules, users, shipReroutes, assignments, weather, weatherResults, news, shipwayResults } from "./schema";
+import { keywords, keywordRules, users, shipReroutes, weather, weatherResults, news, shipwayResults } from "./schema";
 
 export const keywordRulesRelations = relations(keywordRules, ({one}) => ({
 	keyword: one(keywords, {
@@ -21,25 +21,6 @@ export const shipReroutesRelations = relations(shipReroutes, ({one}) => ({
 
 export const usersRelations = relations(users, ({many}) => ({
 	shipReroutes: many(shipReroutes),
-	assignments_managerId: many(assignments, {
-		relationName: "assignments_managerId_users_id"
-	}),
-	assignments_driverId: many(assignments, {
-		relationName: "assignments_driverId_users_id"
-	}),
-}));
-
-export const assignmentsRelations = relations(assignments, ({one}) => ({
-	user_managerId: one(users, {
-		fields: [assignments.managerId],
-		references: [users.id],
-		relationName: "assignments_managerId_users_id"
-	}),
-	user_driverId: one(users, {
-		fields: [assignments.driverId],
-		references: [users.id],
-		relationName: "assignments_driverId_users_id"
-	}),
 }));
 
 export const weatherResultsRelations = relations(weatherResults, ({one}) => ({

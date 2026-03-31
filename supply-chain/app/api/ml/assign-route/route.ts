@@ -4,6 +4,7 @@ import { assignments, routes } from '@/db/schema'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { randomUUID } from 'crypto'
+import { eq } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     const routeResult = await db
       .select()
       .from(routes)
-      .where(({ id }) => id === routeId as any)
+      .where(eq(routes.id, routeId as any))
 
     if (!routeResult.length) {
       return NextResponse.json({ error: 'Route not found' }, { status: 404 })

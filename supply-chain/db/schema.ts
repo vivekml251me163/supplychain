@@ -62,7 +62,7 @@ export const keywordRules = pgTable("keyword_rules", {
 }, (table) => [
 	index("idx_active_rules").using("btree", table.type.asc().nullsLast().op("text_ops")).where(sql`(is_active = true)`),
 	index("idx_keyword_rules_keyword_id").using("btree", table.keywordId.asc().nullsLast().op("int4_ops")),
-	uniqueIndex("uq_keyword_type_date").using("btree", table.keywordId.asc().nullsLast().op("int4_ops"), table.type.asc().nullsLast().op("int4_ops"), table.date.asc().nullsLast().op("int4_ops")),
+	uniqueIndex("uq_keyword_type_date").using("btree", table.keywordId.asc().nullsLast().op("int4_ops"), table.type.asc().nullsLast().op("text_ops"), table.date.asc().nullsLast()),
 	foreignKey({
 			columns: [table.keywordId],
 			foreignColumns: [keywords.id],
@@ -128,6 +128,7 @@ export const shipwayResults = pgTable("shipway_results", {
 	radiusKm: doublePrecision("radius_km").notNull(),
 	severity: integer().notNull(),
 	confidence: doublePrecision().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.newsId],
@@ -224,6 +225,8 @@ export const users = pgTable('users', {
   workDone: boolean('work_done').default(false), // driver updates this
    longtermMemory: text('longterm_memory'),
   threads: jsonb('threads').default([]),
+  location: varchar({ length: 255 }),
+  ownedShips: json("owned_ships"),
   createdAt: timestamp('created_at').defaultNow(),
 })
 
@@ -254,6 +257,7 @@ export const drivers = pgTable('drivers', {
   lon: doublePrecision('lon').notNull(),
   capacity: doublePrecision('capacity').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
+  onWork: boolean('on_work').default(false),
   updatedAt: timestamp('updated_at'),
 })
 
@@ -265,6 +269,7 @@ export const routes = pgTable('routes', {
   destLat: doublePrecision('dest_lat').notNull(),
   destLon: doublePrecision('dest_lon').notNull(),
   goodsAmount: doublePrecision('goods_amount').notNull(),
+  
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => [
