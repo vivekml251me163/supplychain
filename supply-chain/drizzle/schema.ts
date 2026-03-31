@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, json, timestamp, uniqueIndex, serial, varchar, index, foreignKey, check, integer, date, boolean, unique, bigserial, doublePrecision, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, json, timestamp, uniqueIndex, serial, varchar, index, foreignKey, check, integer, date, boolean, unique, bigserial, doublePrecision, jsonb, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const locationTypeEnum = pgEnum("location_type_enum", ['port', 'city', 'chokepoint', 'region'])
@@ -60,6 +60,31 @@ export const keywordRules = pgTable("keyword_rules", {
 	check("check_type_date_consistency", sql`(((type)::text = 'daily'::text) AND (date IS NULL)) OR (((type)::text = 'oneday'::text) AND (date IS NOT NULL))`),
 ]);
 
+export const messages = pgTable("messages", {
+	id: uuid().primaryKey().notNull(),
+	threadId: varchar("thread_id", { length: 255 }).notNull(),
+	messages: json(),
+}, (table) => [
+	index("ix_messages_thread_id").using("btree", table.threadId.asc().nullsLast().op("text_ops")),
+]);
+
+export const shipReroutes = pgTable("ship_reroutes", {
+	id: serial().primaryKey().notNull(),
+	userId: uuid("user_id").notNull(),
+	shipId: integer("ship_id").notNull(),
+	affectedByNews: json("affected_by_news").notNull(),
+	affectedByWeather: json("affected_by_weather").notNull(),
+	suggestion: text().notNull(),
+	bestRoute: json("best_route").notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [users.id],
+			name: "ship_reroutes_user_id_fkey"
+		}),
+]);
+
 export const assignments = pgTable("assignments", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	managerId: uuid("manager_id").notNull(),
@@ -80,20 +105,6 @@ export const assignments = pgTable("assignments", {
 			foreignColumns: [users.id],
 			name: "assignments_driver_id_users_id_fk"
 		}),
-]);
-
-export const users = pgTable("users", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	name: text().notNull(),
-	email: text().notNull(),
-	password: text().notNull(),
-	role: text().default('driver'),
-	location: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
-	isVerified: boolean("is_verified").default(false),
-	workDone: boolean("work_done").default(false),
-}, (table) => [
-	unique("users_email_unique").on(table.email),
 ]);
 
 export const news = pgTable("news", {
@@ -156,6 +167,39 @@ export const weather = pgTable("weather", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }),
 });
 
+export const users = pgTable("users", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	name: text().notNull(),
+	email: text().notNull(),
+	password: text().notNull(),
+	role: text().default('driver'),
+	managerType: text("manager_type"),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	isVerified: boolean("is_verified").default(false),
+	workDone: boolean("work_done").default(false),
+	longtermMemory: text("longterm_memory"),
+	threads: jsonb().default([]),
+}, (table) => [
+	unique("users_email_unique").on(table.email),
+]);
+
+export const weatherResults = pgTable("weather_results", {
+	id: serial().primaryKey().notNull(),
+	weatherId: integer("weather_id"),
+	aiSummary: text("ai_summary").notNull(),
+	consequence: text().notNull(),
+	radiusKm: doublePrecision("radius_km").notNull(),
+	severity: integer().notNull(),
+	confidence: doublePrecision().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.weatherId],
+			foreignColumns: [weather.id],
+			name: "weather_results_weather_id_fkey"
+		}),
+]);
+
 export const alembicVersion = pgTable("alembic_version", {
 	versionNum: varchar("version_num", { length: 32 }).primaryKey().notNull(),
 });
@@ -181,23 +225,6 @@ export const shipwayResults = pgTable("shipway_results", {
 			columns: [table.weatherId],
 			foreignColumns: [weather.id],
 			name: "shipway_results_weather_id_fkey"
-		}),
-]);
-
-export const weatherResults = pgTable("weather_results", {
-	id: serial().primaryKey().notNull(),
-	weatherId: integer("weather_id"),
-	aiSummary: text("ai_summary").notNull(),
-	consequence: text().notNull(),
-	radiusKm: doublePrecision("radius_km").notNull(),
-	severity: integer().notNull(),
-	confidence: doublePrecision().notNull(),
-	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
-}, (table) => [
-	foreignKey({
-			columns: [table.weatherId],
-			foreignColumns: [weather.id],
-			name: "weather_results_weather_id_fkey"
 		}),
 ]);
 

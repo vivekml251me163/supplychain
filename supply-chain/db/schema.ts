@@ -140,7 +140,46 @@ export const shipwayResults = pgTable("shipway_results", {
 			name: "shipway_results_weather_id_fkey"
 		}),
 ]);
+export const weatherResults = pgTable("weather_results", {
+	id: serial().primaryKey().notNull(),
+	weatherId: integer("weather_id"),
+	aiSummary: text("ai_summary").notNull(),
+	consequence: text().notNull(),
+	radiusKm: doublePrecision("radius_km").notNull(),
+	severity: integer().notNull(),
+	confidence: doublePrecision().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.weatherId],
+			foreignColumns: [weather.id],
+			name: "weather_results_weather_id_fkey"
+		}),
+]);
+export const messages = pgTable("messages", {
+	id: uuid().primaryKey().notNull(),
+	threadId: varchar("thread_id", { length: 255 }).notNull(),
+	messages: json(),
+}, (table) => [
+	index("ix_messages_thread_id").using("btree", table.threadId.asc().nullsLast().op("text_ops")),
+]);
 
+export const shipReroutes = pgTable("ship_reroutes", {
+	id: serial().primaryKey().notNull(),
+	userId: uuid("user_id").notNull(),
+	shipId: integer("ship_id").notNull(),
+	affectedByNews: json("affected_by_news").notNull(),
+	affectedByWeather: json("affected_by_weather").notNull(),
+	suggestion: text().notNull(),
+	bestRoute: json("best_route").notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [users.id],
+			name: "ship_reroutes_user_id_fkey"
+		}),
+]);
 
 // Custom application tables
 export const ships = pgTable('ships', {

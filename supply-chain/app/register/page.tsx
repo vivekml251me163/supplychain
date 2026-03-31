@@ -11,6 +11,7 @@ export default function RegisterPage() {
     password: '',
     role: 'driver',
     managerType: '',
+    capacity: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -105,6 +106,20 @@ export default function RegisterPage() {
                 <option value="ship">Ship Manager</option>
                 <option value="road">Road Manager</option>
               </select>
+            </div>
+          )}
+
+          {form.role === 'driver' && (
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">Truck Capacity (units)</label>
+              <input
+                type="number"
+                step="0.1"
+                value={form.capacity}
+                onChange={e => setForm({ ...form, capacity: e.target.value })}
+                placeholder="e.g., 1000"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              />
             </div>
           )}
 
