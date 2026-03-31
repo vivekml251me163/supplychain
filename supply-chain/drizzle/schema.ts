@@ -1,8 +1,104 @@
-import { pgTable, serial, varchar, timestamp, index, foreignKey, check, integer, date, boolean, uuid, json, text, unique, bigserial, doublePrecision, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, json, timestamp, index, foreignKey, doublePrecision, boolean, jsonb, serial, varchar, check, integer, date, unique, bigserial, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const locationTypeEnum = pgEnum("location_type_enum", ['port', 'city', 'chokepoint', 'region'])
 
+
+export const roads = pgTable("roads", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	userId: text("user_id").notNull(),
+	origin: json().notNull(),
+	destination: json().notNull(),
+	originalRoute: json("original_route"),
+	bestRoute: json("best_route"),
+	reasons: json(),
+	weatherData: json("weather_data"),
+	newsData: json("news_data"),
+	status: text().default('pending'),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	refreshedAt: timestamp("refreshed_at", { mode: 'string' }),
+});
+
+export const ships = pgTable("ships", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	userId: text("user_id").notNull(),
+	origin: json().notNull(),
+	destination: json().notNull(),
+	originalRoute: json("original_route"),
+	bestRoute: json("best_route"),
+	reasons: json(),
+	weatherData: json("weather_data"),
+	newsData: json("news_data"),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	refreshedAt: timestamp("refreshed_at", { mode: 'string' }),
+});
+
+export const routes = pgTable("routes", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	managerId: uuid("manager_id").notNull(),
+	srcLat: doublePrecision("src_lat").notNull(),
+	srcLon: doublePrecision("src_lon").notNull(),
+	destLat: doublePrecision("dest_lat").notNull(),
+	destLon: doublePrecision("dest_lon").notNull(),
+	goodsAmount: doublePrecision("goods_amount").notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("idx_routes_manager_id").using("btree", table.managerId.asc().nullsLast().op("uuid_ops")),
+	foreignKey({
+			columns: [table.managerId],
+			foreignColumns: [users.id],
+			name: "routes_manager_id_users_id_fk"
+		}),
+]);
+
+export const assignments = pgTable("assignments", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	managerId: uuid("manager_id").notNull(),
+	driverId: uuid("driver_id").notNull(),
+	routeId: uuid("route_id").notNull(),
+	routeType: text("route_type").notNull(),
+	assignedQuantity: doublePrecision("assigned_quantity").default(0).notNull(),
+	workDone: boolean("work_done").default(false),
+	assignedAt: timestamp("assigned_at", { mode: 'string' }).defaultNow(),
+	completedAt: timestamp("completed_at", { mode: 'string' }),
+	bestRoute: jsonb("best_route"),
+}, (table) => [
+	index("idx_assignment_driver_id").using("btree", table.driverId.asc().nullsLast().op("uuid_ops")),
+	index("idx_assignment_route_id").using("btree", table.routeId.asc().nullsLast().op("uuid_ops")),
+	foreignKey({
+			columns: [table.managerId],
+			foreignColumns: [users.id],
+			name: "assignments_manager_id_users_id_fk"
+		}),
+	foreignKey({
+			columns: [table.driverId],
+			foreignColumns: [users.id],
+			name: "assignments_driver_id_users_id_fk"
+		}),
+	foreignKey({
+			columns: [table.routeId],
+			foreignColumns: [routes.id],
+			name: "fk_assignment_route"
+		}).onDelete("cascade"),
+]);
+
+export const drivers = pgTable("drivers", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	userId: uuid("user_id").notNull(),
+	lat: doublePrecision().notNull(),
+	lon: doublePrecision().notNull(),
+	capacity: doublePrecision().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }),
+	onWork: boolean().default(false),
+}, (table) => [
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [users.id],
+			name: "drivers_user_id_users_id_fk"
+		}),
+]);
 
 export const keywords = pgTable("keywords", {
 	id: serial().primaryKey().notNull(),
@@ -34,6 +130,14 @@ export const messages = pgTable("messages", {
 }, (table) => [
 	index("ix_messages_thread_id").using("btree", table.threadId.asc().nullsLast().op("text_ops")),
 ]);
+
+export const roadReroute = pgTable("road_reroute", {
+	id: serial().primaryKey().notNull(),
+	requestPayload: jsonb("request_payload").notNull(),
+	responsePayload: jsonb("response_payload").notNull(),
+	done: boolean().default(true),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow(),
+});
 
 export const shipReroutes = pgTable("ship_reroutes", {
 	id: serial().primaryKey().notNull(),

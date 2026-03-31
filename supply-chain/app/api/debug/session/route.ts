@@ -12,7 +12,6 @@ export async function GET(req: NextRequest) {
         id: session.user.id,
         name: session.user.name,
         role: (session.user as any).role,
-        managerType: (session.user as any).managerType,
         email: session.user.email,
       } : null,
     })

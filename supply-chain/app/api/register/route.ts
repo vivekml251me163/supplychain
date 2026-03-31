@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
-  const { name, email, password, role, managerType, capacity } = await req.json()
+  const { name, email, password, role, capacity } = await req.json()
 
   // Validate required fields
   if (!name || !email || !password) {
@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       email,
       password: hashedPassword,
       role: role || 'driver',
-      managerType: role === 'manager' && managerType ? managerType : null,
       isVerified: false,
     })
     .returning()

@@ -43,21 +43,9 @@ export default function Navbar() {
         {/* Manager only */}
         {user?.role === 'manager' && user?.isVerified && (
           <>
-            {user?.managerType === 'ship' && (
-              <Link href="/manager/ship" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                Ship Manager
-              </Link>
-            )}
-            {user?.managerType === 'road' && (
-              <Link href="/manager/road" className="text-sm text-green-600 hover:text-green-800 font-medium">
-                Road Manager
-              </Link>
-            )}
-            {!user?.managerType && (
-              <div className="text-sm text-orange-600 font-medium">
-                Manager (Type Not Set)
-              </div>
-            )}
+            <Link href="/manager/road" className="text-sm text-green-600 hover:text-green-800 font-medium">
+              Manage Routes
+            </Link>
           </>
         )}
 

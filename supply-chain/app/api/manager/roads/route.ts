@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions)
     const user = session?.user as any
 
-    if (!session || !user?.id || user?.role !== 'manager' || user?.managerType !== 'road') {
+    if (!session || !user?.id || user?.role !== 'manager') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -67,8 +67,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    if (user?.role !== 'manager' || user?.managerType !== 'road') {
-      return NextResponse.json({ error: 'Only road managers can view routes' }, { status: 403 })
+    if (user?.role !== 'manager') {
+      return NextResponse.json({ error: 'Only managers can view routes' }, { status: 403 })
     }
 
     // Get all routes created by this manager

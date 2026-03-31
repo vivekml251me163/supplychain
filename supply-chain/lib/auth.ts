@@ -17,11 +17,14 @@ export const authOptions: NextAuthOptions = {
 
         const email = credentials.email.trim().toLowerCase()
 
-        const user = await db.query.users.findFirst({
-          where: eq(users.email, email),
-        })
+        const userResult = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
 
-        if (!user) return null
+        if (!userResult.length) return null
+
+        const user = userResult[0]
 
         const passwordMatch = await bcrypt.compare(
           credentials.password as string,
@@ -36,7 +39,6 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           role: user.role ?? 'driver',
           isVerified: user.isVerified ?? false,
-          managerType: user.managerType ?? null,
         }
       },
     }),
@@ -47,7 +49,6 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.role = user.role
         token.isVerified = user.isVerified
-        token.managerType = user.managerType
       }
       return token
     },
@@ -56,7 +57,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id
         session.user.role = token.role
         session.user.isVerified = token.isVerified
-        session.user.managerType = token.managerType
       }
       return session
     },

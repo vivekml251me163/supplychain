@@ -11,7 +11,7 @@ export default async function RoadManagerPage() {
   const session = await getServerSession(authOptions)
   const user = session?.user as any
 
-  if (!session || user?.role !== 'manager' || user?.managerType !== 'road') {
+  if (!session || user?.role !== 'manager') {
     redirect('/')
   }
 
