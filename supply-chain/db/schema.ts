@@ -257,8 +257,8 @@ export const routes = pgTable('routes', {
   destLat: doublePrecision('dest_lat').notNull(),
   destLon: doublePrecision('dest_lon').notNull(),
   goodsAmount: doublePrecision('goods_amount').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }, (table) => [
   index('idx_routes_assignment_id').on(table.assignmentId),
   index('idx_routes_manager_id').on(table.managerId),

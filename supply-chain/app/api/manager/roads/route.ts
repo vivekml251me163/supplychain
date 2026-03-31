@@ -21,24 +21,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing or invalid required fields' }, { status: 400 })
   }
 
-  // Create route
-  const result = await db
-    .insert(routes)
-    .values({
-      managerId: user.id,
-      srcLat,
-      srcLon,
-      destLat,
-      destLon,
-      goodsAmount,
-      assignmentId: null,
-    })
-    .returning()
+  // Create route - assignmentId should not be set initially
+  try {
+    const result = await db
+      .insert(routes)
+      .values({
+        managerId: user.id,
+        srcLat,
+        srcLon,
+        destLat,
+        destLon,
+        goodsAmount,
+      })
+      .returning()
 
-  return NextResponse.json({
-    message: 'Route created successfully and awaiting ML assignment',
-    route: result[0],
-  })
+    return NextResponse.json({
+      message: 'Route created successfully and awaiting ML assignment',
+      route: result[0],
+    })
+  } catch (error) {
+    console.error('Error creating route:', error)
+    return NextResponse.json(
+      { error: 'Failed to create route. Please try again.' },
+      { status: 500 }
+    )
+  }
 }
 
 export async function GET(req: NextRequest) {
