@@ -72,7 +72,7 @@ export default function RoadManagerRouteForm() {
 
       // 2. Attempt ML Assignment
       try {
-        const resk = await fetch('http://127.0.0.1:8000/api/v1/assign', {
+        const resk = await fetch('http://13.234.240.126:8000/api/v1/assign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
