@@ -74,5 +74,5 @@ export default async function DriverAssignmentDetailPage({
     console.error('[Driver Assignment Detail Error]', error)
     redirect('/driver')
   }
-  )
+  
 }

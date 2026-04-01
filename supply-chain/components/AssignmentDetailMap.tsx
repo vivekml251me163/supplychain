@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 
 interface RoutePoint {
   lat: number
-  lng: number
+  lon: number
 }
 
 interface AssignmentDetailMapProps {
@@ -26,7 +26,7 @@ export default function AssignmentDetailMap({ bestRoute, reasons }: AssignmentDe
   const endPoint = bestRoute[bestRoute.length - 1]
   const center: [number, number] = [
     (startPoint.lat + endPoint.lat) / 2,
-    (startPoint.lng + endPoint.lng) / 2,
+    (startPoint.lon + endPoint.lon) / 2,
   ]
 
   return (
@@ -37,28 +37,28 @@ export default function AssignmentDetailMap({ bestRoute, reasons }: AssignmentDe
       />
       
       {/* Start Point */}
-      <Marker position={[startPoint.lat, startPoint.lng]}>
+      <Marker position={[startPoint.lat, startPoint.lon]}>
         <Popup>
           <div className="text-sm">
             <p className="font-semibold">Start</p>
-            <p>{startPoint.lat.toFixed(4)}, {startPoint.lng.toFixed(4)}</p>
+            <p>{startPoint.lat.toFixed(4)}, {startPoint.lon.toFixed(4)}</p>
           </div>
         </Popup>
       </Marker>
 
       {/* End Point */}
-      <Marker position={[endPoint.lat, endPoint.lng]}>
+      <Marker position={[endPoint.lat, endPoint.lon]}>
         <Popup>
           <div className="text-sm">
             <p className="font-semibold">End</p>
-            <p>{endPoint.lat.toFixed(4)}, {endPoint.lng.toFixed(4)}</p>
+            <p>{endPoint.lat.toFixed(4)}, {endPoint.lon.toFixed(4)}</p>
           </div>
         </Popup>
       </Marker>
 
       {/* Route Line */}
       <Polyline
-        positions={bestRoute.map((p) => [p.lat, p.lng])}
+        positions={bestRoute.map((p) => [p.lat, p.lon])}
         color="blue"
         weight={3}
         opacity={0.7}

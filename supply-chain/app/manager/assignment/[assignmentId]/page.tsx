@@ -74,5 +74,5 @@ export default async function AssignmentDetailPage({
     console.error('[Assignment Detail Error]', error)
     redirect('/manager/road')
   }
-  )
+  
 }

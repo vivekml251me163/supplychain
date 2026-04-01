@@ -52,6 +52,44 @@ export default function AssignmentDetailClient({
   const reasons = assignment.bestRoute?.reasons || {}
   const routePoints = assignment.bestRoute?.route || []
 
+  // Parse the actual route structure - find the leg with nodes
+  let parsedRoutePoints: any[] = []
+  let parsedReasons: any = {}
+
+  if (assignment.bestRoute && typeof assignment.bestRoute === 'object') {
+    // Check for legs structure (leg_1_driver_to_source, leg_2_source_to_dest, etc.)
+    const legs = Object.keys(assignment.bestRoute).filter(key => key.startsWith('leg_'))
+    if (legs.length > 0) {
+      // Combine all legs with nodes
+      for (const legKey of legs) {
+        const leg = assignment.bestRoute[legKey]
+        if (leg?.nodes && Array.isArray(leg.nodes) && leg.nodes.length > 0) {
+          parsedRoutePoints.push(...leg.nodes)
+          // Store reasons from the first leg that has content
+          if (!parsedReasons.reason && leg.reason) {
+            parsedReasons = {
+              reason: leg.reason,
+              factors: leg.factors || {},
+              distance_km: leg.distance_m ? (leg.distance_m / 1000).toFixed(2) : 'N/A',
+              duration_min: leg.duration_min ? leg.duration_min.toFixed(1) : 'N/A',
+              winner_reason: leg.winner_reason || '',
+            }
+          }
+        }
+      }
+    } else if (assignment.bestRoute.nodes && Array.isArray(assignment.bestRoute.nodes)) {
+      // Direct nodes array
+      parsedRoutePoints = assignment.bestRoute.nodes
+      parsedReasons = {
+        reason: assignment.bestRoute.reason || '',
+        factors: assignment.bestRoute.factors || {},
+        distance_km: assignment.bestRoute.distance_m ? (assignment.bestRoute.distance_m / 1000).toFixed(2) : 'N/A',
+        duration_min: assignment.bestRoute.duration_min ? assignment.bestRoute.duration_min.toFixed(1) : 'N/A',
+        winner_reason: assignment.bestRoute.winner_reason || '',
+      }
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="max-w-6xl mx-auto">
@@ -74,7 +112,7 @@ export default function AssignmentDetailClient({
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-2xl font-bold text-gray-900">Optimized Route</h2>
               </div>
-              <AssignmentDetailMap bestRoute={routePoints} reasons={reasons} />
+              <AssignmentDetailMap bestRoute={parsedRoutePoints} reasons={parsedReasons} />
             </div>
           </div>
 
@@ -137,6 +175,18 @@ export default function AssignmentDetailClient({
                     {routeDetails.goodsAmount.toFixed(2)} units
                   </p>
                 </div>
+                {parsedReasons.distance_km && (
+                  <div>
+                    <p className="text-sm text-gray-600">Route Distance</p>
+                    <p className="text-gray-900 font-semibold">{parsedReasons.distance_km} km</p>
+                  </div>
+                )}
+                {parsedReasons.duration_min && (
+                  <div>
+                    <p className="text-sm text-gray-600">Estimated Duration</p>
+                    <p className="text-gray-900 font-semibold">{parsedReasons.duration_min} minutes</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -161,20 +211,43 @@ export default function AssignmentDetailClient({
         </div>
 
         {/* Reasons Section */}
-        {Object.keys(reasons).length > 0 && (
+        {parsedReasons && Object.keys(parsedReasons).length > 0 && (
           <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Optimization Reasons</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Object.entries(reasons).map(([key, value]: [string, any]) => (
-                <div key={key} className="border-l-4 border-blue-500 pl-4 py-2">
-                  <h3 className="font-semibold text-gray-900 capitalize mb-2">
-                    {key.replace(/_/g, ' ')}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
-                  </p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Route Optimization Details</h2>
+            
+            <div className="space-y-6">
+              {/* Main Reason */}
+              {parsedReasons.reason && (
+                <div className="border-l-4 border-blue-500 pl-4 py-2">
+                  <h3 className="font-semibold text-gray-900 mb-2">Route Optimization Reason</h3>
+                  <p className="text-gray-700">{parsedReasons.reason}</p>
                 </div>
-              ))}
+              )}
+
+              {/* Factors Grid */}
+              {parsedReasons.factors && Object.keys(parsedReasons.factors).length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Impact Factors</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Object.entries(parsedReasons.factors).map(([key, value]: [string, any]) => (
+                      <div key={key} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <p className="text-sm text-gray-600 capitalize">{key.replace(/_/g, ' ')}</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          {typeof value === 'number' ? value.toFixed(3) : value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Winner Reason */}
+              {parsedReasons.winner_reason && (
+                <div className="border-l-4 border-green-500 pl-4 py-2 bg-green-50">
+                  <h3 className="font-semibold text-gray-900 mb-2">Why This Route Was Selected</h3>
+                  <p className="text-gray-700 text-sm">{parsedReasons.winner_reason}</p>
+                </div>
+              )}
             </div>
           </div>
         )}
