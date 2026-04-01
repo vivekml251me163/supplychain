@@ -71,6 +71,7 @@ export default function RoadManagerRouteForm() {
       }
 
       // 2. Attempt ML Assignment via proxy endpoint
+      let mlSuccess = false
       try {
         const resk = await fetch('/api/ml/assign', {
           method: 'POST',
@@ -84,14 +85,18 @@ export default function RoadManagerRouteForm() {
 
         if (!resk.ok) {
           // If ML fails but DB succeeded, we show a partial success/warning
-          setError(data2.error || 'Route created, but driver assignment service is busy. It will be assigned later.')
+          console.error('ML Assignment failed:', data2)
+          setError(`Route created successfully! Assignment service response: ${data2.error || 'Service unavailable'}. Drivers will be assigned in the next cycle.`)
         } else {
+          // ML assignment succeeded
+          mlSuccess = true
           setSuccess(true)
+          console.log('ML Assignment successful:', data2)
         }
       } catch (mlErr) {
         // ML service might be down, but the route is still in the DB
-        setError('Route created successfully, but the automated assignment service is currently unavailable. Drivers will be assigned manually or during the next cycle.')
         console.error('ML Assignment Service Error:', mlErr)
+        setError('Route created successfully! The automated assignment service is currently unavailable. Drivers will be assigned manually or during the next cycle.')
       }
 
       // Clear form on successful DB creation regardless of ML status (since route exists now)
@@ -103,7 +108,12 @@ export default function RoadManagerRouteForm() {
         goodsAmount: '',
       })
       
-      // If we didn't set a critical error that stopped us earlier, refresh the page
+      // If ML succeeded, show success message; otherwise show it was created even if assignment failed
+      if (!mlSuccess && !success) {
+        setSuccess(true) // Show success because route was created in DB
+      }
+      
+      // Refresh the page after delay
       setTimeout(() => {
         router.refresh()
       }, 2000)
