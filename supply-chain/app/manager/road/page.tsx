@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { db } from '@/db/index'
 import { assignments, users, routes, roads, drivers } from '@/db/schema'
 import { eq, and, isNull, isNotNull } from 'drizzle-orm'
@@ -224,30 +225,33 @@ export default async function RoadManagerPage() {
                     <h4 className="font-semibold text-gray-800 mb-4">Assigned Drivers</h4>
                     <div className="space-y-4">
                       {item.assignments.map((driverAssignment: any, idx: number) => (
-                        <div
+                        <Link
                           key={driverAssignment.assignment.id}
-                          className="bg-blue-50 p-4 rounded-lg border border-blue-200"
+                          href={`/manager/assignment/${driverAssignment.assignment.id}`}
                         >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
-                              <p className="text-sm text-gray-600">
-                                Quantity assigned: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                Truck capacity: <span className="font-semibold">{driverAssignment.driverProfile?.capacity.toFixed(2) || 'N/A'} units</span>
-                              </p>
-                              {driverAssignment.assignment.workDone ? (
-                                <p className="text-sm text-green-600 mt-1">✓ Completed</p>
-                              ) : (
-                                <p className="text-sm text-orange-600 mt-1">⏳ In progress</p>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-500 text-right">
-                              Current location: {driverAssignment.driverProfile?.lat.toFixed(4)}, {driverAssignment.driverProfile?.lon.toFixed(4)}
+                          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 hover:border-blue-400 hover:bg-blue-100 cursor-pointer transition">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
+                                <p className="text-sm text-gray-600">
+                                  Quantity assigned: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Truck capacity: <span className="font-semibold">{driverAssignment.driverProfile?.capacity.toFixed(2) || 'N/A'} units</span>
+                                </p>
+                                {driverAssignment.assignment.workDone ? (
+                                  <p className="text-sm text-green-600 mt-1">✓ Completed</p>
+                                ) : (
+                                  <p className="text-sm text-orange-600 mt-1">⏳ In progress</p>
+                                )}
+                              </div>
+                              <div className="text-xs text-gray-500 text-right">
+                                <p>Current location: {driverAssignment.driverProfile?.lat.toFixed(4)}, {driverAssignment.driverProfile?.lon.toFixed(4)}</p>
+                                <p className="text-blue-600 font-semibold mt-2">View Details →</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -324,24 +328,27 @@ export default async function RoadManagerPage() {
                     <h4 className="font-semibold text-gray-800 mb-4">Delivery Drivers</h4>
                     <div className="space-y-3">
                       {item.assignments.map((driverAssignment: any) => (
-                        <div
+                        <Link
                           key={driverAssignment.assignment.id}
-                          className="bg-green-50 p-4 rounded-lg border border-green-200"
+                          href={`/manager/assignment/${driverAssignment.assignment.id}`}
                         >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
-                              <p className="text-sm text-gray-600">
-                                Quantity delivered: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
-                              </p>
-                              {driverAssignment.assignment.completedAt && (
-                                <p className="text-sm text-green-600 mt-1">
-                                  Completed: {new Date(driverAssignment.assignment.completedAt).toLocaleDateString()}
+                          <div className="bg-green-50 p-4 rounded-lg border border-green-200 hover:border-green-400 hover:bg-green-100 cursor-pointer transition">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
+                                <p className="text-sm text-gray-600">
+                                  Quantity delivered: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
                                 </p>
-                              )}
+                                {driverAssignment.assignment.completedAt && (
+                                  <p className="text-sm text-green-600 mt-1">
+                                    Completed: {new Date(driverAssignment.assignment.completedAt).toLocaleDateString()}
+                                  </p>
+                                )}
+                              </div>
+                              <p className="text-green-600 font-semibold">View →</p>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>

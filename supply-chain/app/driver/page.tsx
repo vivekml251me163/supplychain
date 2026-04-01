@@ -109,15 +109,23 @@ export default async function DriverPage() {
                         Manager: <span className="font-medium">{assignment.manager?.name || 'N/A'}</span>
                       </p>
                     </div>
-                    <span
-                      className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                        assignment.workDone
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {assignment.workDone ? '✓ Completed' : 'In Progress'}
-                    </span>
+                    <div className="flex flex-col items-end gap-2">
+                      <span
+                        className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                          assignment.workDone
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {assignment.workDone ? '✓ Completed' : 'In Progress'}
+                      </span>
+                      <Link
+                        href={`/driver/assignment/${assignment.id}`}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-semibold"
+                      >
+                        View Details →
+                      </Link>
+                    </div>
                   </div>
 
                   {/* Coordinates Display */}
