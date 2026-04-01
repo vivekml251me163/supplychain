@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AssignmentDetailMap from '@/components/AssignmentDetailMap'
 
@@ -24,6 +24,42 @@ export default function AssignmentDetailClient({
   const router = useRouter()
   const [isCompleting, setIsCompleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pickupPlace, setPickupPlace] = useState<string | null>(null)
+  const [deliveryPlace, setDeliveryPlace] = useState<string | null>(null)
+  const [loadingPlaces, setLoadingPlaces] = useState(true)
+
+  // Fetch place names using reverse geocoding
+  useEffect(() => {
+    const fetchPlaceNames = async () => {
+      try {
+        setLoadingPlaces(true)
+        const [pickupRes, deliveryRes] = await Promise.all([
+          fetch(
+            `/api/geocode?lat=${routeDetails.srcLat}&lon=${routeDetails.srcLon}`
+          ),
+          fetch(
+            `/api/geocode?lat=${routeDetails.destLat}&lon=${routeDetails.destLon}`
+          ),
+        ])
+
+        if (pickupRes.ok) {
+          const pickupData = await pickupRes.json()
+          setPickupPlace(pickupData.placeName)
+        }
+
+        if (deliveryRes.ok) {
+          const deliveryData = await deliveryRes.json()
+          setDeliveryPlace(deliveryData.placeName)
+        }
+      } catch (err) {
+        console.error('Failed to fetch place names:', err)
+      } finally {
+        setLoadingPlaces(false)
+      }
+    }
+
+    fetchPlaceNames()
+  }, [routeDetails.srcLat, routeDetails.srcLon, routeDetails.destLat, routeDetails.destLon])
 
   const handleCompleteAssignment = async () => {
     setIsCompleting(true)
@@ -159,15 +195,29 @@ export default function AssignmentDetailClient({
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600">Pickup Location</p>
-                  <p className="text-gray-900 text-sm">
-                    {routeDetails.srcLat.toFixed(4)}, {routeDetails.srcLon.toFixed(4)}
-                  </p>
+                  {loadingPlaces ? (
+                    <p className="text-gray-500 text-sm italic">Loading location...</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-900 font-semibold">{pickupPlace || 'Unknown'}</p>
+                      <p className="text-gray-500 text-xs">
+                        {routeDetails.srcLat.toFixed(4)}, {routeDetails.srcLon.toFixed(4)}
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Delivery Location</p>
-                  <p className="text-gray-900 text-sm">
-                    {routeDetails.destLat.toFixed(4)}, {routeDetails.destLon.toFixed(4)}
-                  </p>
+                  {loadingPlaces ? (
+                    <p className="text-gray-500 text-sm italic">Loading location...</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-900 font-semibold">{deliveryPlace || 'Unknown'}</p>
+                      <p className="text-gray-500 text-xs">
+                        {routeDetails.destLat.toFixed(4)}, {routeDetails.destLon.toFixed(4)}
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Goods</p>
