@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db/index'
-import { assignments } from '@/db/schema'
+import { assignments, users, drivers } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -37,7 +37,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Mark assignment as complete
+    // Update transactions:
+    // 1. Mark assignment as complete
+    // 2. Mark driver as free (workDone = false) in users table so ML can reassign them
+    
     const updatedAssignment = await db
       .update(assignments)
       .set({
@@ -46,6 +49,22 @@ export async function POST(req: NextRequest) {
       })
       .where(eq(assignments.id, assignmentId as any))
       .returning()
+
+    // Mark driver as free in users table
+    await db
+      .update(users)
+      .set({
+        workDone: false, // Driver is now free for new assignments
+      })
+      .where(eq(users.id, assignment.driverId))
+
+    // Mark driver as not on work in drivers table
+    await db
+      .update(drivers)
+      .set({
+        onWork: false, // Driver is now available
+      })
+      .where(eq(drivers.userId, assignment.driverId))
 
     return NextResponse.json({
       message: 'Assignment marked as complete',

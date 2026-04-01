@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db/index'
-import { assignments, drivers, routes } from '@/db/schema'
+import { assignments, drivers, routes, users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -50,6 +50,26 @@ export async function POST(req: NextRequest) {
     .update(assignments)
     .set({ workDone, completedAt: workDone ? new Date().toISOString() : null })
     .where(eq(assignments.id, assignmentId as any))
+
+  // When work is marked as done, set driver as free in both tables
+  // so ML service can assign them to new deliveries
+  if (workDone) {
+    // Mark user as free
+    await db
+      .update(users)
+      .set({
+        workDone: false, // Driver is now free for new assignments
+      })
+      .where(eq(users.id, user.id))
+
+    // Mark driver as not on work
+    await db
+      .update(drivers)
+      .set({
+        onWork: false, // Driver is now available for new assignments
+      })
+      .where(eq(drivers.userId, user.id))
+  }
 
   return NextResponse.json({ message: 'Updated successfully' })
 }
