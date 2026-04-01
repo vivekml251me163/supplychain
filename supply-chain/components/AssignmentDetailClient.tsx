@@ -165,7 +165,7 @@ export default function AssignmentDetailClient({
                 <div>
                   <p className="text-sm text-gray-600">Quantity Assigned</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    {assignment.assignedQuantity.toFixed(2)} units
+                    {Math.round(assignment.assignedQuantity)} units
                   </p>
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export default function AssignmentDetailClient({
                     <>
                       <p className="text-gray-900 font-semibold">{pickupPlace || 'Unknown'}</p>
                       <p className="text-gray-500 text-xs">
-                        {routeDetails.srcLat.toFixed(4)}, {routeDetails.srcLon.toFixed(4)}
+                        {routeDetails.srcLat.toFixed(2)}, {routeDetails.srcLon.toFixed(2)}
                       </p>
                     </>
                   )}
@@ -214,7 +214,7 @@ export default function AssignmentDetailClient({
                     <>
                       <p className="text-gray-900 font-semibold">{deliveryPlace || 'Unknown'}</p>
                       <p className="text-gray-500 text-xs">
-                        {routeDetails.destLat.toFixed(4)}, {routeDetails.destLon.toFixed(4)}
+                        {routeDetails.destLat.toFixed(2)}, {routeDetails.destLon.toFixed(2)}
                       </p>
                     </>
                   )}
@@ -222,7 +222,7 @@ export default function AssignmentDetailClient({
                 <div>
                   <p className="text-sm text-gray-600">Total Goods</p>
                   <p className="text-gray-900 font-semibold">
-                    {routeDetails.goodsAmount.toFixed(2)} units
+                    {Math.round(routeDetails.goodsAmount)} units
                   </p>
                 </div>
                 {parsedReasons.distance_km && (

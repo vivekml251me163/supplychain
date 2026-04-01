@@ -93,7 +93,7 @@ export default function DriverAssignmentCard({
               <>
                 <p className="text-gray-900 font-semibold">{pickupPlace || 'Unknown'}</p>
                 <p className="text-gray-500 text-xs">
-                  {route.srcLat?.toFixed(4)}, {route.srcLon?.toFixed(4)}
+                  {route.srcLat?.toFixed(2)}, {route.srcLon?.toFixed(2)}
                 </p>
               </>
             )}
@@ -106,7 +106,7 @@ export default function DriverAssignmentCard({
               <>
                 <p className="text-gray-900 font-semibold">{deliveryPlace || 'Unknown'}</p>
                 <p className="text-gray-500 text-xs">
-                  {route.destLat?.toFixed(4)}, {route.destLon?.toFixed(4)}
+                  {route.destLat?.toFixed(2)}, {route.destLon?.toFixed(2)}
                 </p>
               </>
             )}
@@ -117,8 +117,8 @@ export default function DriverAssignmentCard({
         {assignment.bestRoute && (
           <div className="bg-blue-50 p-3 rounded-lg mb-4">
             <p className="text-sm text-blue-900">
-              <strong>Goods Amount:</strong> {route.goodsAmount?.toFixed(2)} units |
-              <strong className="ml-3">Quantity Assigned:</strong> {assignment.assignedQuantity?.toFixed(2)} units
+              <strong>Goods Amount:</strong> {Math.round(route.goodsAmount || 0)} units |
+              <strong className="ml-3">Quantity Assigned:</strong> {Math.round(assignment.assignedQuantity || 0)} units
             </p>
           </div>
         )}

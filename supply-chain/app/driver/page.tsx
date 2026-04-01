@@ -6,6 +6,7 @@ import { assignments, routes, users, drivers } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import DriverLocationTracker from '@/components/DriverLocationTracker'
 import DriverAssignmentCard from '@/components/DriverAssignmentCard'
+import DriverProfileUpdate from '@/components/DriverProfileUpdate'
 
 export default async function DriverPage() {
   const session = await getServerSession(authOptions)
@@ -61,27 +62,33 @@ export default async function DriverPage() {
           View your assigned delivery tasks and mark them as complete.
         </p>
 
-        {/* Current Location Card */}
+        {/* Current Location Card and Profile */}
         {currentDriver && (
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-6 mb-8 border border-blue-200">
-            <h2 className="text-lg font-semibold text-blue-900 mb-3">Your Current Location</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-4">
-                <p className="text-sm text-gray-600">Latitude</p>
-                <p className="text-2xl font-bold text-blue-600">{currentDriver.lat.toFixed(4)}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Location Card */}
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-6 border border-blue-200">
+              <h2 className="text-lg font-semibold text-blue-900 mb-3">Your Current Location</h2>
+              <div className="space-y-3">
+                <div className="bg-white rounded-lg p-4">
+                  <p className="text-sm text-gray-600">Latitude</p>
+                  <p className="text-2xl font-bold text-blue-600">{currentDriver.lat.toFixed(2)}</p>
+                </div>
+                <div className="bg-white rounded-lg p-4">
+                  <p className="text-sm text-gray-600">Longitude</p>
+                  <p className="text-2xl font-bold text-blue-600">{currentDriver.lon.toFixed(2)}</p>
+                </div>
               </div>
-              <div className="bg-white rounded-lg p-4">
-                <p className="text-sm text-gray-600">Longitude</p>
-                <p className="text-2xl font-bold text-blue-600">{currentDriver.lon.toFixed(4)}</p>
-              </div>
-              <div className="bg-white rounded-lg p-4">
-                <p className="text-sm text-gray-600">Truck Capacity</p>
-                <p className="text-2xl font-bold text-blue-600">{currentDriver.capacity.toFixed(2)} units</p>
-              </div>
+              <p className="text-xs text-blue-700 mt-4">
+                Last updated: {currentDriver.updatedAt ? new Date(currentDriver.updatedAt).toLocaleString() : 'N/A'}
+              </p>
             </div>
-            <p className="text-xs text-blue-700 mt-4">
-              Last updated: {currentDriver.updatedAt ? new Date(currentDriver.updatedAt).toLocaleString() : 'N/A'}
-            </p>
+
+            {/* Profile Update Card */}
+            <DriverProfileUpdate
+              currentCapacity={currentDriver.capacity}
+              currentLat={currentDriver.lat}
+              currentLon={currentDriver.lon}
+            />
           </div>
         )}
 
