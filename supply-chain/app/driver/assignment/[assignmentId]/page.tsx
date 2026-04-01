@@ -9,8 +9,9 @@ import AssignmentDetailClient from '@/components/AssignmentDetailClient'
 export default async function DriverAssignmentDetailPage({
   params,
 }: {
-  params: { assignmentId: string }
+  params: Promise<{ assignmentId: string }>
 }) {
+  const { assignmentId } = await params
   const session = await getServerSession(authOptions)
   const user = session?.user as any
 
@@ -22,7 +23,7 @@ export default async function DriverAssignmentDetailPage({
   const assignmentResult = await db
     .select()
     .from(assignments)
-    .where(eq(assignments.id, params.assignmentId as any))
+    .where(eq(assignments.id, assignmentId as any))
 
   if (!assignmentResult.length) {
     redirect('/driver')
