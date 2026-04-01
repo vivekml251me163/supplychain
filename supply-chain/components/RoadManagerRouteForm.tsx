@@ -70,9 +70,9 @@ export default function RoadManagerRouteForm() {
         return
       }
 
-      // 2. Attempt ML Assignment
+      // 2. Attempt ML Assignment via proxy endpoint
       try {
-        const resk = await fetch('http://13.234.240.126:8000/api/v1/assign', {
+        const resk = await fetch('/api/ml/assign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
