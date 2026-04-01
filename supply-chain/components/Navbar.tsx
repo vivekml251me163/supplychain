@@ -2,115 +2,151 @@
 
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
   const { data: session } = useSession()
   const user = session?.user as any
+  const pathname = usePathname()
+
+  const isManagerPanel = pathname?.includes('/manager')
+  const isDriverPanel = pathname?.includes('/driver')
+  const isAdminPanel = pathname?.includes('/admin')
 
   return (
-    <nav className="w-full border-b border-gray-200 bg-white px-8 py-3 flex items-center justify-between">
-
-      {/* Left - Logo */}
-      <Link href="/" className="text-lg font-semibold text-gray-800">
-        SupplyChain AI
-      </Link>
-
-      {/* Middle - Nav Links */}
-      <div className="flex items-center gap-6">
-        <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
-          Dashboard
+    <nav className="w-full border-b border-gray-200 bg-white">
+      <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+        {/* Left - Logo */}
+        <Link href="/" className="text-lg font-bold text-gray-900">
+          SupplyChain AI
         </Link>
 
-        {/* Only show if logged in and verified */}
-        {session && (user?.isVerified || user?.role === 'admin') && (
-          <>
-            <Link href="/roads" className="text-sm text-gray-600 hover:text-gray-900">
-              Roads 🚛
-            </Link>
-            <Link href="/ships" className="text-sm text-gray-600 hover:text-gray-900">
-              Ships 🚢
-            </Link>
-          </>
-        )}
-
-        {/* Admin only */}
-        {user?.role === 'admin' && (
-          <Link href="/admin" className="text-sm text-purple-600 hover:text-purple-800 font-medium">
-            Admin Panel
+        {/* Middle - Nav Links */}
+        <div className="flex items-center gap-8 flex-1 ml-12">
+          <Link
+            href="/"
+            className={`text-sm font-medium transition ${
+              pathname === '/'
+                ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Dashboard
           </Link>
-        )}
 
-        {/* Manager only */}
-        {user?.role === 'manager' && user?.isVerified && (
-          <>
-            <Link href="/manager/road" className="text-sm text-green-600 hover:text-green-800 font-medium">
-              Manage Routes
-            </Link>
-          </>
-        )}
+          {/* Only show if logged in and verified */}
+          {session && (user?.isVerified || user?.role === 'admin') && (
+            <>
+              <Link
+                href="/routes"
+                className={`text-sm font-medium transition ${
+                  pathname?.includes('/routes')
+                    ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Routes
+              </Link>
+              <Link
+                href="/zones"
+                className={`text-sm font-medium transition ${
+                  pathname?.includes('/zones')
+                    ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Affected Zones
+              </Link>
+            </>
+          )}
 
-        {/* Driver only */}
-        {user?.role === 'driver' && user?.isVerified && (
-          <Link href="/driver" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-            My Routes
-          </Link>
-        )}
-      </div>
-      {/* Affected Zones Link */}
-      <Link href="/zones" className="text-sm text-gray-600 hover:text-gray-900">
-  Affected Zones 🌐
-</Link>
-
-      {/* Right - Auth */}
-      <div className="flex items-center gap-3">
-        {!session ? (
-          <>
+          {/* Manager Panel */}
+          {user?.role === 'manager' && user?.isVerified && (
             <Link
-              href="/login"
-              className="text-sm text-gray-600 hover:text-gray-900"
+              href="/manager/road"
+              className={`text-sm font-medium transition ${
+                isManagerPanel
+                  ? 'text-green-600 border-b-2 border-green-600 pb-1'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
-              Sign in
+              Manager Panel
             </Link>
+          )}
+
+          {/* Driver Panel */}
+          {user?.role === 'driver' && user?.isVerified && (
             <Link
-              href="/register"
-              className="text-sm bg-black text-white px-4 py-1.5 rounded-lg hover:bg-gray-800"
+              href="/driver"
+              className={`text-sm font-medium transition ${
+                isDriverPanel
+                  ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
-              Register
+              Driver Panel
             </Link>
-          </>
-        ) : (
-          <div className="flex items-center gap-3">
-            {/* User info */}
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-xs font-medium text-blue-700">
+          )}
+
+          {/* Admin Panel */}
+          {user?.role === 'admin' && (
+            <Link
+              href="/admin"
+              className={`text-sm font-medium transition ${
+                isAdminPanel
+                  ? 'text-green-600 border-b-2 border-green-600 pb-1'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Admin Panel
+            </Link>
+          )}
+        </div>
+
+        {/* Right - Auth */}
+        <div className="flex items-center gap-4">
+          {!session ? (
+            <>
+              <Link
+                href="/login"
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/register"
+                className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <div className="flex items-center gap-4">
+              {/* Notifications */}
+              <button className="text-gray-600 hover:text-gray-900 text-lg">
+                🔔
+              </button>
+
+              {/* Settings */}
+              <button className="text-gray-600 hover:text-gray-900 text-lg">
+                ⚙️
+              </button>
+
+              {/* User Avatar */}
+              <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
-              <div className="flex flex-col">
-                <span className="text-xs font-medium text-gray-800">{user?.name}</span>
-                <span className="text-xs text-gray-400">{user?.role}</span>
-              </div>
+
+              {/* Sign Out */}
+              <button
+                onClick={() => signOut()}
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+              >
+                Sign Out
+              </button>
             </div>
-
-            {/* Verified badge */}
-            {user?.isVerified ? (
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                ✓ Verified
-              </span>
-            ) : (
-              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">
-                Pending
-              </span>
-            )}
-
-            {/* Sign out */}
-            <button
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="text-sm text-red-500 hover:text-red-700 border border-red-200 px-3 py-1 rounded-lg hover:bg-red-50"
-            >
-              Sign out
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </nav>
   )
