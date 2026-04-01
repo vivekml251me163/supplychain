@@ -162,19 +162,19 @@ export default async function RoadManagerPage() {
                       <div className="bg-orange-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Pickup Location</p>
                         <p className="text-gray-900 text-sm">
-                          {route.srcLat.toFixed(4)}, {route.srcLon.toFixed(4)}
+                          {route.srcLat.toFixed(2)}, {route.srcLon.toFixed(2)}
                         </p>
                       </div>
                       <div className="bg-orange-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Delivery Location</p>
                         <p className="text-gray-900 text-sm">
-                          {route.destLat.toFixed(4)}, {route.destLon.toFixed(4)}
+                          {route.destLat.toFixed(2)}, {route.destLon.toFixed(2)}
                         </p>
                       </div>
                       <div className="bg-orange-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Goods Amount</p>
                         <p className="text-gray-900 text-lg font-semibold">
-                          {route.goodsAmount.toFixed(2)} units
+                          {Math.round(route.goodsAmount)} units
                         </p>
                       </div>
                     </div>
@@ -234,10 +234,10 @@ export default async function RoadManagerPage() {
                               <div>
                                 <p className="font-medium text-gray-900">{driverAssignment.driverUser?.name || 'Unknown'}</p>
                                 <p className="text-sm text-gray-600">
-                                  Quantity assigned: <span className="font-semibold">{driverAssignment.assignment.assignedQuantity.toFixed(2)} units</span>
+                                  Quantity assigned: <span className="font-semibold">{Math.round(driverAssignment.assignment.assignedQuantity)} units</span>
                                 </p>
                                 <p className="text-sm text-gray-600">
-                                  Truck capacity: <span className="font-semibold">{driverAssignment.driverProfile?.capacity.toFixed(2) || 'N/A'} units</span>
+                                  Truck capacity: <span className="font-semibold">{driverAssignment.driverProfile?.capacity ? Math.round(driverAssignment.driverProfile.capacity) : 'N/A'} units</span>
                                 </p>
                                 {driverAssignment.assignment.workDone ? (
                                   <p className="text-sm text-green-600 mt-1">✓ Completed</p>
@@ -246,7 +246,7 @@ export default async function RoadManagerPage() {
                                 )}
                               </div>
                               <div className="text-xs text-gray-500 text-right">
-                                <p>Current location: {driverAssignment.driverProfile?.lat.toFixed(4)}, {driverAssignment.driverProfile?.lon.toFixed(4)}</p>
+                                <p>Current location: {driverAssignment.driverProfile?.lat.toFixed(2)}, {driverAssignment.driverProfile?.lon.toFixed(2)}</p>
                                 <p className="text-blue-600 font-semibold mt-2">View Details →</p>
                               </div>
                             </div>
@@ -263,19 +263,19 @@ export default async function RoadManagerPage() {
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Pickup Location</p>
                         <p className="text-gray-900 text-sm">
-                          {item.route.srcLat.toFixed(4)}, {item.route.srcLon.toFixed(4)}
+                          {item.route.srcLat.toFixed(2)}, {item.route.srcLon.toFixed(2)}
                         </p>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Delivery Location</p>
                         <p className="text-gray-900 text-sm">
-                          {item.route.destLat.toFixed(4)}, {item.route.destLon.toFixed(4)}
+                          {item.route.destLat.toFixed(2)}, {item.route.destLon.toFixed(2)}
                         </p>
                       </div>
                       <div className="bg-green-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-600 font-medium mb-2">Total Goods</p>
                         <p className="text-gray-900 text-lg font-semibold">
-                          {item.route.goodsAmount.toFixed(2)} units
+                          {Math.round(item.route.goodsAmount)} units
                         </p>
                       </div>
                     </div>
@@ -358,15 +358,15 @@ export default async function RoadManagerPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div className="bg-white p-4 rounded-lg border border-gray-200">
                         <p className="text-sm text-gray-600 font-medium mb-2">Pickup</p>
-                        <p className="text-sm text-gray-900">{item.route.srcLat.toFixed(4)}, {item.route.srcLon.toFixed(4)}</p>
+                        <p className="text-sm text-gray-900">{item.route.srcLat.toFixed(2)}, {item.route.srcLon.toFixed(2)}</p>
                       </div>
                       <div className="bg-white p-4 rounded-lg border border-gray-200">
                         <p className="text-sm text-gray-600 font-medium mb-2">Delivery</p>
-                        <p className="text-sm text-gray-900">{item.route.destLat.toFixed(4)}, {item.route.destLon.toFixed(4)}</p>
+                        <p className="text-sm text-gray-900">{item.route.destLat.toFixed(2)}, {item.route.destLon.toFixed(2)}</p>
                       </div>
                       <div className="bg-white p-4 rounded-lg border border-gray-200">
                         <p className="text-sm text-gray-600 font-medium mb-2">Total Goods</p>
-                        <p className="text-sm font-semibold text-gray-900">{item.route.goodsAmount.toFixed(2)} units</p>
+                        <p className="text-sm font-semibold text-gray-900">{Math.round(item.route.goodsAmount)} units</p>
                       </div>
                     </div>
                     <p className="text-xs text-gray-500">

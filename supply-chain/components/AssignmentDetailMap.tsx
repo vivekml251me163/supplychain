@@ -41,7 +41,7 @@ export default function AssignmentDetailMap({ bestRoute, reasons }: AssignmentDe
         <Popup>
           <div className="text-sm">
             <p className="font-semibold">Start</p>
-            <p>{startPoint.lat.toFixed(4)}, {startPoint.lon.toFixed(4)}</p>
+            <p>{startPoint.lat.toFixed(2)}, {startPoint.lon.toFixed(2)}</p>
           </div>
         </Popup>
       </Marker>
@@ -51,7 +51,7 @@ export default function AssignmentDetailMap({ bestRoute, reasons }: AssignmentDe
         <Popup>
           <div className="text-sm">
             <p className="font-semibold">End</p>
-            <p>{endPoint.lat.toFixed(4)}, {endPoint.lon.toFixed(4)}</p>
+            <p>{endPoint.lat.toFixed(2)}, {endPoint.lon.toFixed(2)}</p>
           </div>
         </Popup>
       </Marker>
