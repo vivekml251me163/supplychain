@@ -30,15 +30,33 @@ export async function GET(req: NextRequest) {
     const data = await response.json()
     const address = data.address || {}
 
+    // Build place name like "Konchady, Mangaruru" (excluding state)
+    const parts: string[] = []
+
+    // Add primary location (village, town, suburb, city, hamlet)
+    const primaryLocation =
+      address.village ||
+      address.town ||
+      address.suburb ||
+      address.city ||
+      address.hamlet ||
+      address.neighbourhood
+
+    if (primaryLocation) {
+      parts.push(primaryLocation)
+    }
+
+    // Add secondary location (county or district)
+    const secondaryLocation = address.county || address.district
+
+    if (secondaryLocation && secondaryLocation !== primaryLocation) {
+      parts.push(secondaryLocation)
+    }
+
+    const placeName = parts.length > 0 ? parts.join(', ') : `${lat}, ${lon}`
+
     return NextResponse.json({
-      placeName:
-        data.name ||
-        address.city ||
-        address.town ||
-        address.village ||
-        address.county ||
-        address.state ||
-        `${lat}, ${lon}`,
+      placeName,
       address: data.display_name || '',
       lat,
       lon,
