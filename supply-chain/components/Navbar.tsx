@@ -57,6 +57,16 @@ export default function Navbar() {
               >
                 Affected Zones
               </Link>
+              <Link
+                href="/weather"
+                className={`text-sm font-medium transition ${
+                  pathname?.includes('/weather')
+                    ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Weather Alerts
+              </Link>
             </>
           )}
 

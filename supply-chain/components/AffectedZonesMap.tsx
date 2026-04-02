@@ -124,7 +124,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
           color,
           fillColor:           color,
           fillOpacity:         0,
-          opacity:             0.3,
+          opacity:             0.1,
           weight:              1,
           bubblingMouseEvents: false,
         })
@@ -136,7 +136,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
 
         circle.on('mouseout', () => {
           if (selectedRef.current !== null) return
-          circle.setStyle({ fillOpacity: 0, opacity: 0.3, weight: 1 })
+          circle.setStyle({ fillOpacity: 0, opacity: 0.1, weight: 1 })
         })
 
         circle.on('click', (e: any) => {

@@ -24,7 +24,7 @@ export function useGeolocation() {
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       )
 
-      // Set up interval to update location every 5 minutes
+      // Set up interval to update location every 2 minutes
       const interval = setInterval(() => {
         navigator.geolocation.getCurrentPosition(
           async (position) => {
@@ -43,7 +43,7 @@ export function useGeolocation() {
             console.error('Geolocation error:', error)
           }
         )
-      }, 5 * 60 * 1000) // 5 minutes
+      }, 2 * 60 * 1000) // 2 minutes
 
       return () => clearInterval(interval)
     }
