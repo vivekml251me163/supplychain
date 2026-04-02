@@ -1,68 +1,70 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ShipManagerForm from '@/components/ShipManagerForm'
 import ShipRouteMapClient from '@/components/ShipRouteMapClient'
 
-interface Ship {
-  id: string
+interface ShipReroute {
+  id: number
   userId: string
-  origin: any
-  destination: any
-  originalRoute: any
+  shipId: number
+  affectedByNews: any
+  affectedByWeather: any
+  suggestion: string
   bestRoute: any
-  reasons: any
-  weatherData: any
-  newsData: any
   createdAt: string
-  refreshedAt: string
 }
 
 export default function ShipManagerClient() {
-  const [selectedShip, setSelectedShip] = useState<Ship | null>(null)
+  const [selectedReroute, setSelectedReroute] = useState<ShipReroute | null>(null)
+
+  useEffect(() => {
+    // Load from localStorage if available
+    const savedShipId = localStorage.getItem('selectedShipId')
+    const savedReroute = localStorage.getItem('selectedReroute')
+    
+    if (savedReroute) {
+      try {
+        setSelectedReroute(JSON.parse(savedReroute))
+      } catch (e) {
+        console.error('Failed to parse saved reroute', e)
+      }
+    }
+  }, [])
 
   return (
     <div className="space-y-6">
       {/* Ship Selector */}
-      <ShipManagerForm onShipSelect={(ship) => setSelectedShip(ship)} />
+      <ShipManagerForm onRerouteSelect={(reroute) => setSelectedReroute(reroute)} />
 
       {/* Stats Cards */}
-      {selectedShip && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {selectedReroute && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <p className="text-xs text-gray-600 mb-1">Ship ID</p>
             <p className="text-lg font-semibold text-gray-900">
-              {selectedShip.id.substring(0, 8)}
+              {selectedReroute.shipId}
             </p>
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-xs text-gray-600 mb-1">Origin</p>
+            <p className="text-xs text-gray-600 mb-1">Route ID</p>
             <p className="text-lg font-semibold text-gray-900">
-              {selectedShip.origin?.name || 'Unknown'}
+              {selectedReroute.id}
             </p>
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-xs text-gray-600 mb-1">Destination</p>
-            <p className="text-lg font-semibold text-gray-900">
-              {selectedShip.destination?.name || 'Unknown'}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-xs text-gray-600 mb-1">Last Updated</p>
+            <p className="text-xs text-gray-600 mb-1">Created At</p>
             <p className="text-sm font-semibold text-gray-900">
-              {selectedShip.refreshedAt
-                ? new Date(selectedShip.refreshedAt).toLocaleDateString()
-                : new Date(selectedShip.createdAt).toLocaleDateString()}
+              {new Date(selectedReroute.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
       )}
 
       {/* Route Map */}
-      {selectedShip && selectedShip.bestRoute && (
+      {selectedReroute && selectedReroute.bestRoute && (
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
@@ -74,53 +76,57 @@ export default function ShipManagerClient() {
           </div>
           <div className="h-96">
             <ShipRouteMapClient
-              originalRoute={selectedShip.originalRoute}
-              bestRoute={selectedShip.bestRoute}
-              reasons={selectedShip.reasons}
+              originalRoute={selectedReroute.bestRoute}
+              bestRoute={selectedReroute.bestRoute}
+              reasons={selectedReroute.suggestion ? [selectedReroute.suggestion] : []}
             />
           </div>
         </div>
       )}
 
-      {/* Info Cards - Reasons */}
-      {selectedShip && selectedShip.reasons && selectedShip.reasons.length > 0 && (
+      {/* Suggestions */}
+      {selectedReroute && selectedReroute.suggestion && (
         <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-900 mb-3">
-            Optimization Reasons
-          </h3>
+          <h3 className="font-semibold text-gray-900 mb-3">Route Suggestion</h3>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {selectedReroute.suggestion}
+          </p>
+        </div>
+      )}
+
+      {/* Affected by News */}
+      {selectedReroute && selectedReroute.affectedByNews && selectedReroute.affectedByNews.length > 0 && (
+        <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+          <h3 className="font-semibold text-blue-900 mb-3">Affected by News</h3>
           <div className="space-y-2">
-            {selectedShip.reasons.map(
-              (reason: string, idx: number) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-2 text-sm text-gray-700"
-                >
-                  <span className="text-blue-600 font-bold mt-0.5">•</span>
-                  <span>{reason}</span>
-                </div>
-              )
-            )}
+            {selectedReroute.affectedByNews.map((news: any, idx: number) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2 text-sm text-blue-900"
+              >
+                <span className="text-blue-600 font-bold mt-0.5">•</span>
+                <span>{news.title || news.description || JSON.stringify(news)}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Info Cards - Weather Data */}
-      {selectedShip && selectedShip.weatherData && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-900 mb-3">Weather Data</h3>
-          <pre className="bg-gray-50 p-3 rounded text-xs overflow-x-auto text-gray-700">
-            {JSON.stringify(selectedShip.weatherData, null, 2)}
-          </pre>
-        </div>
-      )}
-
-      {/* Info Cards - News Data */}
-      {selectedShip && selectedShip.newsData && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-900 mb-3">News Data</h3>
-          <pre className="bg-gray-50 p-3 rounded text-xs overflow-x-auto text-gray-700">
-            {JSON.stringify(selectedShip.newsData, null, 2)}
-          </pre>
+      {/* Affected by Weather */}
+      {selectedReroute && selectedReroute.affectedByWeather && selectedReroute.affectedByWeather.length > 0 && (
+        <div className="bg-orange-50 rounded-lg border border-orange-200 p-4">
+          <h3 className="font-semibold text-orange-900 mb-3">Affected by Weather</h3>
+          <div className="space-y-2">
+            {selectedReroute.affectedByWeather.map((weather: any, idx: number) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2 text-sm text-orange-900"
+              >
+                <span className="text-orange-600 font-bold mt-0.5">•</span>
+                <span>{weather.condition || weather.description || JSON.stringify(weather)}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
