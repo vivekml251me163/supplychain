@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 
 interface Ship {
   id: string
+  userId: string
   origin: any
   destination: any
   originalRoute: any

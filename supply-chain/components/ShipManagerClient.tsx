@@ -24,7 +24,7 @@ export default function ShipManagerClient() {
   return (
     <div className="space-y-6">
       {/* Ship Selector */}
-      <ShipManagerForm onShipSelect={setSelectedShip} />
+      <ShipManagerForm onShipSelect={(ship) => setSelectedShip(ship)} />
 
       {/* Stats Cards */}
       {selectedShip && (
