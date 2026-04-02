@@ -35,6 +35,7 @@ export default function RoleSelector({
     >
       <option value="driver">Driver</option>
       <option value="manager">Manager</option>
+      <option value="manager_ship">Manager Ship</option>
       <option value="admin">Admin</option>
     </select>
   )
