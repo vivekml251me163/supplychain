@@ -16,13 +16,14 @@ export default async function ShipReroutesPage() {
   const reroutes = await db.select().from(shipReroutes)
 
   // Group reroutes by shipId
-  const groupedReroutes = reroutes.reduce((acc: Record<number, typeof reroutes>, reroute) => {
+  type ShipReroute = typeof reroutes[number]
+  const groupedReroutes = reroutes.reduce<Record<number, ShipReroute[]>>((acc, reroute) => {
     if (!acc[reroute.shipId]) {
       acc[reroute.shipId] = []
     }
     acc[reroute.shipId].push(reroute)
     return acc
-  }, {} as Record<number, (typeof reroutes)[number][]>)
+  }, {})
 
   // Get unique ship IDs from reroutes
   const uniqueShipIds = Object.keys(groupedReroutes).map(Number)
@@ -91,7 +92,7 @@ export default async function ShipReroutesPage() {
                   uniqueShipIds.map((shipId) => {
                     const shipRerouteList = groupedReroutes[shipId] || []
                     const shipRerouteCount = shipRerouteList.length
-                    const shipRerouteInfo = shipRerouteList.at(0)
+                    const shipRerouteInfo: ShipReroute | undefined = shipRerouteList.at(0)
 
                     return (
                       <div key={shipId} className="p-4 hover:bg-gray-50 transition">
