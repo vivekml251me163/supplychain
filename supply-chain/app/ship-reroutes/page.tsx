@@ -119,12 +119,12 @@ export default async function ShipReroutesPage() {
 
                             {/* Impacts */}
                             <div className="flex gap-1 flex-wrap mt-2 pt-2 border-t border-gray-200">
-                              {shipRerouteInfo.affectedByWeather && (
+                              {Boolean(shipRerouteInfo.affectedByWeather) && (
                                 <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">
                                   🌪️ Weather
                                 </span>
                               )}
-                              {shipRerouteInfo.affectedByNews && (
+                              {Boolean(shipRerouteInfo.affectedByNews) && (
                                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-[10px] font-semibold">
                                   📰 News
                                 </span>
