@@ -90,6 +90,7 @@ export default function RegisterPage() {
             >
               <option value="driver">Driver</option>
               <option value="manager">Manager</option>
+              <option value="manager_ship">Manager Ship</option>
             </select>
           </div>
 
