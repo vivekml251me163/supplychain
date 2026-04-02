@@ -1,11 +1,6 @@
 import { db } from '@/db/index'
 import { weatherResults } from '@/db/schema'
-import dynamic from 'next/dynamic'
-
-const WeatherResultsDisplay = dynamic(
-  () => import('@/components/WeatherResultsDisplay'),
-  { ssr: false }
-)
+import WeatherResultsDisplay from '@/components/WeatherResultsDisplay'
 
 export default async function WeatherPage() {
   const weather = await db.select().from(weatherResults)

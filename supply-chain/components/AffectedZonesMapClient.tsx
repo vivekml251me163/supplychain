@@ -18,6 +18,7 @@ interface Zone {
   radiusKm: number
   severity: number
   confidence: number
+  createdAt: string
 }
 
 interface AffectedZonesMapClientProps {

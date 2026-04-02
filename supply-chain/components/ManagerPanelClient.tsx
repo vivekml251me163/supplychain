@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import RoadManagerRouteForm from './RoadManagerRouteForm'
 
 interface ManagerPanelClientProps {
   managerRoutes: any[]
@@ -21,6 +22,7 @@ export default function ManagerPanelClient({
   uniqueDrivers,
 }: ManagerPanelClientProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'completed'>('all')
+  const [showCreateForm, setShowCreateForm] = useState(false)
 
   const displayAssignments =
     activeTab === 'active'
@@ -77,6 +79,22 @@ export default function ManagerPanelClient({
               <span className="text-2xl">✓</span>
             </div>
           </div>
+        </div>
+
+        {/* Create New Assignment Section */}
+        <div className="mb-12">
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="mb-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-bold shadow-md transition transition-all"
+          >
+            {showCreateForm ? '✕ Close Form' : '➕ Create New Assignment'}
+          </button>
+          
+          {showCreateForm && (
+            <div className="mb-12">
+              <RoadManagerRouteForm />
+            </div>
+          )}
         </div>
 
         {/* Regional Drivers Table */}

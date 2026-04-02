@@ -12,6 +12,7 @@ interface Zone {
   aiSummary: string
   consequence: string
   confidence: number
+  createdAt: string
 }
 
 interface AffectedZonesMapProps {
@@ -39,10 +40,16 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
   const [loading,     setLoading]     = useState(true)
   const [selectedId,  setSelectedId]  = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [dateFilter,  setDateFilter]  = useState<string | null>(null)
 
   // filter + sort by severity (highest first), then by radius
   const mapZones = zones
     .filter(z => z.radiusKm <= MAP_RADIUS_THRESHOLD_KM)
+    .filter(z => {
+      if (!dateFilter) return true
+      // createdAt is string like '2024-03-24T...'
+      return z.createdAt.startsWith(dateFilter)
+    })
     .sort((a, b) => {
       if (a.severity !== b.severity) {
         return b.severity - a.severity  // Higher severity first
@@ -230,16 +237,44 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
       <div className="border-t border-gray-200 bg-gray-50">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-3">
-          <div>
-            <h3 className="text-sm font-bold text-gray-900">Zone Details</h3>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {startIndex + 1}–{Math.min(startIndex + TILES_PER_PAGE, mapZones.length)} of {mapZones.length} zones
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 pt-5 pb-3 gap-4">
+          <div className="flex items-center gap-6">
+            <div>
+              <h3 className="text-sm font-bold text-gray-900 leading-tight">Zone Details</h3>
+              <p className="text-[10px] uppercase font-black tracking-widest text-gray-400 mt-1">
+                {startIndex + 1}–{Math.min(startIndex + TILES_PER_PAGE, mapZones.length)} of {mapZones.length} zones
+              </p>
+            </div>
+
+            {/* Date Filter */}
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg shadow-xs transition-all hover:border-emerald-200 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500/20">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">Filter by Date:</span>
+              <input 
+                type="date"
+                value={dateFilter || ''}
+                onChange={(e) => {
+                   setDateFilter(e.target.value || null)
+                   setCurrentPage(1)
+                }}
+                className="bg-transparent border-none p-0 text-xs font-bold text-gray-700 focus:ring-0 outline-hidden cursor-pointer"
+              />
+              {dateFilter && (
+                <button 
+                  onClick={() => setDateFilter(null)}
+                  className="p-1 hover:bg-gray-100 rounded-md transition-colors text-gray-400 hover:text-red-500"
+                  title="Clear filter"
+                >
+                  <span className="text-xs">✕</span>
+                </button>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-2.5 py-1 rounded-md">
+              Page <span className="text-emerald-600">{currentPage}</span> / {totalPages || 1}
             </p>
           </div>
-          <p className="text-xs text-gray-500">
-            Page <span className="font-bold text-gray-800">{currentPage}</span> / {totalPages}
-          </p>
         </div>
 
         {/* Grid */}

@@ -13,156 +13,108 @@ export default function Navbar() {
   const isDriverPanel = pathname?.includes('/driver')
   const isAdminPanel = pathname?.includes('/admin')
 
+  const navLinkClass = (isActive: boolean) => 
+    `text-sm font-medium transition ${
+      isActive 
+        ? 'text-emerald-600' 
+        : 'text-gray-600 hover:text-gray-900'
+    }`
+
   return (
-    <nav className="w-full border-b border-gray-200 bg-white">
-      <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+    <nav className="w-full border-b border-gray-200 bg-white sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         {/* Left - Logo */}
-        <Link href="/" className="text-lg font-bold text-gray-900">
-          SupplyChain AI
+        <Link href="/" className="flex items-center gap-2 shrink-0 group">
+          <div className="h-8 w-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs group-hover:shadow-md transition">
+            SC
+          </div>
+          <span className="text-lg font-bold text-gray-900 hidden sm:inline tracking-tight">SupplyChain</span>
         </Link>
 
         {/* Middle - Nav Links */}
-        <div className="flex items-center gap-8 flex-1 ml-12">
-          <Link
-            href="/"
-            className={`text-sm font-medium transition ${
-              pathname === '/'
-                ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Dashboard
+        <div className="hidden lg:flex items-center gap-12 flex-1 ml-16">
+          <Link href="/" className={navLinkClass(pathname === '/')}>
+            Home
           </Link>
 
-          {/* Routes - only show if logged in and verified */}
           {session && (user?.isVerified || user?.role === 'admin') && (
-            <Link
-              href="/routes"
-              className={`text-sm font-medium transition ${
-                pathname?.includes('/routes')
-                  ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
+            <Link href="/routes" className={navLinkClass(pathname?.includes('/routes'))}>
               Routes
             </Link>
           )}
 
-          {/* Zones and Weather - show for everyone */}
-          <Link
-            href="/zones"
-            className={`text-sm font-medium transition ${
-              pathname?.includes('/zones')
-                ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Affected Zones
-          </Link>
-          <Link
-            href="/weather"
-            className={`text-sm font-medium transition ${
-              pathname?.includes('/weather')
-                ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Weather Alerts
+          <Link href="/zones" className={navLinkClass(pathname?.includes('/zones'))}>
+            Zones
           </Link>
 
-          {/* Manager Panel */}
+          <Link href="/weather" className={navLinkClass(pathname?.includes('/weather'))}>
+            Weather
+          </Link>
+
+          <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
+            Ship Reroutes
+          </Link>
+
           {user?.role === 'manager' && user?.isVerified && (
-            <Link
-              href="/manager/road"
-              className={`text-sm font-medium transition ${
-                isManagerPanel
-                  ? 'text-green-600 border-b-2 border-green-600 pb-1'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Manager Panel
+            <Link href="/manager/road" className={navLinkClass(isManagerPanel)}>
+              Manager
             </Link>
           )}
 
-          {/* Manager Ship Panel */}
           {user?.role === 'manager_ship' && user?.isVerified && (
-            <Link
-              href="/manager/ship"
-              className={`text-sm font-medium transition ${
-                isManagerPanel
-                  ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Ship Manager
+            <Link href="/manager/ship" className={navLinkClass(isManagerPanel)}>
+              Ships
             </Link>
           )}
 
-          {/* Driver Panel */}
           {user?.role === 'driver' && user?.isVerified && (
-            <Link
-              href="/driver"
-              className={`text-sm font-medium transition ${
-                isDriverPanel
-                  ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Driver Panel
+            <Link href="/driver" className={navLinkClass(isDriverPanel)}>
+              Driver
             </Link>
           )}
 
-          {/* Admin Panel */}
           {user?.role === 'admin' && (
-            <Link
-              href="/admin"
-              className={`text-sm font-medium transition ${
-                isAdminPanel
-                  ? 'text-green-600 border-b-2 border-green-600 pb-1'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Admin Panel
+            <Link href="/admin" className={navLinkClass(isAdminPanel)}>
+              Admin
             </Link>
           )}
         </div>
 
         {/* Right - Auth */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {!session ? (
             <>
               <Link
                 href="/login"
-                className="text-sm text-gray-600 hover:text-gray-900"
+                className="text-sm text-gray-600 font-medium hover:text-gray-900 transition hidden sm:inline px-3 py-2"
               >
-                Sign in
+                Sign In
               </Link>
               <Link
                 href="/register"
-                className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+                className="text-sm bg-emerald-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-emerald-700 transition"
               >
-                Register
+                Start Free
               </Link>
             </>
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {/* User Info */}
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
-                {/* User Avatar */}
-                <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
-                  {user?.name?.charAt(0).toUpperCase()}
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100">
+                <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                  {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
                 </div>
-                
-                {/* Username */}
-                <span className="text-sm font-medium text-gray-900">
-                  {user?.name || user?.email?.split('@')[0] || 'User'}
-                </span>
+                <div className="hidden md:block">
+                  <p className="text-xs font-semibold text-gray-900 truncate">
+                    {user?.name || user?.email?.split('@')[0]}
+                  </p>
+                </div>
               </div>
 
               {/* Sign Out */}
               <button
                 onClick={() => signOut()}
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer"
+                className="text-sm text-gray-600 font-medium hover:text-gray-900 transition px-3 py-2"
               >
                 Sign Out
               </button>

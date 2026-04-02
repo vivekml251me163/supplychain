@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import Providers from '@/components/Providers'
 
 const geistSans = Geist({
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'SupplyChain AI',
-  description: 'Resilient Logistics and Dynamic Supply Chain Optimization',
+  title: 'SupplyChain - Intelligent Logistics Management',
+  description: 'Optimize your supply chain with real-time tracking, intelligent routing, and weather integration.',
 }
 
 export default function RootLayout({
@@ -26,10 +27,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}>
         <Providers>
           <Navbar />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>
