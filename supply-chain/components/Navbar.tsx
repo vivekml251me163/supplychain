@@ -74,6 +74,20 @@ export default function Navbar() {
             </Link>
           )}
 
+          {/* Manager Ship Panel */}
+          {user?.role === 'manager_ship' && user?.isVerified && (
+            <Link
+              href="/manager/ship"
+              className={`text-sm font-medium transition ${
+                isManagerPanel
+                  ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Ship Manager
+            </Link>
+          )}
+
           {/* Driver Panel */}
           {user?.role === 'driver' && user?.isVerified && (
             <Link
