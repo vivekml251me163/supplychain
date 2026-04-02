@@ -136,25 +136,23 @@ export default function Navbar() {
             </>
           ) : (
             <div className="flex items-center gap-4">
-              {/* Notifications */}
-              <button className="text-gray-600 hover:text-gray-900 text-lg">
-                🔔
-              </button>
-
-              {/* Settings */}
-              <button className="text-gray-600 hover:text-gray-900 text-lg">
-                ⚙️
-              </button>
-
-              {/* User Avatar */}
-              <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
-                {user?.name?.charAt(0).toUpperCase()}
+              {/* User Info */}
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
+                {/* User Avatar */}
+                <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </div>
+                
+                {/* Username */}
+                <span className="text-sm font-medium text-gray-900">
+                  {user?.name || user?.email?.split('@')[0] || 'User'}
+                </span>
               </div>
 
               {/* Sign Out */}
               <button
                 onClick={() => signOut()}
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition"
               >
                 Sign Out
               </button>
