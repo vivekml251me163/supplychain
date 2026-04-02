@@ -34,41 +34,41 @@ export default function Navbar() {
             Dashboard
           </Link>
 
-          {/* Only show if logged in and verified */}
+          {/* Routes - only show if logged in and verified */}
           {session && (user?.isVerified || user?.role === 'admin') && (
-            <>
-              <Link
-                href="/routes"
-                className={`text-sm font-medium transition ${
-                  pathname?.includes('/routes')
-                    ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Routes
-              </Link>
-              <Link
-                href="/zones"
-                className={`text-sm font-medium transition ${
-                  pathname?.includes('/zones')
-                    ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Affected Zones
-              </Link>
-              <Link
-                href="/weather"
-                className={`text-sm font-medium transition ${
-                  pathname?.includes('/weather')
-                    ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Weather Alerts
-              </Link>
-            </>
+            <Link
+              href="/routes"
+              className={`text-sm font-medium transition ${
+                pathname?.includes('/routes')
+                  ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Routes
+            </Link>
           )}
+
+          {/* Zones and Weather - show for everyone */}
+          <Link
+            href="/zones"
+            className={`text-sm font-medium transition ${
+              pathname?.includes('/zones')
+                ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Affected Zones
+          </Link>
+          <Link
+            href="/weather"
+            className={`text-sm font-medium transition ${
+              pathname?.includes('/weather')
+                ? 'text-gray-900 border-b-2 border-gray-900 pb-1'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Weather Alerts
+          </Link>
 
           {/* Manager Panel */}
           {user?.role === 'manager' && user?.isVerified && (
@@ -162,7 +162,7 @@ export default function Navbar() {
               {/* Sign Out */}
               <button
                 onClick={() => signOut()}
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition"
+                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition cursor-pointer"
               >
                 Sign Out
               </button>
