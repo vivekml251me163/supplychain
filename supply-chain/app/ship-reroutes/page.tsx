@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { db } from '@/db/index'
-import { shipReroutes, ships } from '@/db/schema'
+import { shipReroutes } from '@/db/schema'
 import ShipReroutesMapClient from '@/components/ShipReroutesMapClient'
 
 export default async function ShipReroutesPage() {
@@ -15,14 +15,17 @@ export default async function ShipReroutesPage() {
   // Fetch all ship reroutes
   const reroutes = await db.select().from(shipReroutes)
 
-  // Fetch all ships for details
-  const allShips = await db.select().from(ships)
+  // Group reroutes by shipId
+  const groupedReroutes = reroutes.reduce((acc: Record<number, typeof reroutes>, reroute) => {
+    if (!acc[reroute.shipId]) {
+      acc[reroute.shipId] = []
+    }
+    acc[reroute.shipId].push(reroute)
+    return acc
+  }, {} as Record<number, (typeof reroutes)[number][]>)
 
-  // Get unique ship IDs from reroutes and match with ships
-  const shipIdsInReroutes = new Set(reroutes.map(r => r.shipId))
-  const shipsWithReroutes = allShips.filter(ship => {
-    return shipIdsInReroutes.has(ship.id as any)
-  })
+  // Get unique ship IDs from reroutes
+  const uniqueShipIds = Object.keys(groupedReroutes).map(Number)
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -75,25 +78,26 @@ export default async function ShipReroutesPage() {
               {/* Header */}
               <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-b border-blue-700">
                 <h2 className="text-lg font-bold">🚢 Ships with Reroutes</h2>
-                <p className="text-blue-100 text-xs mt-1">{shipsWithReroutes.length} ship{shipsWithReroutes.length !== 1 ? 's' : ''}</p>
+                <p className="text-blue-100 text-xs mt-1">{uniqueShipIds.length} ship{uniqueShipIds.length !== 1 ? 's' : ''}</p>
               </div>
 
               {/* Ship List */}
               <div className="divide-y divide-gray-200 max-h-[70vh] overflow-y-auto">
-                {shipsWithReroutes.length === 0 ? (
+                {uniqueShipIds.length === 0 ? (
                   <div className="px-6 py-8 text-center text-gray-500">
                     No ships with active reroutes
                   </div>
                 ) : (
-                  shipsWithReroutes.map((ship) => {
-                    const shipRerouteCount = reroutes.filter(r => r.shipId === ship.id).length
-                    const shipRerouteInfo = reroutes.find(r => r.shipId === ship.id)
+                  uniqueShipIds.map((shipId) => {
+                    const shipRerouteList = groupedReroutes[shipId] || []
+                    const shipRerouteCount = shipRerouteList.length
+                    const shipRerouteInfo = shipRerouteList.at(0)
 
                     return (
-                      <div key={ship.id} className="p-4 hover:bg-gray-50 transition">
+                      <div key={shipId} className="p-4 hover:bg-gray-50 transition">
                         {/* Ship Info */}
                         <div className="mb-3">
-                          <h3 className="font-bold text-gray-800 text-sm mb-1">Ship {ship.id.substring(0, 8)}</h3>
+                          <h3 className="font-bold text-gray-800 text-sm mb-1">Ship #{shipId}</h3>
                           <div className="flex items-center gap-2 mb-2">
                             <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
                               {shipRerouteCount} Reroute{shipRerouteCount !== 1 ? 's' : ''}
@@ -104,23 +108,11 @@ export default async function ShipReroutesPage() {
                         {/* Route Details */}
                         {shipRerouteInfo && (
                           <div className="space-y-2 text-xs">
-                            {/* Origin */}
-                            {ship.origin && typeof ship.origin === 'object' && (
+                            {/* Suggestion */}
+                            {shipRerouteInfo.suggestion && (
                               <div>
-                                <p className="text-gray-600 font-semibold">📍 From:</p>
-                                <p className="text-gray-700 font-mono text-[10px]">
-                                  {(ship.origin as any).lat?.toFixed(4)}°, {(ship.origin as any).lng?.toFixed(4)}°
-                                </p>
-                              </div>
-                            )}
-
-                            {/* Destination */}
-                            {ship.destination && typeof ship.destination === 'object' && (
-                              <div>
-                                <p className="text-gray-600 font-semibold">📍 To:</p>
-                                <p className="text-gray-700 font-mono text-[10px]">
-                                  {(ship.destination as any).lat?.toFixed(4)}°, {(ship.destination as any).lng?.toFixed(4)}°
-                                </p>
+                                <p className="text-gray-600 font-semibold">💡 Suggestion:</p>
+                                <p className="text-gray-700">{shipRerouteInfo.suggestion}</p>
                               </div>
                             )}
 
