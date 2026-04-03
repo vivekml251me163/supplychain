@@ -37,4 +37,3 @@ export default function DeleteButton({ userId }: { userId: string }) {
     </Button>
   )
 }
-}
