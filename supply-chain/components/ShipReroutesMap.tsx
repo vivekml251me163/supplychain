@@ -3,7 +3,7 @@
 import { MapContainer, TileLayer, Polyline, Marker, Popup, Circle } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -61,6 +61,29 @@ function interpolateRoute(points: Array<[number, number]>, steps: number = 10): 
 
 export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
   const [selectedRoute, setSelectedRoute] = useState<ShipReroute | null>(null)
+  const mapRef = useRef<L.Map | null>(null)
+
+  // Function to focus map on a specific route
+  const focusOnRoute = (route: ShipReroute) => {
+    if (!mapRef.current || !route.bestRoute || route.bestRoute.length === 0) return
+
+    const lats = route.bestRoute.map(p => p[0])
+    const lons = route.bestRoute.map(p => p[1])
+    
+    const minLat = Math.min(...lats)
+    const maxLat = Math.max(...lats)
+    const minLon = Math.min(...lons)
+    const maxLon = Math.max(...lons)
+
+    // Add padding around the bounds
+    const padding = 0.1
+    const bounds: L.LatLngBoundsExpression = [
+      [minLat - padding, minLon - padding],
+      [maxLat + padding, maxLon + padding]
+    ]
+
+    mapRef.current.fitBounds(bounds, { padding: [50, 50], duration: 0.5 })
+  }
 
   // Filter out invalid reroutes and validate bestRoute data
   const validReroutes = reroutes.filter(
@@ -102,15 +125,18 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
   const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899']
 
   return (
-    <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md">
+    <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md relative z-0">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <h2 className="text-gray-800 text-lg font-bold">🚢 Ship Reroutes Map</h2>
         <p className="text-gray-500 text-sm">Best routes suggested by AI based on weather and news impacts</p>
       </div>
 
-      {/* Map Container */}
-      <MapContainer
+      {/* Map Section - relative container for popup */}
+      <div className="relative">
+        {/* Map Container */}
+        <MapContainer
+        ref={mapRef}
         center={[centerLat, centerLon]}
         zoom={4}
         minZoom={2}
@@ -228,143 +254,93 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
 
       </MapContainer>
 
-      {/* Route Details Modal */}
+      {/* Route Details Popup Card - appears over map */}
       {selectedRoute && (
         <div 
-          className="fixed inset-0 flex items-center justify-end z-[9999] p-4 pointer-events-auto"
-          onClick={() => setSelectedRoute(null)}
+          className="absolute top-6 left-6 z-[1000] pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
         >
           <div 
-            className="bg-white rounded-2xl shadow-2xl w-full md:w-[45%] max-w-lg h-[70vh] overflow-y-auto flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-xl shadow-lg border border-gray-200 w-80 max-h-96 overflow-y-auto flex flex-col"
           >
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-6 text-white flex justify-between items-center border-b border-blue-700 flex-shrink-0">
+            {/* Popup Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white flex justify-between items-center border-b border-blue-700 flex-shrink-0">
               <div>
-                <h2 className="text-lg font-bold">🚢 Ship {selectedRoute.shipId}</h2>
-                <p className="text-blue-100 text-sm mt-1">Optimized Reroute Information</p>
+                <h2 className="text-sm font-bold">🚢 Ship {selectedRoute.shipId}</h2>
               </div>
               <button
                 onClick={() => setSelectedRoute(null)}
-                className="text-white hover:bg-blue-700 p-2 rounded-lg transition"
+                className="text-white hover:bg-blue-700 p-1 rounded transition text-lg leading-none"
               >
                 ✕
               </button>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-4 space-y-4 overflow-y-auto flex-1">
+            {/* Popup Content */}
+            <div className="p-3 space-y-2 overflow-y-auto flex-1">
               
               {/* AI Summary Section */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-200">
-                <div className="flex items-start gap-2">
-                  <span className="text-xl flex-shrink-0">🤖</span>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-800 mb-2 text-sm">AI Recommendation</h3>
-                    <p className="text-gray-700 leading-relaxed text-xs">
-                      {selectedRoute.suggestion || 'No AI recommendation available'}
-                    </p>
-                  </div>
+              {selectedRoute.suggestion && (
+                <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
+                  <p className="text-gray-700 text-xs leading-relaxed">
+                    {selectedRoute.suggestion}
+                  </p>
                 </div>
-              </div>
+              )}
 
-              {/* Route Information Grid */}
-              <div className="grid grid-cols-1 gap-3">
-                
-                {/* Route Coordinates */}
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <h4 className="font-bold text-gray-800 mb-2 text-xs flex items-center gap-2">
-                    📍 Route Points
-                  </h4>
-                  <div className="space-y-1 text-xs">
-                    {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
-                      <>
-                        <div>
-                          <p className="text-gray-600">Start:</p>
-                          <p className="font-mono text-gray-800 text-[10px]">
-                            {selectedRoute.bestRoute[0][0].toFixed(4)}°, {selectedRoute.bestRoute[0][1].toFixed(4)}°
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">End:</p>
-                          <p className="font-mono text-gray-800 text-[10px]">
-                            {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][0].toFixed(4)}°, {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][1].toFixed(4)}°
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">Waypoints: <span className="font-bold">{selectedRoute.bestRoute.length}</span></p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Impact Factors */}
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <h4 className="font-bold text-gray-800 mb-2 text-xs flex items-center gap-2">
-                    ⚠️ Impacts
-                  </h4>
-                  <div className="space-y-2 text-xs">
-                    {selectedRoute.affectedByWeather ? (
-                      <div className="p-2 bg-orange-50 border border-orange-200 rounded">
-                        <p className="text-[10px] font-bold text-orange-700 mb-1">🌪️ WEATHER</p>
-                        <p className="text-[10px] text-orange-600 line-clamp-2">
-                          {typeof selectedRoute.affectedByWeather === 'string' 
-                            ? selectedRoute.affectedByWeather 
-                            : JSON.stringify(selectedRoute.affectedByWeather).substring(0, 80)}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="text-[10px] text-gray-500">✓ No weather impact</div>
-                    )}
-                    {selectedRoute.affectedByNews ? (
-                      <div className="p-2 bg-blue-50 border border-blue-200 rounded">
-                        <p className="text-[10px] font-bold text-blue-700 mb-1">📰 NEWS</p>
-                        <p className="text-[10px] text-blue-600 line-clamp-2">
-                          {typeof selectedRoute.affectedByNews === 'string' 
-                            ? selectedRoute.affectedByNews 
-                            : JSON.stringify(selectedRoute.affectedByNews).substring(0, 80)}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="text-[10px] text-gray-500">✓ No news impact</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Full Waypoints List */}
+              {/* Route Coordinates */}
               {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <h4 className="font-bold text-gray-800 mb-2 text-xs">📌 Waypoints</h4>
-                  <div className="max-h-24 overflow-y-auto">
-                    <div className="space-y-1">
-                      {selectedRoute.bestRoute.map((point, idx) => (
-                        <div key={idx} className="flex items-center gap-1 p-1 bg-white rounded border border-gray-200 text-[10px]">
-                          <span className="font-bold text-gray-600 w-5">{idx + 1}</span>
-                          <code className="text-gray-700 flex-1 text-[9px]">
-                            {point[0].toFixed(4)}°, {point[1].toFixed(4)}°
-                          </code>
-                          {idx === 0 && <span className="px-1 py-0.5 bg-green-100 text-green-700 rounded text-[8px] font-bold">S</span>}
-                          {idx === selectedRoute.bestRoute.length - 1 && <span className="px-1 py-0.5 bg-red-100 text-red-700 rounded text-[8px] font-bold">E</span>}
-                        </div>
-                      ))}
+                <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
+                  <p className="text-gray-600 font-semibold mb-1">📍 Route Points</p>
+                  <div className="space-y-0.5">
+                    <div>
+                      <p className="text-gray-600 text-[10px]">Start:</p>
+                      <p className="font-mono text-gray-800 text-[9px]">
+                        {selectedRoute.bestRoute[0][0].toFixed(4)}°, {selectedRoute.bestRoute[0][1].toFixed(4)}°
+                      </p>
                     </div>
+                    <div>
+                      <p className="text-gray-600 text-[10px]">End:</p>
+                      <p className="font-mono text-gray-800 text-[9px]">
+                        {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][0].toFixed(4)}°, {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][1].toFixed(4)}°
+                      </p>
+                    </div>
+                    <p className="text-gray-600 text-[10px]">Waypoints: <span className="font-bold">{selectedRoute.bestRoute.length}</span></p>
                   </div>
                 </div>
               )}
 
+              {/* Impact Factors */}
+              <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
+                <p className="text-gray-600 font-semibold mb-1">⚠️ Impacts</p>
+                <div className="space-y-1">
+                  {selectedRoute.affectedByWeather ? (
+                    <div className="p-1 bg-orange-50 border border-orange-200 rounded text-[10px]">
+                      <p className="font-bold text-orange-700">🌪️ Weather</p>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-gray-500">✓ No weather impact</div>
+                  )}
+                  {selectedRoute.affectedByNews ? (
+                    <div className="p-1 bg-blue-50 border border-blue-200 rounded text-[10px]">
+                      <p className="font-bold text-blue-700">📰 News</p>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-gray-500">✓ No news impact</div>
+                  )}
+                </div>
+              </div>
+
               {/* Metadata */}
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-2 text-xs">ℹ️ Info</h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
                     <p className="text-gray-600 text-[10px]">Ship ID</p>
-                    <p className="font-bold text-gray-800">{selectedRoute.shipId}</p>
+                    <p className="font-bold text-gray-800 text-sm">{selectedRoute.shipId}</p>
                   </div>
                   <div>
                     <p className="text-gray-600 text-[10px]">Route ID</p>
-                    <p className="font-bold text-gray-800">{selectedRoute.id}</p>
+                    <p className="font-bold text-gray-800 text-sm">{selectedRoute.id}</p>
                   </div>
                 </div>
               </div>
@@ -372,6 +348,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
           </div>
         </div>
       )}
+      </div>
 
       {/* Route Details Below Map */}
       <div className="p-4 border-t border-gray-200 bg-gray-50">
@@ -380,7 +357,14 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
           {validReroutes.map((reroute, idx) => {
             const color = colors[idx % colors.length]
             return (
-              <div key={reroute.id} className="p-3 bg-white rounded-lg border border-gray-200">
+              <div 
+                key={reroute.id} 
+                onClick={() => {
+                  setSelectedRoute(reroute)
+                  focusOnRoute(reroute)
+                }}
+                className="p-3 bg-white rounded-lg border border-gray-200 cursor-pointer hover:shadow-md hover:border-blue-300 transition"
+              >
                 <div className="flex items-start gap-3">
                   <div
                     className="w-4 h-4 rounded-full mt-1 flex-shrink-0"
