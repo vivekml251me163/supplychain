@@ -71,7 +71,9 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
   useEffect(() => {
     if (selectedRoute && mapWrapperRef.current) {
       setTimeout(() => {
-        mapWrapperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const scrollTop = mapWrapperRef.current?.getBoundingClientRect().top ?? 0
+        const offset = scrollTop + window.scrollY - 100 // Scroll more up with 100px buffer
+        window.scrollTo({ top: offset, behavior: 'smooth' })
       }, 100)
     }
   }, [selectedRoute])
@@ -89,13 +91,13 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
     const maxLon = Math.max(...lons)
 
     // Add padding around the bounds
-    const padding = 0.1
+    const padding = 0.15
     const bounds: L.LatLngBoundsExpression = [
       [minLat - padding, minLon - padding],
       [maxLat + padding, maxLon + padding]
     ]
 
-    mapRef.current.fitBounds(bounds, { padding: [50, 50], duration: 0.5 })
+    mapRef.current.fitBounds(bounds, { padding: [120, 120], duration: 0.5 })
   }
 
   // Filter out invalid reroutes and validate bestRoute data
@@ -270,7 +272,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
       {/* Route Details Popup Card - appears over map */}
       {selectedRoute && (
         <div 
-          className="absolute top-6 left-6 z-[1000] pointer-events-auto"
+          className="absolute top-6 right-6 z-[1000] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div 
