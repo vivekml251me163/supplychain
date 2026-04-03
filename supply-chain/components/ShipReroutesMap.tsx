@@ -3,7 +3,7 @@
 import { MapContainer, TileLayer, Polyline, Marker, Popup, Circle } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -61,7 +61,20 @@ function interpolateRoute(points: Array<[number, number]>, steps: number = 10): 
 
 export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
   const [selectedRoute, setSelectedRoute] = useState<ShipReroute | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
   const mapRef = useRef<L.Map | null>(null)
+  const mapWrapperRef = useRef<HTMLDivElement | null>(null)
+
+  const itemsPerPage = 4 // Show 4 routes per page
+
+  // Scroll to map when route is selected
+  useEffect(() => {
+    if (selectedRoute && mapWrapperRef.current) {
+      setTimeout(() => {
+        mapWrapperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 100)
+    }
+  }, [selectedRoute])
 
   // Function to focus map on a specific route
   const focusOnRoute = (route: ShipReroute) => {
@@ -133,7 +146,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
       </div>
 
       {/* Map Section - relative container for popup */}
-      <div className="relative">
+      <div className="relative" ref={mapWrapperRef}>
         {/* Map Container */}
         <MapContainer
         ref={mapRef}
@@ -352,47 +365,97 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
 
       {/* Route Details Below Map */}
       <div className="p-4 border-t border-gray-200 bg-gray-50">
-        <h3 className="text-sm font-bold text-gray-800 mb-3">Route Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {validReroutes.map((reroute, idx) => {
-            const color = colors[idx % colors.length]
-            return (
-              <div 
-                key={reroute.id} 
-                onClick={() => {
-                  setSelectedRoute(reroute)
-                  focusOnRoute(reroute)
-                }}
-                className="p-3 bg-white rounded-lg border border-gray-200 cursor-pointer hover:shadow-md hover:border-blue-300 transition"
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="w-4 h-4 rounded-full mt-1 flex-shrink-0"
-                    style={{ backgroundColor: color }}
-                  ></div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-800 text-sm">Ship {reroute.shipId}</p>
-                    <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                      {reroute.suggestion || 'No suggestion provided'}
-                    </p>
-                    <div className="flex gap-2 mt-2">
-                      {reroute.affectedByWeather && (
-                        <span className="inline-block px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold">
-                          🌪️ Weather
-                        </span>
-                      )}
-                      {reroute.affectedByNews && (
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
-                          📰 News
-                        </span>
-                      )}
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-sm font-bold text-gray-800">Route Details</h3>
+          <div className="text-xs text-gray-600">
+            Page {currentPage} of {Math.ceil(validReroutes.length / itemsPerPage)}
+          </div>
+        </div>
+
+        {/* Routes Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {validReroutes
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((reroute, idx) => {
+              const color = colors[(validReroutes.indexOf(reroute)) % colors.length]
+              return (
+                <div 
+                  key={reroute.id} 
+                  onClick={() => {
+                    setSelectedRoute(reroute)
+                    focusOnRoute(reroute)
+                  }}
+                  className="p-3 bg-white rounded-lg border border-gray-200 cursor-pointer hover:shadow-md hover:border-blue-300 transition"
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="w-4 h-4 rounded-full mt-1 flex-shrink-0"
+                      style={{ backgroundColor: color }}
+                    ></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-800 text-sm">Ship {reroute.shipId}</p>
+                      <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                        {reroute.suggestion || 'No suggestion provided'}
+                      </p>
+                      <div className="flex gap-2 mt-2">
+                        {reroute.affectedByWeather && (
+                          <span className="inline-block px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold">
+                            🌪️ Weather
+                          </span>
+                        )}
+                        {reroute.affectedByNews && (
+                          <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                            📰 News
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
         </div>
+
+        {/* Pagination Controls */}
+        {Math.ceil(validReroutes.length / itemsPerPage) > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-2 border-t border-gray-200">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              ← Previous
+            </button>
+
+            <div className="flex gap-1">
+              {Array.from({ length: Math.ceil(validReroutes.length / itemsPerPage) }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
+                      currentPage === page
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+            </div>
+
+            <button
+              onClick={() =>
+                setCurrentPage(prev => Math.min(Math.ceil(validReroutes.length / itemsPerPage), prev + 1))
+              }
+              disabled={currentPage === Math.ceil(validReroutes.length / itemsPerPage)}
+              className="px-3 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
