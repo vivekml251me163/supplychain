@@ -45,59 +45,59 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-1">Register</h1>
-        <p className="text-gray-500 text-sm mb-6">Create your account</p>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-1 poppins-bold">Register</h1>
+        <p className="text-gray-500 text-sm mb-6 poppins-regular">Create your account</p>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg mb-4 poppins-regular">
             {error}
           </div>
         )}
 
         <div className="flex flex-col gap-4">
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Full Name</label>
+            <label className="text-sm text-gray-600 mb-1 block poppins-medium">Full Name</label>
             <input
               type="text"
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
               onKeyPress={handleKeyPress}
               placeholder="John Doe"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400 poppins-regular"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Email</label>
+            <label className="text-sm text-gray-600 mb-1 block poppins-medium">Email</label>
             <input
               type="email"
               value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })}
               onKeyPress={handleKeyPress}
               placeholder="you@example.com"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400 poppins-regular"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Password</label>
+            <label className="text-sm text-gray-600 mb-1 block poppins-medium">Password</label>
             <input
               type="password"
               value={form.password}
               onChange={e => setForm({ ...form, password: e.target.value })}
               onKeyPress={handleKeyPress}
               placeholder="••••••••"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400 poppins-regular"
             />
           </div>
 
           <div>
-            <label className="text-sm text-gray-600 mb-1 block">Role</label>
+            <label className="text-sm text-gray-600 mb-1 block poppins-medium">Role</label>
             <select
               value={form.role}
               onChange={e => setForm({ ...form, role: e.target.value })}
               onKeyPress={handleKeyPress}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400 poppins-regular"
             >
               <option value="driver">Driver</option>
               <option value="manager">Manager</option>
@@ -107,7 +107,7 @@ export default function RegisterPage() {
 
           {form.role === 'driver' && (
             <div>
-              <label className="text-sm text-gray-600 mb-1 block">Truck Capacity (units)</label>
+              <label className="text-sm text-gray-600 mb-1 block poppins-medium">Truck Capacity (units)</label>
               <input
                 type="number"
                 step="0.1"
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 onChange={e => setForm({ ...form, capacity: e.target.value })}
                 onKeyPress={handleKeyPress}
                 placeholder="e.g., 1000"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400 poppins-regular"
               />
             </div>
           )}
@@ -123,14 +123,14 @@ export default function RegisterPage() {
           <button
             onClick={handleRegister}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition poppins-medium"
           >
             {loading ? 'Creating account...' : 'Register'}
           </button>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-gray-500 poppins-regular">
             Already have an account?{' '}
-            <a href="/login" className="text-blue-600 hover:underline">Sign in</a>
+            <a href="/login" className="text-blue-600 hover:underline poppins-medium">Sign in</a>
           </p>
         </div>
       </div>

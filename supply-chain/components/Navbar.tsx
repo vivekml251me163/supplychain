@@ -29,7 +29,7 @@ export default function Navbar() {
   }, [])
 
   const navLinkClass = (isActive: boolean) => 
-    `text-sm font-medium transition ${
+    `text-sm font-medium transition poppins-medium ${
       isActive 
         ? 'text-emerald-600' 
         : 'text-gray-600 hover:text-gray-900'
@@ -50,10 +50,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         {/* Left - Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <div className="h-8 w-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs group-hover:shadow-md transition">
+          <div className="h-8 w-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs group-hover:shadow-md transition poppins-bold">
             SC
           </div>
-          <span className="text-lg font-bold text-gray-900 hidden sm:inline tracking-tight">SupplyChain</span>
+          <span className="text-lg font-bold text-gray-900 hidden sm:inline tracking-tight poppins-bold">SupplyChain</span>
         </Link>
 
         {/* Middle - Nav Links */}
@@ -115,13 +115,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="text-sm text-gray-600 font-medium hover:text-gray-900 transition hidden sm:inline px-3 py-2"
+                className="text-sm text-gray-600 font-medium hover:text-gray-900 transition hidden sm:inline px-3 py-2 poppins-medium"
               >
                 Sign In
               </Link>
               <Link
                 href="/register"
-                className="text-sm bg-emerald-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-emerald-700 transition"
+                className="text-sm bg-emerald-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-emerald-700 transition poppins-medium"
               >
                 Start Free
               </Link>
@@ -133,14 +133,14 @@ export default function Navbar() {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition focus:outline-none"
               >
-                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold">
+                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold poppins-bold">
                   {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
                 </div>
                 <div className="hidden sm:flex flex-col items-start">
-                  <p className="text-xs font-semibold text-gray-900 truncate">
+                  <p className="text-xs font-semibold text-gray-900 truncate poppins-semibold">
                     {user?.name || user?.email?.split('@')[0]}
                   </p>
-                  <p className="text-[10px] text-gray-500">{getRoleDisplay()}</p>
+                  <p className="text-[10px] text-gray-500 poppins-regular">{getRoleDisplay()}</p>
                 </div>
                 <svg
                   className={`w-4 h-4 text-gray-600 transition ${dropdownOpen ? 'rotate-180' : ''}`}
@@ -158,25 +158,25 @@ export default function Navbar() {
                   {/* User Profile Section */}
                   <div className="p-4 border-b border-gray-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold poppins-bold">
                         {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate">
+                        <p className="text-sm font-semibold text-gray-900 truncate poppins-semibold">
                           {user?.name || 'User'}
                         </p>
-                        <p className="text-xs text-gray-600 truncate">
+                        <p className="text-xs text-gray-600 truncate poppins-regular">
                           {user?.email}
                         </p>
                       </div>
-                      <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded">
+                      <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded poppins-semibold">
                         {getRoleDisplay()}
                       </span>
                     </div>
                   </div>
 
                   {/* Menu Items */}
-                  <ul className="px-2 py-2 text-sm text-gray-700 font-medium">
+                  <ul className="px-2 py-2 text-sm text-gray-700 font-medium poppins-medium">
                     <li>
                       <button
                         onClick={() => {

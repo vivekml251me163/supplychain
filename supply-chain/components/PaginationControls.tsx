@@ -64,7 +64,7 @@ export default function PaginationControls({
       <button
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="relative inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 transition-colors"
+        className="relative inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 transition-colors poppins-medium"
         title="Previous page"
       >
         <svg
@@ -92,7 +92,7 @@ export default function PaginationControls({
           return (
             <span
               key={`ellipsis-${index}`}
-              className="relative inline-flex items-center justify-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300"
+              className="relative inline-flex items-center justify-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 poppins-regular"
             >
               …
             </span>
@@ -103,7 +103,7 @@ export default function PaginationControls({
           <button
             key={page}
             onClick={() => onPageChange(page as number)}
-            className={`relative inline-flex items-center justify-center px-3 py-2 text-sm font-medium border transition-colors ${
+            className={`relative inline-flex items-center justify-center px-3 py-2 text-sm font-medium border transition-colors poppins-medium ${
               currentPage === page
                 ? 'z-10 bg-blue-50 border-blue-500 text-blue-600 hover:bg-blue-100'
                 : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
@@ -118,7 +118,7 @@ export default function PaginationControls({
       <button
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="relative inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 transition-colors"
+        className="relative inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 transition-colors poppins-medium"
         title="Next page"
       >
         <svg

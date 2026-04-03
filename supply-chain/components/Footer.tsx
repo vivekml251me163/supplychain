@@ -11,19 +11,19 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold">
+              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold poppins-bold">
                 SC
               </div>
-              <span className="font-bold text-white">SupplyChain</span>
+              <span className="font-bold text-white poppins-bold">SupplyChain</span>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm text-gray-400 leading-relaxed poppins-regular">
               Optimize your logistics with intelligent route planning and real-time tracking.
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Product</h3>
+            <h3 className="font-semibold text-white mb-4 poppins-semibold">Product</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/routes" className="hover:text-green-400 transition">

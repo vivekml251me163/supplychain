@@ -20,18 +20,18 @@ export default async function Page() {
           {/* Center-aligned Hero Content */}
           <div className="text-center space-y-8">
             <div className="inline-block">
-              <span className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 rounded-full px-3 py-1.5 text-xs font-semibold tracking-tight">
+              <span className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 rounded-full px-3 py-1.5 text-xs font-semibold tracking-tight poppins-semibold">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
                 The Modern Logistics Platform
               </span>
             </div>
             
-            <h1 className="text-6xl lg:text-7xl font-bold text-gray-900 leading-tight tracking-tight">
+            <h1 className="text-6xl lg:text-7xl font-bold text-gray-900 leading-tight tracking-tight poppins-bold">
               Manage your supply with
               <span className="block bg-linear-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">precision and clarity</span>
             </h1>
             
-            <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto poppins-regular">
               Real-time tracking, intelligent routing, weather integration, and role-based access—all in one unified platform built for modern logistics operations.
             </p>
             
@@ -40,14 +40,14 @@ export default async function Page() {
                 <>
                   <Link
                     href="/register"
-                    className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white font-semibold px-8 py-3.5 rounded-lg hover:bg-emerald-700 hover:-translate-y-0.5 transition active:translate-y-0"
+                    className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white font-semibold px-8 py-3.5 rounded-lg hover:bg-emerald-700 hover:-translate-y-0.5 transition active:translate-y-0 poppins-semibold"
                   >
                     Start Free Trial
                     <span>→</span>
                   </Link>
                   <Link
                     href="/login"
-                    className="inline-flex items-center justify-center gap-2 border border-gray-300 text-gray-900 font-semibold px-8 py-3.5 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition"
+                    className="inline-flex items-center justify-center gap-2 border border-gray-300 text-gray-900 font-semibold px-8 py-3.5 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition poppins-semibold"
                   >
                     Sign In
                   </Link>
@@ -59,8 +59,8 @@ export default async function Page() {
 
             {/* Social Proof */}
             <div className="flex items-center justify-center gap-2 pt-16">
-              <p className="text-xs text-slate-500">
-                Joined by <span className="font-semibold text-slate-600">500+ companies worldwide</span>
+              <p className="text-xs text-slate-500 poppins-regular">
+                Joined by <span className="font-semibold text-slate-600 poppins-semibold">500+ companies worldwide</span>
               </p>
             </div>
           </div>
@@ -96,10 +96,10 @@ export default async function Page() {
         <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gray-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-24">
-              <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
+              <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight poppins-bold">
                 Everything you need
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed poppins-regular">
                 Powerful features designed to optimize your logistics operations
               </p>
             </div>
@@ -115,8 +115,8 @@ export default async function Page() {
               ].map((feature, idx) => (
                 <div key={idx} className="group relative bg-white rounded-lg p-8 border border-slate-100 hover:border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                   <div className="text-3xl mb-4">{feature.icon}</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 poppins-semibold">{feature.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed poppins-regular">{feature.desc}</p>
                 </div>
               ))}
             </div>
@@ -126,29 +126,29 @@ export default async function Page() {
         <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gray-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-24">
-              <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-4 tracking-tight">
+              <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-4 tracking-tight poppins-bold">
                 Welcome back
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-xl text-gray-600 poppins-regular">
                 Access your dashboard and manage operations
               </p>
               
               <div className="mt-8 inline-flex items-center gap-3 bg-gray-100 rounded-full px-4 py-2.5">
                 <span className="inline-block w-2 h-2 bg-emerald-500 rounded-full"></span>
-                <span className="font-semibold text-gray-900 capitalize text-sm">{user?.role}</span>
+                <span className="font-semibold text-gray-900 capitalize text-sm poppins-semibold">{user?.role}</span>
                 {user?.isVerified ? (
-                  <span className="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-semibold">✓ Verified</span>
+                  <span className="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-semibold poppins-semibold">✓ Verified</span>
                 ) : (
-                  <span className="text-xs bg-gray-200 text-gray-700 px-2.5 py-0.5 rounded-full font-semibold">⏳ Pending</span>
+                  <span className="text-xs bg-gray-200 text-gray-700 px-2.5 py-0.5 rounded-full font-semibold poppins-semibold">⏳ Pending</span>
                 )}
               </div>
             </div>
 
             {!user?.isVerified && user?.role !== 'admin' && (
               <div className="max-w-3xl mx-auto mb-12 bg-gray-100 border border-gray-300 rounded-lg p-4">
-                <p className="text-gray-900 flex items-start gap-3 text-sm">
+                <p className="text-gray-900 flex items-start gap-3 text-sm poppins-regular">
                   <span className="text-lg">ℹ️</span>
-                  <span><strong>Verification Pending:</strong> Your account is awaiting admin verification. Some features may be restricted.</span>
+                  <span><strong className="poppins-semibold">Verification Pending:</strong> Your account is awaiting admin verification. Some features may be restricted.</span>
                 </p>
               </div>
             )}
@@ -159,20 +159,20 @@ export default async function Page() {
                 <>
                   <Link href="/roads" className="group relative bg-white rounded-lg p-6 border border-gray-200 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1 transition duration-300">
                     <div className="text-3xl mb-4">🛣️</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Road Routes</h3>
-                    <p className="text-gray-600 text-sm">Manage road-based logistics efficiently</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 poppins-semibold">Road Routes</h3>
+                    <p className="text-gray-600 text-sm poppins-regular">Manage road-based logistics efficiently</p>
                   </Link>
 
                   <Link href="/ships" className="group relative bg-white rounded-lg p-6 border border-gray-200 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1 transition duration-300">
                     <div className="text-3xl mb-4">⛴️</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Ship Routes</h3>
-                    <p className="text-gray-600 text-sm">Track maritime operations with real-time data</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 poppins-semibold">Ship Routes</h3>
+                    <p className="text-gray-600 text-sm poppins-regular">Track maritime operations with real-time data</p>
                   </Link>
 
                   <Link href="/routes" className="group relative bg-white rounded-lg p-6 border border-gray-200 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1 transition duration-300">
                     <div className="text-3xl mb-4">📍</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">All Routes</h3>
-                    <p className="text-gray-600 text-sm">View complete logistics network overview</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 poppins-semibold">All Routes</h3>
+                    <p className="text-gray-600 text-sm poppins-regular">View complete logistics network overview</p>
                   </Link>
                 </>
               )}
@@ -180,8 +180,8 @@ export default async function Page() {
               {user?.role === 'admin' && (
                 <Link href="/admin" className="group relative bg-white rounded-lg p-6 border border-gray-200 hover:border-gray-300 hover:shadow-lg hover:-translate-y-1 transition duration-300">
                   <div className="text-3xl mb-4">⚙️</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Admin Panel</h3>
-                  <p className="text-gray-600 text-sm">Manage users, roles, and system settings</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 poppins-semibold">Admin Panel</h3>
+                  <p className="text-gray-600 text-sm poppins-regular">Manage users, roles, and system settings</p>
                 </Link>
               )}
             </div>
@@ -195,8 +195,8 @@ export default async function Page() {
           <div className="max-w-7xl mx-auto relative">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
               <div className="text-center">
-                <div className="text-5xl lg:text-6xl font-bold text-white tracking-tight">1000+</div>
-                <p className="text-slate-400 text-sm font-light mt-2 tracking-wide">Active Routes</p>
+                <div className="text-5xl lg:text-6xl font-bold text-white tracking-tight poppins-bold">1000+</div>
+                <p className="text-slate-400 text-sm font-light mt-2 tracking-wide poppins-regular">Active Routes</p>
               </div>
               <div className="text-center">
                 <div className="text-5xl lg:text-6xl font-bold text-white tracking-tight">500+</div>
