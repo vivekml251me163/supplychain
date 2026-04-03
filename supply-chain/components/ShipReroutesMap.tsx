@@ -62,8 +62,12 @@ function interpolateRoute(points: Array<[number, number]>, steps: number = 10): 
 export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
   const [selectedRoute, setSelectedRoute] = useState<ShipReroute | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const mapRef = useRef<L.Map | null>(null)
   const mapWrapperRef = useRef<HTMLDivElement | null>(null)
+  const popupRef = useRef<HTMLDivElement | null>(null)
 
   const itemsPerPage = 4 // Show 4 routes per page
 
@@ -75,8 +79,35 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
         const offset = scrollTop + window.scrollY - 100 // Scroll more up with 100px buffer
         window.scrollTo({ top: offset, behavior: 'smooth' })
       }, 100)
+      // Reset popup position when new route is selected
+      setPopupPosition({ x: 0, y: 0 })
     }
   }, [selectedRoute])
+
+  // Handle mouse down on popup header for dragging
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!popupRef.current) return
+    setIsDragging(true)
+    const rect = popupRef.current.getBoundingClientRect()
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    })
+  }
+
+  // Handle mouse move for dragging
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return
+    setPopupPosition({
+      x: e.clientX - dragOffset.x,
+      y: e.clientY - dragOffset.y
+    })
+  }
+
+  // Handle mouse up to stop dragging
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
 
   // Function to focus map on a specific route
   const focusOnRoute = (route: ShipReroute) => {
@@ -272,20 +303,33 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
       {/* Route Details Popup Card - appears over map */}
       {selectedRoute && (
         <div 
-          className="absolute top-6 right-6 z-[1000] pointer-events-auto"
+          ref={popupRef}
+          className="fixed z-[1000] pointer-events-auto"
+          style={{
+            left: `${popupPosition.x}px`,
+            top: `${popupPosition.y}px`,
+            right: popupPosition.x === 0 ? '24px' : 'auto',
+            userSelect: isDragging ? 'none' : 'auto'
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
           onClick={(e) => e.stopPropagation()}
         >
           <div 
             className="bg-white rounded-xl shadow-lg border border-gray-200 w-80 max-h-96 overflow-y-auto flex flex-col"
           >
-            {/* Popup Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white flex justify-between items-center border-b border-blue-700 flex-shrink-0">
+            {/* Popup Header - Draggable */}
+            <div 
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white flex justify-between items-center border-b border-blue-700 flex-shrink-0 cursor-move select-none"
+              onMouseDown={handleMouseDown}
+            >
               <div>
                 <h2 className="text-sm font-bold">🚢 Ship {selectedRoute.shipId}</h2>
               </div>
               <button
                 onClick={() => setSelectedRoute(null)}
-                className="text-white hover:bg-blue-700 p-1 rounded transition text-lg leading-none"
+                className="text-white hover:bg-blue-700 p-1 rounded transition text-lg leading-none cursor-pointer"
               >
                 ✕
               </button>

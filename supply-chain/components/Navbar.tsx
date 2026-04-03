@@ -33,9 +33,37 @@ export default function Navbar() {
 
         {/* Middle - Nav Links */}
         <div className="hidden lg:flex items-center gap-12 flex-1 ml-16">
-          <Link href="/" className={navLinkClass(pathname === '/')}>
-            Home
-          </Link>
+          {!session ? (
+            <Link href="/" className={navLinkClass(pathname === '/')}>
+              Home
+            </Link>
+          ) : (
+            <>
+              {user?.role === 'manager' && user?.isVerified && (
+                <Link href="/manager/road" className={navLinkClass(isManagerPanel)}>
+                  My Panel
+                </Link>
+              )}
+
+              {user?.role === 'manager_ship' && user?.isVerified && (
+                <Link href="/manager/ship" className={navLinkClass(isManagerPanel)}>
+                  My Panel
+                </Link>
+              )}
+
+              {user?.role === 'driver' && user?.isVerified && (
+                <Link href="/driver" className={navLinkClass(isDriverPanel)}>
+                  My Panel
+                </Link>
+              )}
+
+              {user?.role === 'admin' && (
+                <Link href="/admin" className={navLinkClass(isAdminPanel)}>
+                  My Panel
+                </Link>
+              )}
+            </>
+          )}
 
           {session && (user?.isVerified || user?.role === 'admin') && (
             <Link href="/routes" className={navLinkClass(pathname?.includes('/routes'))}>
@@ -54,30 +82,6 @@ export default function Navbar() {
           <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
             Ship Reroutes
           </Link>
-
-          {user?.role === 'manager' && user?.isVerified && (
-            <Link href="/manager/road" className={navLinkClass(isManagerPanel)}>
-              Manager
-            </Link>
-          )}
-
-          {user?.role === 'manager_ship' && user?.isVerified && (
-            <Link href="/manager/ship" className={navLinkClass(isManagerPanel)}>
-              Ships
-            </Link>
-          )}
-
-          {user?.role === 'driver' && user?.isVerified && (
-            <Link href="/driver" className={navLinkClass(isDriverPanel)}>
-              Driver
-            </Link>
-          )}
-
-          {user?.role === 'admin' && (
-            <Link href="/admin" className={navLinkClass(isAdminPanel)}>
-              Admin
-            </Link>
-          )}
         </div>
 
         {/* Right - Auth */}
