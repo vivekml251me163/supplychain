@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'SupplyChain - Intelligent Logistics Management',
+  title: 'SupplyChain - Intelligent Logistics  Management',
   description: 'Optimize your supply chain with real-time tracking, intelligent routing, and weather integration.',
 }
 
