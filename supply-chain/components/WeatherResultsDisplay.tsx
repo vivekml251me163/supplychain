@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import PaginationControls from './PaginationControls'
 
 interface WeatherResult {
   id: number
@@ -146,57 +147,13 @@ export default function WeatherResultsDisplay({ weather }: WeatherResultsDisplay
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1.5 px-6 py-4 border-t border-gray-200 bg-gray-50">
-
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition text-sm"
-          >‹</button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-            const show = page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1
-            const isEllipsis = page === 2 && currentPage > 3
-
-            if (isEllipsis) {
-              return (
-                <span key="ellipsis-start" className="text-gray-400 font-bold">
-                  …
-                </span>
-              )
-            }
-            if (page === totalPages - 1 && currentPage < totalPages - 2) {
-              return (
-                <span key="ellipsis-end" className="text-gray-400 font-bold">
-                  …
-                </span>
-              )
-            }
-            if (!show) return null
-
-            return (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg font-bold transition ${
-                  page === currentPage
-                    ? 'bg-blue-600 text-white border border-blue-600'
-                    : 'border border-gray-300 text-gray-600 hover:bg-white'
-                }`}
-              >
-                {page}
-              </button>
-            )
-          })}
-
-          <button
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition text-sm"
-          >›</button>
-        </div>
-      )}
+      <div className="flex items-center justify-center py-4 border-t border-gray-200">
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </div>
   )
 }

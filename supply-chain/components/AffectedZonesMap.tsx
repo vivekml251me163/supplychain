@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import 'leaflet/dist/leaflet.css'
+import PaginationControls from './PaginationControls'
 
 interface Zone {
   id: number
@@ -321,46 +322,13 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-1.5 px-6 py-4 border-t border-gray-200">
-
-            <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition text-sm"
-            >‹</button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-              const show = page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1
-              if (!show) {
-                if (page === 2 || page === totalPages - 1) {
-                  return <span key={page} className="text-xs text-gray-400 px-1">…</span>
-                }
-                return null
-              }
-              return (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold transition ${
-                    currentPage === page
-                      ? 'bg-emerald-500 text-white border border-emerald-600 shadow-sm scale-110'
-                      : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {page}
-                </button>
-              )
-            })}
-
-            <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 font-bold hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition text-sm"
-            >›</button>
-
-          </div>
-        )}
+        <div className="flex items-center justify-center py-4 border-t border-gray-200">
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       </div>
 
     </div>

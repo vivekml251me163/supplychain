@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Polyline, Marker, Popup, Circle } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import PaginationControls from './PaginationControls'
 import { useState, useRef, useEffect } from 'react'
 
 // Fix for default marker icons in react-leaflet
@@ -463,45 +464,13 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
         </div>
 
         {/* Pagination Controls */}
-        {Math.ceil(validReroutes.length / itemsPerPage) > 1 && (
-          <div className="flex items-center justify-center gap-2 pt-2 border-t border-gray-200">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              ← Previous
-            </button>
-
-            <div className="flex gap-1">
-              {Array.from({ length: Math.ceil(validReroutes.length / itemsPerPage) }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-2 text-sm font-semibold rounded-lg transition ${
-                      currentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
-            </div>
-
-            <button
-              onClick={() =>
-                setCurrentPage(prev => Math.min(Math.ceil(validReroutes.length / itemsPerPage), prev + 1))
-              }
-              disabled={currentPage === Math.ceil(validReroutes.length / itemsPerPage)}
-              className="px-3 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Next →
-            </button>
-          </div>
-        )}
+        <div className="flex items-center justify-center pt-4 border-t border-gray-200">
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={Math.ceil(validReroutes.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       </div>
     </div>
   )
