@@ -10,20 +10,60 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // not logged in → redirect to login
-  // if (!token) {
-  //   return NextResponse.redirect(new URL('/login', request.url))
-  // }
+  // Role-based panel mapping
+  const rolePanelMap: { [key: string]: string } = {
+    manager: '/manager/road',
+    manager_ship: '/manager/ship',
+    driver: '/driver',
+    admin: '/admin',
+  }
 
-  // not verified and not admin → redirect to home
-  // if (!token.isVerified && token.role !== 'admin') {
-  //   return NextResponse.redirect(new URL('/', request.url))
-  // }
+  // If user is logged in and accessing home page, redirect to their panel
+  if (token && pathname === '/') {
+    const userRole = token.role as string
+    const panelUrl = rolePanelMap[userRole]
+
+    if (panelUrl) {
+      return NextResponse.redirect(new URL(panelUrl, request.url))
+    }
+  }
+
+  // Role-based route protection
+  const roleRouteMap: { [key: string]: string[] } = {
+    manager: ['/manager/road', '/manager/assignment'],
+    manager_ship: ['/manager/ship'],
+    driver: ['/driver', '/driver/assignment'],
+    admin: ['/admin'],
+  }
+
+  const userRole = token?.role as string
+  const allowedRoutes = roleRouteMap[userRole] || []
+
+  // Check if current route requires a specific role
+  const isProtectedRoute = Object.values(roleRouteMap).flat().some(route => pathname.startsWith(route))
+
+  if (isProtectedRoute) {
+    // Check if user's role has access to this route
+    const hasAccess = allowedRoutes.some(route => pathname.startsWith(route))
+
+    if (!hasAccess) {
+      // Redirect to home if role doesn't match route
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
 
   return NextResponse.next()
 }
  
 
 export const config = {
-  matcher: ["/roads/:path*", "/ships/:path*",'/admin/:path*'],
+  matcher: [
+    '/',
+    '/manager/road/:path*',
+    '/manager/ship/:path*',
+    '/manager/assignment/:path*',
+    '/driver/:path*',
+    '/driver/assignment/:path*',
+    '/admin/:path*'
+  ],
 };

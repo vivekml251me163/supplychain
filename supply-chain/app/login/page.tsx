@@ -1,57 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { signIn } from 'next-auth/react'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { data: session } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [requestingLocation, setRequestingLocation] = useState(false)
-
-  // Handle geolocation request for drivers after session is available
-  useEffect(() => {
-    if (session?.user && requestingLocation) {
-      const user = session.user as any
-      if (user.role === 'driver' && typeof navigator !== 'undefined' && 'geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const { latitude, longitude } = position.coords
-            try {
-              await fetch('/api/driver/location', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lat: latitude, lon: longitude }),
-              })
-            } catch (error) {
-              console.error('Failed to update location:', error)
-            } finally {
-              router.push('/')
-              setLoading(false)
-              setRequestingLocation(false)
-            }
-          },
-          (error) => {
-            console.error('Geolocation error:', error)
-            router.push('/')
-            setLoading(false)
-            setRequestingLocation(false)
-          },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        )
-      } else {
-        // If not a driver, just redirect
-        router.push('/')
-        setLoading(false)
-        setRequestingLocation(false)
-      }
-    }
-  }, [session, requestingLocation, router])
 
   async function handleLogin() {
     setLoading(true)
@@ -66,8 +22,16 @@ export default function LoginPage() {
       setError('Invalid email or password')
       setLoading(false)
     } else {
-      // Signal that we should request location once session is available
-      setRequestingLocation(true)
+      // Let middleware handle the redirect based on role
+      await new Promise(resolve => setTimeout(resolve, 500))
+      window.location.href = '/'
+    }
+  }
+
+  // Handle Enter key on form inputs
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !loading) {
+      handleLogin()
     }
   }
 
@@ -85,7 +49,7 @@ export default function LoginPage() {
 
         {loading && (
           <div className="bg-blue-50 border border-blue-200 text-blue-600 text-sm p-3 rounded-lg mb-4">
-            {requestingLocation ? 'Requesting your location...' : 'Signing in...'}
+            Signing in...
           </div>
         )}
 
@@ -96,6 +60,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="you@example.com"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             />
@@ -107,6 +72,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="••••••••"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             />

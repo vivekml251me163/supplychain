@@ -1,16 +1,10 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import ShipManagerClient from '@/components/ShipManagerClient'
 
 export default async function ShipManagerPage() {
   const session = await getServerSession(authOptions)
   const user = session?.user as any
-
-  // Only allow manager_ship role
-  if (!session || user?.role !== 'manager_ship') {
-    redirect('/')
-  }
 
   return (
     <main className="min-h-screen bg-gray-50">

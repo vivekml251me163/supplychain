@@ -35,6 +35,13 @@ export default function RegisterPage() {
     setLoading(false)
   }
 
+  // Handle Enter key on form inputs
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !loading) {
+      handleRegister()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-md">
@@ -54,6 +61,7 @@ export default function RegisterPage() {
               type="text"
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
+              onKeyPress={handleKeyPress}
               placeholder="John Doe"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             />
@@ -65,6 +73,7 @@ export default function RegisterPage() {
               type="email"
               value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })}
+              onKeyPress={handleKeyPress}
               placeholder="you@example.com"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             />
@@ -76,6 +85,7 @@ export default function RegisterPage() {
               type="password"
               value={form.password}
               onChange={e => setForm({ ...form, password: e.target.value })}
+              onKeyPress={handleKeyPress}
               placeholder="••••••••"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             />
@@ -86,6 +96,7 @@ export default function RegisterPage() {
             <select
               value={form.role}
               onChange={e => setForm({ ...form, role: e.target.value })}
+              onKeyPress={handleKeyPress}
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
             >
               <option value="driver">Driver</option>
@@ -102,6 +113,7 @@ export default function RegisterPage() {
                 step="0.1"
                 value={form.capacity}
                 onChange={e => setForm({ ...form, capacity: e.target.value })}
+                onKeyPress={handleKeyPress}
                 placeholder="e.g., 1000"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-400"
               />

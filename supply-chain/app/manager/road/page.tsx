@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import { db } from '@/db/index'
 import { assignments, users, routes, drivers } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,10 +8,6 @@ import ManagerPanelClient from '@/components/ManagerPanelClient'
 export default async function RoadManagerPage() {
   const session = await getServerSession(authOptions)
   const user = session?.user as any
-
-  if (!session || user?.role !== 'manager') {
-    redirect('/')
-  }
 
   // Get all routes created by this manager
   const managerRoutes = await db

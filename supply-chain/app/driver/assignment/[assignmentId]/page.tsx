@@ -16,10 +16,6 @@ export default async function DriverAssignmentDetailPage({
     const session = await getServerSession(authOptions)
     const user = session?.user as any
 
-    if (!session || user?.role !== 'driver') {
-      redirect('/')
-    }
-
     // Get the assignment
     const assignmentResult = await db
       .select()

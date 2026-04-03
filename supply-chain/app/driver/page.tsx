@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import { db } from '@/db/index'
 import { assignments, routes, users, drivers } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
@@ -11,9 +10,6 @@ import DriverProfileUpdate from '@/components/DriverProfileUpdate'
 export default async function DriverPage() {
   const session = await getServerSession(authOptions)
   const user = session?.user as any
-
-  if (!session || user?.role !== 'driver') redirect('/')
-  if (!user?.isVerified) redirect('/')
 
   // Get driver profile
   const driverProfile = await db
