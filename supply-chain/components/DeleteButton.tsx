@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from './Button'
 
 export default function DeleteButton({ userId }: { userId: string }) {
   const router = useRouter()
@@ -25,16 +26,15 @@ export default function DeleteButton({ userId }: { userId: string }) {
   }
 
   return (
-    <button
+    <Button
       onClick={handleDelete}
       disabled={loading}
-      className={`text-xs px-3 py-1.5 rounded-lg border transition ${
-        confirm
-          ? 'bg-red-500 text-white border-red-500'
-          : 'border-red-200 text-red-500 hover:bg-red-50'
-      }`}
+      variant={confirm ? 'danger' : 'danger'}
+      size="sm"
+      className={confirm ? 'bg-red-600 hover:bg-red-700' : ''}
     >
-      {loading ? '...' : confirm ? 'Sure?' : 'Delete'}
-    </button>
+      {loading ? '...' : confirm ? 'Confirm Delete' : 'Delete'}
+    </Button>
   )
+}
 }

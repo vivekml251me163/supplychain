@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from './Button'
 
 interface Route {
   id: string
@@ -46,12 +47,12 @@ export default function AssignButton({
 
   return (
     <div>
-      <button
+      <Button
         onClick={() => setOpen(!open)}
-        className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition"
+        variant="success"
       >
         + Assign Route to Driver
-      </button>
+      </Button>
 
       {success && (
         <span className="ml-3 text-sm text-green-600">✓ Assigned successfully!</span>
@@ -104,19 +105,19 @@ export default function AssignButton({
           </div>
 
           <div className="flex gap-3">
-            <button
+            <Button
               onClick={handleAssign}
               disabled={loading}
-              className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700"
+              variant="success"
             >
               {loading ? 'Assigning...' : 'Confirm Assign'}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setOpen(false)}
-              className="border border-gray-200 text-gray-600 text-sm px-4 py-2 rounded-lg hover:bg-gray-50"
+              variant="tertiary"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}

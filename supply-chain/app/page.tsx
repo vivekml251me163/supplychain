@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import SignOutButton from "@/components/SignOutButton";
+import Button from "@/components/Button";
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -38,18 +39,16 @@ export default async function Page() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               {!session ? (
                 <>
-                  <Link
-                    href="/register"
-                    className="inline-flex items-center justify-center gap-2 bg-emerald-600 text-white font-semibold px-8 py-3.5 rounded-lg hover:bg-emerald-700 hover:-translate-y-0.5 transition active:translate-y-0 poppins-semibold"
-                  >
-                    Start Free Trial
-                    <span>→</span>
+                  <Link href="/register">
+                    <Button variant="default" className="inline-flex items-center justify-center gap-2">
+                      Start Free Trial
+                      <span>→</span>
+                    </Button>
                   </Link>
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center justify-center gap-2 border border-gray-300 text-gray-900 font-semibold px-8 py-3.5 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition poppins-semibold"
-                  >
-                    Sign In
+                  <Link href="/login">
+                    <Button variant="tertiary" className="inline-flex items-center justify-center gap-2">
+                      Sign In
+                    </Button>
                   </Link>
                 </>
               ) : (

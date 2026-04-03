@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import Button from './Button'
 
 export default function Navbar() {
   const { data: session } = useSession()
@@ -113,17 +114,15 @@ export default function Navbar() {
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {!session ? (
             <>
-              <Link
-                href="/login"
-                className="text-sm text-gray-600 font-medium hover:text-gray-900 transition hidden sm:inline px-3 py-2 poppins-medium"
-              >
-                Sign In
+              <Link href="/login">
+                <Button variant="ghost" size="md" className="hidden sm:inline-flex">
+                  Sign In
+                </Button>
               </Link>
-              <Link
-                href="/register"
-                className="text-sm bg-emerald-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-emerald-700 transition poppins-medium"
-              >
-                Start Free
+              <Link href="/register">
+                <Button variant="default" size="md">
+                  Start Free
+                </Button>
               </Link>
             </>
           ) : (

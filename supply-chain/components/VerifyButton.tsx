@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from './Button'
 
 export default function VerifyButton({
   userId,
@@ -25,16 +26,13 @@ export default function VerifyButton({
   }
 
   return (
-    <button
+    <Button
       onClick={handleVerify}
       disabled={loading}
-      className={`text-xs px-3 py-1.5 rounded-lg border transition ${
-        isVerified
-          ? 'border-red-200 text-red-500 hover:bg-red-50'
-          : 'border-green-200 text-green-600 hover:bg-green-50'
-      }`}
+      variant={isVerified ? 'danger' : 'success'}
+      size="sm"
     >
-      {loading ? '...' : isVerified ? 'Revoke' : 'Verify'}
-    </button>
+      {loading ? '...' : isVerified ? 'Unverify' : 'Verify'}
+    </Button>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from './Button'
 
 export default function WorkDoneButton({
   assignmentId,
@@ -49,36 +50,32 @@ export default function WorkDoneButton({
           </p>
         )}
         <div className="flex gap-3">
-          <button
+          <Button
             onClick={handleToggle}
             disabled={loading}
-            className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition disabled:opacity-50"
+            variant="success"
           >
             {loading ? 'Confirming...' : '✓ Confirm Completion'}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setShowConfirmation(false)}
             disabled={loading}
-            className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition disabled:opacity-50"
+            variant="secondary"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     )
   }
 
   return (
-    <button
+    <Button
       onClick={handleToggle}
       disabled={loading}
-      className={`text-sm px-4 py-2 rounded-lg border transition font-medium ${
-        done
-          ? 'bg-green-500 text-white border-green-500 hover:bg-green-600'
-          : 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
-      }`}
+      variant={done ? 'success' : 'default'}
     >
       {loading ? '...' : done ? '✓ Work Done' : 'Mark Delivery as Complete'}
-    </button>
+    </Button>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from '@/components/Button'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -120,17 +121,18 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <button
+          <Button
             onClick={handleRegister}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition poppins-medium"
+            variant="default"
+            fullWidth
           >
             {loading ? 'Creating account...' : 'Register'}
-          </button>
+          </Button>
 
           <p className="text-center text-sm text-gray-500 poppins-regular">
             Already have an account?{' '}
-            <a href="/login" className="text-blue-600 hover:underline poppins-medium">Sign in</a>
+            <a href="/login" className="text-emerald-600 hover:underline poppins-medium">Sign in</a>
           </p>
         </div>
       </div>
