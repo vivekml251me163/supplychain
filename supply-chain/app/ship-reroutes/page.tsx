@@ -58,9 +58,9 @@ export default async function ShipReroutesPage() {
 
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Map - 2 columns */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-8">
+          {/* Map */}
+          <div>
             {reroutes.length > 0 ? (
               <ShipReroutesMapClient reroutes={reroutes as any} />
             ) : (
@@ -68,82 +68,6 @@ export default async function ShipReroutesPage() {
                 <p className="text-gray-500 text-lg">No ship reroutes available</p>
               </div>
             )}
-          </div>
-
-          {/* Ship Details Sidebar - 1 column */}
-          <div>
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden sticky top-6">
-              {/* Header */}
-              <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-b border-blue-700">
-                <h2 className="text-lg font-bold">🚢 Ships with Reroutes</h2>
-                <p className="text-blue-100 text-xs mt-1">{uniqueShipIds.length} ship{uniqueShipIds.length !== 1 ? 's' : ''}</p>
-              </div>
-
-              {/* Ship List */}
-              <div className="divide-y divide-gray-200 max-h-[70vh] overflow-y-auto">
-                {uniqueShipIds.length === 0 ? (
-                  <div className="px-6 py-8 text-center text-gray-500">
-                    No ships with active reroutes
-                  </div>
-                ) : (
-                  uniqueShipIds.map((shipId) => {
-                    const shipRerouteList = groupedReroutes[shipId] || []
-                    const shipRerouteCount = shipRerouteList.length
-                    const shipRerouteInfo: ShipReroute | undefined = shipRerouteList.at(0)
-
-                    return (
-                      <div key={shipId} className="p-4 hover:bg-gray-50 transition">
-                        {/* Ship Info */}
-                        <div className="mb-3">
-                          <h3 className="font-bold text-gray-800 text-sm mb-1">Ship #{shipId}</h3>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
-                              {shipRerouteCount} Reroute{shipRerouteCount !== 1 ? 's' : ''}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Route Details */}
-                        {shipRerouteInfo && (
-                          <div className="space-y-2 text-xs">
-                            {/* Suggestion */}
-                            {shipRerouteInfo.suggestion && (
-                              <div>
-                                <p className="text-gray-600 font-semibold">💡 Suggestion:</p>
-                                <p className="text-gray-700">{shipRerouteInfo.suggestion}</p>
-                              </div>
-                            )}
-
-                            {/* Impacts */}
-                            <div className="flex gap-1 flex-wrap mt-2 pt-2 border-t border-gray-200">
-                              {Boolean(shipRerouteInfo.affectedByWeather) && (
-                                <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-[10px] font-semibold">
-                                  🌪️ Weather
-                                </span>
-                              )}
-                              {Boolean(shipRerouteInfo.affectedByNews) && (
-                                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-[10px] font-semibold">
-                                  📰 News
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Created timestamp */}
-                            {shipRerouteInfo.createdAt && (
-                              <div className="pt-2 border-t border-gray-200">
-                                <p className="text-gray-500 text-[10px]">
-                                  Created: {new Date(shipRerouteInfo.createdAt).toLocaleDateString()}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </section>
