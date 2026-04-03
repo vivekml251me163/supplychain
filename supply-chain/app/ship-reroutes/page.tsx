@@ -8,9 +8,6 @@ import ShipReroutesMapClient from '@/components/ShipReroutesMapClient'
 export default async function ShipReroutesPage() {
   const session = await getServerSession(authOptions)
 
-  if (!session) {
-    redirect('/login')
-  }
 
   // Fetch all ship reroutes
   const reroutes = await db.select().from(shipReroutes)
