@@ -30,7 +30,7 @@ export async function proxy(request: NextRequest) {
 
   // Role-based route protection
   const roleRouteMap: { [key: string]: string[] } = {
-    manager: ['/manager/road', '/manager/assignment'],
+    manager: ['/manager/road'],
     manager_ship: ['/manager/ship'],
     driver: ['/driver', '/driver/assignment'],
     admin: ['/admin'],
@@ -61,7 +61,6 @@ export const config = {
     '/',
     '/manager/road/:path*',
     '/manager/ship/:path*',
-    '/manager/assignment/:path*',
     '/driver/:path*',
     '/driver/assignment/:path*',
     '/admin/:path*'

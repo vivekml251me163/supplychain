@@ -16,9 +16,10 @@ export default async function AssignmentDetailPage({
     const session = await getServerSession(authOptions)
     const user = session?.user as any
 
-    if (!session) {
-      redirect('/')
-    }
+    // Allow public access without session
+    // if (!session) {
+    //   redirect('/')
+    // }
 
     // Get the assignment
     const assignmentResult = await db
@@ -32,10 +33,11 @@ export default async function AssignmentDetailPage({
 
     const assignment = assignmentResult[0]
 
+    // Allow public access to view assignment details
     // Check if user is the manager or driver for this assignment
-    if (user.id !== assignment.managerId && user.id !== assignment.driverId) {
-      redirect('/manager/road')
-    }
+    // if (user?.id !== assignment.managerId && user?.id !== assignment.driverId) {
+    //   redirect('/manager/road')
+    // }
 
     // Get driver information
     const driverUserResult = await db
