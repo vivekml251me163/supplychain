@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import PaginationControls from './PaginationControls'
 import { useState, useRef, useEffect } from 'react'
+import { MapIcon, Ship, MapPin, AlertTriangle, Wind, Newspaper, Check, Bot } from 'lucide-react'
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -175,7 +176,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
     <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md relative z-0">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <h2 className="text-gray-800 text-lg font-bold">🚢 Ship Reroutes Map</h2>
+        <h2 className="text-gray-800 text-lg font-bold flex items-center gap-2"><MapIcon className="w-5 h-5 text-blue-600" /> Ship Reroutes Map</h2>
         <p className="text-gray-500 text-sm">Best routes suggested by AI based on weather and news impacts</p>
       </div>
 
@@ -262,7 +263,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
               <Marker position={[startLat, startLon]}>
                 <Popup>
                   <div className="text-sm font-semibold">
-                    <p>🚢 Ship {reroute.shipId}</p>
+                    <p className="flex items-center gap-1.5"><Ship className="w-4 h-4 text-gray-500" /> Ship {reroute.shipId}</p>
                     <p className="text-xs text-gray-600 mt-1">Route Start</p>
                     <p className="text-xs mt-1">{startLat.toFixed(4)}°, {startLon.toFixed(4)}°</p>
                   </div>
@@ -273,7 +274,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
               <Marker position={[endLat, endLon]}>
                 <Popup>
                   <div className="text-sm font-semibold">
-                    <p>🚢 Ship {reroute.shipId}</p>
+                    <p className="flex items-center gap-1.5"><Ship className="w-4 h-4 text-gray-500" /> Ship {reroute.shipId}</p>
                     <p className="text-xs text-gray-600 mt-1">Route End</p>
                     <p className="text-xs mt-1">{endLat.toFixed(4)}°, {endLon.toFixed(4)}°</p>
                   </div>
@@ -326,7 +327,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
               onMouseDown={handleMouseDown}
             >
               <div>
-                <h2 className="text-sm font-bold">🚢 Ship {selectedRoute.shipId}</h2>
+                <h2 className="text-sm font-bold flex items-center gap-2"><Ship className="w-4 h-4 text-blue-600" /> Ship {selectedRoute.shipId}</h2>
               </div>
               <button
                 onClick={() => setSelectedRoute(null)}
@@ -351,7 +352,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
               {/* Route Coordinates */}
               {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
                 <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
-                  <p className="text-gray-600 font-semibold mb-1">📍 Route Points</p>
+                  <p className="text-gray-600 font-semibold mb-1 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-500" /> Route Points</p>
                   <div className="space-y-0.5">
                     <div>
                       <p className="text-gray-600 text-[10px]">Start:</p>
@@ -372,7 +373,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
 
               {/* Impact Factors */}
               <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
-                <p className="text-gray-600 font-semibold mb-1">⚠️ Impacts</p>
+                <p className="text-gray-600 font-semibold mb-1 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-orange-500" /> Impacts</p>
                 <div className="space-y-1">
                   {selectedRoute.affectedByWeather ? (
                     <div className="p-1 bg-orange-50 border border-orange-200 rounded text-[10px]">
@@ -446,13 +447,13 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
                       </p>
                       <div className="flex gap-2 mt-2">
                         {reroute.affectedByWeather && (
-                          <span className="inline-block px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold">
-                            🌪️ Weather
+                          <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold">
+                            <Wind className="w-3 h-3" /> Weather
                           </span>
                         )}
                         {reroute.affectedByNews && (
-                          <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
-                            📰 News
+                          <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                            <Newspaper className="w-3 h-3" /> News
                           </span>
                         )}
                       </div>

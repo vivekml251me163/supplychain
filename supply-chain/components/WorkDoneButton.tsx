@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { MapPin, Check } from 'lucide-react'
 import Button from './Button'
 
 export default function WorkDoneButton({
@@ -45,8 +46,8 @@ export default function WorkDoneButton({
           Confirm completion? Your location will be updated to the delivery destination:
         </p>
         {(destLat !== undefined && destLon !== undefined) && (
-          <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-            📍 {destLat.toFixed(4)}, {destLon.toFixed(4)}
+          <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-gray-400" /> {destLat.toFixed(4)}, {destLon.toFixed(4)}
           </p>
         )}
         <div className="flex gap-3">
@@ -54,8 +55,9 @@ export default function WorkDoneButton({
             onClick={handleToggle}
             disabled={loading}
             variant="success"
+            className="flex items-center gap-1.5"
           >
-            {loading ? 'Confirming...' : '✓ Confirm Completion'}
+            {loading ? 'Confirming...' : <><Check className="w-4 h-4" /> Confirm Completion</>}
           </Button>
           <Button
             onClick={() => setShowConfirmation(false)}
@@ -74,8 +76,9 @@ export default function WorkDoneButton({
       onClick={handleToggle}
       disabled={loading}
       variant={done ? 'success' : 'default'}
+      className="flex items-center gap-1.5 justify-center"
     >
-      {loading ? '...' : done ? '✓ Work Done' : 'Mark Delivery as Complete'}
+      {loading ? '...' : done ? <><Check className="w-4 h-4" /> Work Done</> : 'Mark Delivery as Complete'}
     </Button>
   )
 }

@@ -1,4 +1,5 @@
 'use client'
+import { Ship, Truck, AlertTriangle, CheckCircle2 } from 'lucide-react'
 
 interface Route {
   id: string
@@ -27,8 +28,8 @@ export default function RouteList({
       {/* Ships section */}
       <div className="mb-4">
         <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            🚢 Ships
+          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+            <Ship className="w-3.5 h-3.5" /> Ships
           </h3>
         </div>
         {ships.length === 0 ? (
@@ -47,9 +48,9 @@ export default function RouteList({
               </p>
               <p className="text-xs text-gray-400 mt-0.5">
                 {route.reasons?.length > 0 ? (
-                  <span className="text-yellow-600">⚠️ Route changed</span>
+                  <span className="text-yellow-600 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Route changed</span>
                 ) : (
-                  <span className="text-green-600">✓ On track</span>
+                  <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> On track</span>
                 )}
               </p>
             </button>
@@ -60,8 +61,8 @@ export default function RouteList({
       {/* Roads section */}
       <div>
         <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            🚛 Roads
+          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+            <Truck className="w-3.5 h-3.5" /> Roads
           </h3>
         </div>
         {roads.length === 0 ? (
@@ -80,9 +81,9 @@ export default function RouteList({
               </p>
               <p className="text-xs text-gray-400 mt-0.5">
                 {route.reasons?.length > 0 ? (
-                  <span className="text-yellow-600">⚠️ Route changed</span>
+                  <span className="text-yellow-600 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Route changed</span>
                 ) : (
-                  <span className="text-green-600">✓ On track</span>
+                  <span className="text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> On track</span>
                 )}
               </p>
             </button>

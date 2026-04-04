@@ -89,7 +89,7 @@ export default function ManagerPanelClient({
           >
             {showCreateForm ? '✕ Close Form' : '➕ Create New Assignment'}
           </button>
-          
+
           {showCreateForm && (
             <div className="mb-12">
               <RoadManagerRouteForm />
@@ -166,31 +166,28 @@ export default function ManagerPanelClient({
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`px-4 py-2 rounded font-semibold text-xs uppercase transition ${
-                  activeTab === 'all'
+                className={`px-4 py-2 rounded font-semibold text-xs uppercase transition ${activeTab === 'all'
                     ? 'bg-gray-900 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 All
               </button>
               <button
                 onClick={() => setActiveTab('active')}
-                className={`px-4 py-2 rounded font-semibold text-xs uppercase transition ${
-                  activeTab === 'active'
+                className={`px-4 py-2 rounded font-semibold text-xs uppercase transition ${activeTab === 'active'
                     ? 'bg-gray-900 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Active
               </button>
               <button
                 onClick={() => setActiveTab('completed')}
-                className={`px-4 py-2 rounded font-semibold text-xs uppercase transition ${
-                  activeTab === 'completed'
+                className={`px-4 py-2 rounded font-semibold text-xs uppercase transition ${activeTab === 'completed'
                     ? 'bg-gray-900 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 Completed
               </button>

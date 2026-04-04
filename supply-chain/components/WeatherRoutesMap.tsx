@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Polyline, Marker, Popup, Circle } from 'react-
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useState } from 'react'
+import { Map as MapIcon, Ship, MapPin, AlertTriangle, Wind, Newspaper, Check, Navigation, Info, Bot } from 'lucide-react'
 
 // Fix for default marker icons in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -104,7 +105,9 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
     <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <h2 className="text-gray-800 text-lg font-bold">🗺️ Optimal Reroutes Due to Weather</h2>
+        <h2 className="text-gray-800 text-lg font-bold flex items-center gap-2">
+          <MapIcon className="w-5 h-5 text-blue-600" /> Optimal Reroutes Due to Weather
+        </h2>
         <p className="text-gray-500 text-sm">Best routes suggested by AI based on weather impacts</p>
       </div>
 
@@ -188,7 +191,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
               <Marker position={[startLat, startLon]}>
                 <Popup>
                   <div className="text-sm font-semibold">
-                    <p>🚢 Ship {reroute.shipId}</p>
+                    <p className="flex items-center gap-1.5"><Ship className="w-4 h-4 text-gray-500" /> Ship {reroute.shipId}</p>
                     <p className="text-xs text-gray-600 mt-1">Route Start</p>
                     <p className="text-xs mt-1">{startLat.toFixed(2)}°, {startLon.toFixed(2)}°</p>
                   </div>
@@ -199,7 +202,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
               <Marker position={[endLat, endLon]}>
                 <Popup>
                   <div className="text-sm font-semibold">
-                    <p>🚢 Ship {reroute.shipId}</p>
+                    <p className="flex items-center gap-1.5"><Ship className="w-4 h-4 text-gray-500" /> Ship {reroute.shipId}</p>
                     <p className="text-xs text-gray-600 mt-1">Route End</p>
                     <p className="text-xs mt-1">{endLat.toFixed(2)}°, {endLon.toFixed(2)}°</p>
                   </div>
@@ -240,7 +243,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
             {/* Modal Header */}
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-6 text-white flex justify-between items-center border-b border-blue-700 flex-shrink-0">
               <div>
-                <h2 className="text-lg font-bold">🚢 Ship {selectedRoute.shipId}</h2>
+                <h2 className="text-lg font-bold flex items-center gap-2"><Ship className="w-5 h-5 text-blue-600" /> Ship {selectedRoute.shipId}</h2>
                 <p className="text-blue-100 text-sm mt-1">AI-Generated Reroute Information</p>
               </div>
               <button
@@ -257,7 +260,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
               {/* AI Summary Section */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-200">
                 <div className="flex items-start gap-2">
-                  <span className="text-xl flex-shrink-0">🤖</span>
+                  <Bot className="w-6 h-6 text-blue-600 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-gray-800 mb-2 text-sm">AI Recommendation</h3>
                     <p className="text-gray-700 leading-relaxed text-xs">
@@ -273,7 +276,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
                 {/* Route Coordinates */}
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                   <h4 className="font-bold text-gray-800 mb-2 text-xs flex items-center gap-2">
-                    📍 Route Points
+                    <MapPin className="w-4 h-4 text-gray-500" /> Route Points
                   </h4>
                   <div className="space-y-1 text-xs">
                     {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
@@ -301,12 +304,12 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
                 {/* Impact Factors */}
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                   <h4 className="font-bold text-gray-800 mb-2 text-xs flex items-center gap-2">
-                    ⚠️ Impacts
+                    <AlertTriangle className="w-4 h-4 text-orange-500" /> Impacts
                   </h4>
                   <div className="space-y-2 text-xs">
                     {selectedRoute.affectedByWeather ? (
                       <div className="p-2 bg-orange-50 border border-orange-200 rounded">
-                        <p className="text-[10px] font-bold text-orange-700 mb-1">🌪️ WEATHER</p>
+                        <p className="text-[10px] font-bold text-orange-700 mb-1 flex items-center gap-1"><Wind className="w-3 h-3" /> WEATHER</p>
                         <p className="text-[10px] text-orange-600 line-clamp-2">
                           {typeof selectedRoute.affectedByWeather === 'string' 
                             ? selectedRoute.affectedByWeather 
@@ -314,11 +317,11 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
                         </p>
                       </div>
                     ) : (
-                      <div className="text-[10px] text-gray-500">✓ No weather impact</div>
+                      <div className="text-[10px] text-gray-500 flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> No weather impact</div>
                     )}
                     {selectedRoute.affectedByNews ? (
                       <div className="p-2 bg-blue-50 border border-blue-200 rounded">
-                        <p className="text-[10px] font-bold text-blue-700 mb-1">📰 NEWS</p>
+                        <p className="text-[10px] font-bold text-blue-700 mb-1 flex items-center gap-1"><Newspaper className="w-3 h-3" /> NEWS</p>
                         <p className="text-[10px] text-blue-600 line-clamp-2">
                           {typeof selectedRoute.affectedByNews === 'string' 
                             ? selectedRoute.affectedByNews 
@@ -326,7 +329,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
                         </p>
                       </div>
                     ) : (
-                      <div className="text-[10px] text-gray-500">✓ No news impact</div>
+                      <div className="text-[10px] text-gray-500 flex items-center gap-1"><Check className="w-3 h-3 text-green-500" /> No news impact</div>
                     )}
                   </div>
                 </div>
@@ -335,7 +338,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
               {/* Full Waypoints List */}
               {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <h4 className="font-bold text-gray-800 mb-2 text-xs">📌 Waypoints</h4>
+                  <h4 className="font-bold text-gray-800 mb-2 text-xs flex items-center gap-1"><Navigation className="w-3 h-3 text-gray-500" /> Waypoints</h4>
                   <div className="max-h-24 overflow-y-auto">
                     <div className="space-y-1">
                       {selectedRoute.bestRoute.map((point, idx) => (
@@ -355,7 +358,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
 
               {/* Metadata */}
               <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-2 text-xs">ℹ️ Info</h4>
+                <h4 className="font-bold text-gray-800 mb-2 text-xs flex items-center gap-1"><Info className="w-3 h-3 text-gray-500" /> Info</h4>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <p className="text-gray-600 text-[10px]">Ship ID</p>
@@ -392,13 +395,13 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
                     </p>
                     <div className="flex gap-2 mt-2">
                       {reroute.affectedByWeather && (
-                        <span className="inline-block px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold">
-                          🌪️ Weather
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-semibold">
+                          <Wind className="w-3 h-3" /> Weather
                         </span>
                       )}
                       {reroute.affectedByNews && (
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
-                          📰 News
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                          <Newspaper className="w-3 h-3" /> News
                         </span>
                       )}
                     </div>
