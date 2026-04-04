@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { Map, Clock, Package, CheckCircle, Truck } from 'lucide-react'
 import RoadManagerRouteForm from './RoadManagerRouteForm'
 
 interface ManagerPanelClientProps {
@@ -50,34 +51,34 @@ export default function ManagerPanelClient({
 
       <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Total Routes</p>
-            <div className="flex items-end justify-between">
-              <p className="text-5xl font-bold text-gray-900">{managerRoutes.length}</p>
-              <span className="text-2xl">🚛</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Total Routes</p>
+              <Map className="w-5 h-5 text-gray-400" />
             </div>
+            <p className="text-3xl font-bold text-gray-900">{managerRoutes.length}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Pending Routes</p>
-            <div className="flex items-end justify-between">
-              <p className="text-5xl font-bold text-orange-600">{pendingRoutes.length}</p>
-              <span className="text-2xl">⏳</span>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Pending</p>
+              <Clock className="w-5 h-5 text-orange-400" />
             </div>
+            <p className="text-3xl font-bold text-orange-600">{pendingRoutes.length}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Active Deliveries</p>
-            <div className="flex items-end justify-between">
-              <p className="text-5xl font-bold text-blue-600">{activeRoutes.length}</p>
-              <span className="text-2xl">📦</span>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Active</p>
+              <Package className="w-5 h-5 text-blue-400" />
             </div>
+            <p className="text-3xl font-bold text-blue-600">{activeRoutes.length}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-3">Completed</p>
-            <div className="flex items-end justify-between">
-              <p className="text-5xl font-bold text-green-600">{completedRoutes.length}</p>
-              <span className="text-2xl">✓</span>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Completed</p>
+              <CheckCircle className="w-5 h-5 text-green-400" />
             </div>
+            <p className="text-3xl font-bold text-green-600">{completedRoutes.length}</p>
           </div>
         </div>
 
@@ -256,8 +257,8 @@ export default function ManagerPanelClient({
               {activeRoutes.slice(0, 3).map((route, idx) => (
                 <div key={route.route.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
                   {/* Route Card Image Placeholder */}
-                  <div className="h-40 bg-linear-to-br from-blue-400 to-blue-600 relative flex items-center justify-center text-white">
-                    <span className="text-5xl">🚚</span>
+                  <div className="h-32 bg-linear-to-br from-blue-400 to-blue-600 relative flex items-center justify-center text-white">
+                    <Truck className="w-12 h-12 opacity-80" />
                   </div>
 
                   <div className="p-6">
