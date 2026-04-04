@@ -64,52 +64,22 @@ function interpolateRoute(points: Array<[number, number]>, steps: number = 10): 
 export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
   const [selectedRoute, setSelectedRoute] = useState<ShipReroute | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const mapRef = useRef<L.Map | null>(null)
   const mapWrapperRef = useRef<HTMLDivElement | null>(null)
-  const popupRef = useRef<HTMLDivElement | null>(null)
+  const detailsRef = useRef<HTMLDivElement | null>(null)
 
   const itemsPerPage = 4 // Show 4 routes per page
 
-  // Scroll to map when route is selected
+  // Scroll to details when route is selected
   useEffect(() => {
-    if (selectedRoute && mapWrapperRef.current) {
+    if (selectedRoute && detailsRef.current) {
       setTimeout(() => {
-        const scrollTop = mapWrapperRef.current?.getBoundingClientRect().top ?? 0
-        const offset = scrollTop + window.scrollY - 100 // Scroll more up with 100px buffer
+        const scrollTop = detailsRef.current?.getBoundingClientRect().top ?? 0
+        const offset = scrollTop + window.scrollY - 150 // Buffer for navbar
         window.scrollTo({ top: offset, behavior: 'smooth' })
       }, 100)
-      // Reset popup position when new route is selected
-      setPopupPosition({ x: 0, y: 0 })
     }
   }, [selectedRoute])
-
-  // Handle mouse down on popup header for dragging
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!popupRef.current) return
-    setIsDragging(true)
-    const rect = popupRef.current.getBoundingClientRect()
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    })
-  }
-
-  // Handle mouse move for dragging
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) return
-    setPopupPosition({
-      x: e.clientX - dragOffset.x,
-      y: e.clientY - dragOffset.y
-    })
-  }
-
-  // Handle mouse up to stop dragging
-  const handleMouseUp = () => {
-    setIsDragging(false)
-  }
 
   // Function to focus map on a specific route
   const focusOnRoute = (route: ShipReroute) => {
@@ -301,114 +271,6 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
         })}
 
       </MapContainer>
-
-      {/* Route Details Popup Card - appears over map */}
-      {selectedRoute && (
-        <div 
-          ref={popupRef}
-          className="fixed z-[1000] pointer-events-auto"
-          style={{
-            left: `${popupPosition.x}px`,
-            top: `${popupPosition.y}px`,
-            right: popupPosition.x === 0 ? '24px' : 'auto',
-            userSelect: isDragging ? 'none' : 'auto'
-          }}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-lg border border-gray-200 w-80 max-h-96 overflow-y-auto flex flex-col"
-          >
-            {/* Popup Header - Draggable */}
-            <div 
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white flex justify-between items-center border-b border-blue-700 flex-shrink-0 cursor-move select-none"
-              onMouseDown={handleMouseDown}
-            >
-              <div>
-                <h2 className="text-sm font-bold flex items-center gap-2"><Ship className="w-4 h-4 text-blue-600" /> Ship {selectedRoute.shipId}</h2>
-              </div>
-              <button
-                onClick={() => setSelectedRoute(null)}
-                className="text-white hover:bg-blue-700 p-1 rounded transition text-lg leading-none cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Popup Content */}
-            <div className="p-3 space-y-2 overflow-y-auto flex-1">
-              
-              {/* AI Summary Section */}
-              {selectedRoute.suggestion && (
-                <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
-                  <p className="text-gray-700 text-xs leading-relaxed">
-                    {selectedRoute.suggestion}
-                  </p>
-                </div>
-              )}
-
-              {/* Route Coordinates */}
-              {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
-                <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
-                  <p className="text-gray-600 font-semibold mb-1 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-500" /> Route Points</p>
-                  <div className="space-y-0.5">
-                    <div>
-                      <p className="text-gray-600 text-[10px]">Start:</p>
-                      <p className="font-mono text-gray-800 text-[9px]">
-                        {selectedRoute.bestRoute[0][0].toFixed(4)}°, {selectedRoute.bestRoute[0][1].toFixed(4)}°
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 text-[10px]">End:</p>
-                      <p className="font-mono text-gray-800 text-[9px]">
-                        {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][0].toFixed(4)}°, {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][1].toFixed(4)}°
-                      </p>
-                    </div>
-                    <p className="text-gray-600 text-[10px]">Waypoints: <span className="font-bold">{selectedRoute.bestRoute.length}</span></p>
-                  </div>
-                </div>
-              )}
-
-              {/* Impact Factors */}
-              <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
-                <p className="text-gray-600 font-semibold mb-1 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-orange-500" /> Impacts</p>
-                <div className="space-y-1">
-                  {selectedRoute.affectedByWeather ? (
-                    <div className="p-1 bg-orange-50 border border-orange-200 rounded text-[10px]">
-                      <p className="font-bold text-orange-700">Weather</p>
-                    </div>
-                  ) : (
-                    <div className="text-[10px] text-gray-500">No weather impact</div>
-                  )}
-                  {selectedRoute.affectedByNews ? (
-                    <div className="p-1 bg-blue-50 border border-blue-200 rounded text-[10px]">
-                      <p className="font-bold text-blue-700">News</p>
-                    </div>
-                  ) : (
-                    <div className="text-[10px] text-gray-500">No news impact</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Metadata */}
-              <div className="bg-gray-50 rounded-lg p-2 border border-gray-200 text-xs">
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-gray-600 text-[10px]">Ship ID</p>
-                    <p className="font-bold text-gray-800 text-sm">{selectedRoute.shipId}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-[10px]">Route ID</p>
-                    <p className="font-bold text-gray-800 text-sm">{selectedRoute.id}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       </div>
 
       {/* Route Details Below Map */}
@@ -472,6 +334,117 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
             onPageChange={setCurrentPage}
           />
         </div>
+
+        {/* Selected Route Details - Shown below routes */}
+        {selectedRoute && (
+          <div ref={detailsRef} className="mt-8">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 text-white flex justify-between items-center border-b border-blue-700">
+                <div>
+                  <h2 className="text-lg font-bold flex items-center gap-2"><Ship className="w-5 h-5 text-blue-100" /> Selected Route: Ship {selectedRoute.shipId}</h2>
+                </div>
+                <button
+                  onClick={() => setSelectedRoute(null)}
+                  className="text-white hover:bg-blue-700 p-2 rounded transition text-xl leading-none cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  {/* Left Column */}
+                  <div className="space-y-6">
+                    {/* AI Summary Section */}
+                    {selectedRoute.suggestion && (
+                      <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <h3 className="text-sm font-bold text-blue-900 mb-2 flex items-center gap-1.5"><Bot className="w-4 h-4 text-blue-600" /> AI Suggestion</h3>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {selectedRoute.suggestion}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Metadata */}
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                      <h3 className="text-sm font-bold text-gray-800 mb-3">Route Information</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Ship ID</p>
+                          <p className="font-bold text-gray-900 text-lg">{selectedRoute.shipId}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Route ID</p>
+                          <p className="font-bold text-gray-900 text-lg">{selectedRoute.id}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-6">
+                    {/* Route Coordinates */}
+                    {selectedRoute.bestRoute && selectedRoute.bestRoute.length > 0 && (
+                      <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                         <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-500" /> Route Coordinates</h3>
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                            <p className="text-gray-600 text-xs uppercase tracking-wider font-semibold">Start</p>
+                            <p className="font-mono text-gray-800 text-sm bg-white px-2 py-1 rounded border border-gray-100">
+                              {selectedRoute.bestRoute[0][0].toFixed(4)}°, {selectedRoute.bestRoute[0][1].toFixed(4)}°
+                            </p>
+                          </div>
+                          <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                            <p className="text-gray-600 text-xs uppercase tracking-wider font-semibold">End</p>
+                            <p className="font-mono text-gray-800 text-sm bg-white px-2 py-1 rounded border border-gray-100">
+                              {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][0].toFixed(4)}°, {selectedRoute.bestRoute[selectedRoute.bestRoute.length - 1][1].toFixed(4)}°
+                            </p>
+                          </div>
+                          <div className="flex justify-between items-center pt-1">
+                            <p className="text-gray-600 text-xs uppercase tracking-wider font-semibold">Total Waypoints</p>
+                            <p className="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">{selectedRoute.bestRoute.length}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Impact Factors */}
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                      <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-orange-500" /> Environmental Impacts</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedRoute.affectedByWeather ? (
+                          <div className="px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg flex items-center gap-2 flex-1 justify-center">
+                            <Wind className="w-4 h-4 text-orange-600" />
+                            <p className="font-bold text-orange-800 text-sm">Weather Impact</p>
+                          </div>
+                        ) : (
+                          <div className="px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg flex items-center gap-2 flex-1 justify-center opacity-70">
+                            <p className="font-medium text-gray-500 text-xs">No weather impact</p>
+                          </div>
+                        )}
+                        {selectedRoute.affectedByNews ? (
+                          <div className="px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2 flex-1 justify-center">
+                            <Newspaper className="w-4 h-4 text-blue-600" />
+                            <p className="font-bold text-blue-800 text-sm">News Impact</p>
+                          </div>
+                        ) : (
+                          <div className="px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg flex items-center gap-2 flex-1 justify-center opacity-70">
+                            <p className="font-medium text-gray-500 text-xs">No news impact</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )

@@ -141,24 +141,24 @@ export default function Navbar() {
               {/* User Dropdown Button (Desktop only) */}
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition focus:outline-none"
+                className="hidden lg:flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 focus:outline-none"
               >
-                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold poppins-bold">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white text-base font-bold poppins-bold shadow-inner border-[1.5px] border-white ring-2 ring-emerald-50 hover:ring-emerald-100 transition-all">
                   {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
                 </div>
-                <div className="hidden sm:flex flex-col items-start">
-                  <p className="text-xs font-semibold text-gray-900 truncate poppins-semibold">
+                <div className="hidden sm:flex flex-col items-start pr-2 pl-1">
+                  <p className="text-sm font-semibold text-gray-900 truncate poppins-semibold tracking-tight">
                     {user?.name || user?.email?.split('@')[0]}
                   </p>
-                  <p className="text-[10px] text-gray-500 poppins-regular">{getRoleDisplay()}</p>
+                  <p className="text-[10px] text-gray-500 poppins-medium uppercase tracking-wide mt-[1px]">{getRoleDisplay()}</p>
                 </div>
                 <svg
-                  className={`w-4 h-4 text-gray-600 transition ${dropdownOpen ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-gray-400 ml-2 transition-transform duration-300 ${dropdownOpen ? '-rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
