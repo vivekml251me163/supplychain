@@ -49,9 +49,33 @@ function interpolateRoute(points: RoutePoint[], steps: number = 10): RoutePoint[
 
 export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: ShipRouteMapProps) {
 
+  // Validate route data — it may come as a JSON string or be malformed
+  const parseRoute = (route: any): RoutePoint[] => {
+    try {
+      const parsed = typeof route === 'string' ? JSON.parse(route) : route
+      if (!Array.isArray(parsed) || parsed.length === 0) return []
+      // Validate each point has lat/lng
+      return parsed.filter((p: any) => p && typeof p.lat === 'number' && typeof p.lng === 'number')
+    } catch {
+      return []
+    }
+  }
+
+  const validOriginal = parseRoute(originalRoute)
+  const validBest = parseRoute(bestRoute)
+
+  // If no valid route data, show fallback
+  if (validOriginal.length === 0 && validBest.length === 0) {
+    return (
+      <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md p-8 text-center">
+        <p className="text-gray-500 text-sm">No valid route data available to display on the map.</p>
+      </div>
+    )
+  }
+
   // Apply curve interpolation
-  const smoothOriginal = interpolateRoute(originalRoute, 20)
-  const smoothBest = interpolateRoute(bestRoute, 20)
+  const smoothOriginal = validOriginal.length > 1 ? interpolateRoute(validOriginal, 20) : validOriginal
+  const smoothBest = validBest.length > 1 ? interpolateRoute(validBest, 20) : validBest
 
   const originalPositions = smoothOriginal.map(p => [p.lat, p.lng] as [number, number])
   const bestPositions = smoothBest.map(p => [p.lat, p.lng] as [number, number])
@@ -67,7 +91,7 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
 
       {/* Map */}
       <MapContainer
-        center={[10.0, 80.0]}
+        center={validOriginal.length > 0 ? [validOriginal[0].lat, validOriginal[0].lng] : validBest.length > 0 ? [validBest[0].lat, validBest[0].lng] : [10.0, 80.0]}
         zoom={4}
         style={{ height: '500px', width: '100%' }}
       >
@@ -94,14 +118,18 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
         />
 
         {/* Origin port marker */}
-        <Marker position={[originalRoute[0].lat, originalRoute[0].lng]}>
-          <Popup>⚓ Origin Port - Mumbai</Popup>
-        </Marker>
+        {validOriginal.length > 0 && (
+          <Marker position={[validOriginal[0].lat, validOriginal[0].lng]}>
+            <Popup>⚓ Origin Port</Popup>
+          </Marker>
+        )}
 
         {/* Destination port marker */}
-        <Marker position={[originalRoute[originalRoute.length - 1].lat, originalRoute[originalRoute.length - 1].lng]}>
-          <Popup>Destination Port - Singapore</Popup>
-        </Marker>
+        {validOriginal.length > 1 && (
+          <Marker position={[validOriginal[validOriginal.length - 1].lat, validOriginal[validOriginal.length - 1].lng]}>
+            <Popup>🏁 Destination Port</Popup>
+          </Marker>
+        )}
 
       </MapContainer>
 
