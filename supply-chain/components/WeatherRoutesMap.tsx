@@ -102,7 +102,7 @@ export default function WeatherRoutesMap({ reroutes }: WeatherRoutesMapProps) {
   const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899']
 
   return (
-    <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md">
+    <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md relative z-0">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <h2 className="text-gray-800 text-lg font-bold flex items-center gap-2">

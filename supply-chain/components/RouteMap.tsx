@@ -57,7 +57,7 @@ export default function RouteMap({ originalRoute, bestRoute, reasons }: RouteMap
   const bestPositions = smoothBest.map(p => [p.lat, p.lng] as [number, number])
 
   return (
-    <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md">
+    <div className="w-full bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md relative z-0">
 
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-white">

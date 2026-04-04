@@ -58,7 +58,7 @@ export default function WeatherAlertsMap({ weather }: WeatherAlertsMapProps) {
   const centerLon = (minLon + maxLon) / 2
 
   return (
-    <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-8">
+    <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm relative z-0 mb-8">
       <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
         <h3 className="text-sm font-bold text-gray-900">Weather Geography</h3>
         <p className="text-xs text-gray-500">Mapping {mapWeather.length} weather alerts</p>
