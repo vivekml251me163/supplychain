@@ -188,7 +188,7 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
         zoom={4}
         minZoom={2}
         maxZoom={18}
-        style={{ height: '600px', width: '100%' }}
+        style={{ height: '50vh', minHeight: '400px', maxHeight: '600px', width: '100%' }}
         maxBounds={[[-85, -180], [85, 180]]}
       >
         <TileLayer

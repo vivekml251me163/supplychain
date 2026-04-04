@@ -196,7 +196,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
     <div className="w-full bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
 
       {/* ── Map ── */}
-      <div className="relative h-[750px] w-full">
+      <div className="relative h-[50vh] min-h-[400px] md:h-[750px] w-full">
 
         {loading && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50 animate-pulse">

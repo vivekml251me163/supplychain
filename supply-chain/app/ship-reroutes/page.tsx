@@ -30,25 +30,25 @@ export default async function ShipReroutesPage() {
       {/* Header */}
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-10">
-          <div className="flex items-end justify-between gap-8">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 md:gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Ship Operations</span>
               </div>
-              <h1 className="text-4xl font-black tracking-tight text-gray-900 mb-2">
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900 mb-2">
                 Ship Reroutes & Optimization
               </h1>
-              <p className="text-gray-600 text-base leading-relaxed">
+              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                 AI-optimized routes for ships based on weather and news impacts. View reroute details and map visualization.
               </p>
             </div>
-            <div className="flex flex-col items-end justify-center shrink-0">
+            <div className="w-full md:w-auto flex flex-col md:items-end justify-center shrink-0 bg-blue-50 md:bg-transparent p-4 md:p-0 rounded-xl md:rounded-none mt-4 md:mt-0">
               <div className="flex items-center gap-4">
-                <span className="text-5xl font-black tracking-tighter text-gray-900">{reroutes.length}</span>
+                <span className="text-4xl md:text-5xl font-black tracking-tighter text-gray-900">{reroutes.length}</span>
                 <div className="flex flex-col">
-                  <span className="text-sm font-bold uppercase tracking-wider text-blue-600">Active Reroute{reroutes.length !== 1 ? 's' : ''}</span>
-                  <span className="text-sm font-medium text-gray-500">Tracking in real-time</span>
+                  <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-blue-600">Active Reroute{reroutes.length !== 1 ? 's' : ''}</span>
+                  <span className="text-xs md:text-sm font-medium text-gray-500">Tracking in real-time</span>
                 </div>
               </div>
             </div>
