@@ -65,15 +65,24 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
     try {
       const parsed = typeof route === 'string' ? JSON.parse(route) : route
       if (!Array.isArray(parsed) || parsed.length === 0) return []
+      
       // Handle both formats: {lat, lng} objects and [lat, lng] arrays
       return parsed
         .map((p: any) => {
-          if (Array.isArray(p) && p.length >= 2 && typeof p[0] === 'number' && typeof p[1] === 'number') {
-            return { lat: p[0], lng: p[1] }
+          // Case 1: Array format [lat, lng]
+          if (Array.isArray(p) && p.length >= 2) {
+            const lat = typeof p[0] === 'string' ? parseFloat(p[0]) : p[0]
+            const lng = typeof p[1] === 'string' ? parseFloat(p[1]) : p[1]
+            if (!isNaN(lat) && !isNaN(lng)) return { lat, lng }
           }
-          if (p && typeof p.lat === 'number' && typeof p.lng === 'number') {
-            return { lat: p.lat, lng: p.lng }
+          
+          // Case 2: Object format {lat, lng} or {latitude, longitude} etc.
+          if (p && typeof p === 'object') {
+            const lat = parseFloat(p.lat || p.latitude || 'NaN')
+            const lng = parseFloat(p.lng || p.longitude || p.lon || 'NaN')
+            if (!isNaN(lat) && !isNaN(lng)) return { lat, lng }
           }
+          
           return null
         })
         .filter((p: RoutePoint | null): p is RoutePoint => p !== null)
@@ -111,20 +120,20 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
       </div>
 
       {/* Map */}
-      <MapContainer
-        center={validOriginal.length > 0 ? [validOriginal[0].lat, validOriginal[0].lng] : validBest.length > 0 ? [validBest[0].lat, validBest[0].lng] : [10.0, 80.0]}
-        zoom={4}
-        minZoom={2}
-        maxZoom={18}
-        maxBounds={[[-90, -180], [90, 180]]}
-        style={{ height: '100%', width: '100%' }}
-        className="h-[350px] sm:h-[500px]"
-      >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          noWrap={true}
-        />
+      <div className="h-[350px] sm:h-[500px] w-full">
+        <MapContainer
+          center={validOriginal.length > 0 ? [validOriginal[0].lat, validOriginal[0].lng] : validBest.length > 0 ? [validBest[0].lat, validBest[0].lng] : [10.0, 80.0]}
+          zoom={4}
+          minZoom={2}
+          maxZoom={18}
+          maxBounds={[[-90, -180], [90, 180]]}
+          style={{ height: '100%', width: '100%' }}
+        >
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+            noWrap={true}
+          />
 
         {/* Original sea route - RED dashed curved */}
         <Polyline
@@ -157,7 +166,8 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
           </Marker>
         )}
 
-      </MapContainer>
+        </MapContainer>
+      </div>
 
       {/* Legend */}
       <div className="flex gap-6 px-4 py-3 border-t border-b border-gray-200 bg-gray-50">
