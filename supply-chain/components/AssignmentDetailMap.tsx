@@ -2,6 +2,15 @@
 
 import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
+
+// Fix for default marker icons in react-leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+})
 
 interface RoutePoint {
   lat: number
@@ -30,7 +39,7 @@ export default function AssignmentDetailMap({ bestRoute, reasons }: AssignmentDe
   ]
 
   return (
-    <MapContainer center={center} zoom={10} style={{ height: '500px', width: '100%' }} className="rounded-lg">
+    <MapContainer center={center} zoom={10} style={{ height: '500px', width: '100%' }} className="rounded-lg relative z-0">
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
