@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         pubDate: news.pubDate,
       })
       .from(news)
-      .where(sql`${news.id} = ANY(${validIds}::bigint[])`)
+      .where(sql`${news.id} IN (${sql.join(validIds.map((id: number) => sql`${id}`), sql`, `)})`)
 
     // Convert bigint ids to numbers for JSON serialization
     const serializable = results.map(r => ({
