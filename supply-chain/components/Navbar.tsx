@@ -117,6 +117,10 @@ export default function Navbar() {
           <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
             Ship Reroutes
           </Link>
+
+          <Link href="/road-reroutes" className={navLinkClass(pathname?.includes('/road-reroutes'))}>
+            Road Reroutes
+          </Link>
         </div>
 
         {/* Right - Auth + Hamburger */}
@@ -303,6 +307,10 @@ export default function Navbar() {
 
             <Link href="/ship-reroutes" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass(pathname?.includes('/ship-reroutes'))}>
               Ship Reroutes
+            </Link>
+
+            <Link href="/road-reroutes" onClick={() => setMobileMenuOpen(false)} className={mobileNavLinkClass(pathname?.includes('/road-reroutes'))}>
+              Road Reroutes
             </Link>
 
             {/* Logged-in user info + sign out */}
