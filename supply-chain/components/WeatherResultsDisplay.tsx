@@ -19,6 +19,8 @@ interface WeatherResult {
 
 interface WeatherResultsDisplayProps {
   weather: WeatherResult[]
+  selectedId?: number | null
+  onSelect?: (id: number | null) => void
 }
 
 const ITEMS_PER_PAGE = 6
@@ -43,9 +45,11 @@ function formatDate(dateString: string) {
   })
 }
 
-export default function WeatherResultsDisplay({ weather }: WeatherResultsDisplayProps) {
+export default function WeatherResultsDisplay({ weather, selectedId, onSelect }: WeatherResultsDisplayProps) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [internalExpandedId, setInternalExpandedId] = useState<number | null>(null)
+
+  const expandedId = selectedId !== undefined ? selectedId : internalExpandedId
 
   // Sort by severity (highest first), then by date (newest first)
   const sortedWeather = [...weather].sort((a, b) => {
@@ -61,7 +65,9 @@ export default function WeatherResultsDisplay({ weather }: WeatherResultsDisplay
   const currentWeather = sortedWeather.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   const toggleExpand = (id: number) => {
-    setExpandedId(expandedId === id ? null : id)
+    const newId = expandedId === id ? null : id
+    if (onSelect) onSelect(newId)
+    else setInternalExpandedId(newId)
   }
 
   return (
@@ -113,8 +119,12 @@ export default function WeatherResultsDisplay({ weather }: WeatherResultsDisplay
               </p>
 
               {/* Stats row */}
-              <p className="text-xs font-bold text-gray-800 mb-1 flex items-center gap-1">
-                📍 {item.locationName || 'Unknown Location'}
+              <p className={`text-xs font-bold mb-1 flex items-center gap-1 transition-colors ${
+                isExpanded ? 'text-blue-600' : 'text-gray-800'
+              }`}>
+                📍 <span className={isExpanded ? 'underline underline-offset-2' : ''}>
+                  {item.locationName || 'Unknown Location'}
+                </span>
               </p>
               <p className="text-xs text-gray-500 mb-3">
                 Coverage: {item.radiusKm.toFixed(0)} km radius · {confidencePct}% confidence

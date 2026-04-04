@@ -1,6 +1,6 @@
 'use client'
 
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Circle, Tooltip, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useState } from 'react'
@@ -29,6 +29,8 @@ interface WeatherResultWithLocation {
 
 interface WeatherAlertsMapProps {
   weather: WeatherResultWithLocation[]
+  selectedId?: number | null
+  onSelect?: (id: number | null) => void
 }
 
 function getSeverityConfig(severity: number) {
@@ -39,7 +41,7 @@ function getSeverityConfig(severity: number) {
   return { color: '#10b981', label: 'Minimal' }
 }
 
-export default function WeatherAlertsMap({ weather }: WeatherAlertsMapProps) {
+export default function WeatherAlertsMap({ weather, selectedId, onSelect }: WeatherAlertsMapProps) {
   const mapWeather = weather.filter(w => w.latitude != null && w.longitude != null)
 
   if (mapWeather.length === 0) {
@@ -81,6 +83,17 @@ export default function WeatherAlertsMap({ weather }: WeatherAlertsMapProps) {
           const lat = w.latitude!
           const lon = w.longitude!
           const { color, label } = getSeverityConfig(w.severity)
+          const isSelected = selectedId === w.id
+          
+          let icon = new L.Icon.Default();
+          if (isSelected) {
+            icon = L.divIcon({
+              className: 'custom-selected-marker bg-transparent border-none outline-none focus:outline-none',
+              html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 4px solid white; box-shadow: 0 0 15px ${color}"></div>`,
+              iconSize: [28, 28],
+              iconAnchor: [14, 14]
+            });
+          }
           
           return (
             <div key={w.id}>
@@ -91,19 +104,31 @@ export default function WeatherAlertsMap({ weather }: WeatherAlertsMapProps) {
                   color: color, 
                   fill: true, 
                   fillColor: color,
-                  fillOpacity: 0.15,
-                  weight: 2,
-                  dashArray: '4, 4'
+                  fillOpacity: isSelected ? 0.35 : 0.15,
+                  weight: isSelected ? 4 : 2,
+                  dashArray: isSelected ? '0' : '4, 4'
                 }}
               />
-              <Marker position={[lat, lon]}>
-                <Popup>
-                  <div className="text-xs">
-                    <p className="font-bold text-gray-900 mb-1">{w.locationName || 'Unknown Location'}</p>
-                    <p className="font-semibold mb-1" style={{ color }}>{label} Severity: {w.severity}/5</p>
-                    <p className="text-gray-700 line-clamp-3 leading-snug break-words max-w-[200px]">{w.aiSummary}</p>
-                  </div>
-                </Popup>
+              <Marker 
+                position={[lat, lon]} 
+                icon={icon} 
+                zIndexOffset={isSelected ? 1000 : 0}
+                eventHandlers={{ click: () => onSelect && onSelect(isSelected ? null : w.id) }}
+              >
+                {isSelected && (
+                  <Tooltip permanent direction="top" offset={[0, -15]} className="font-bold text-lg shadow-xl !border-blue-500 !bg-white">
+                    <span className="text-blue-600 block mb-1">📍 {w.locationName || 'Unknown'}</span>
+                    <span className="text-xs text-gray-500 font-semibold">{label} Alert</span>
+                  </Tooltip>
+                )}
+                {!isSelected && (
+                  <Tooltip direction="top">
+                    <div className="text-xs">
+                      <p className="font-bold text-gray-900 mb-1">{w.locationName || 'Unknown Location'}</p>
+                      <p className="font-semibold" style={{ color }}>{label} Severity: {w.severity}/5</p>
+                    </div>
+                  </Tooltip>
+                )}
               </Marker>
             </div>
           )

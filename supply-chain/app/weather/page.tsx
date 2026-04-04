@@ -1,8 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db/index'
 import { weatherResults, weather } from '@/db/schema'
-import WeatherResultsDisplay from '@/components/WeatherResultsDisplay'
-import WeatherAlertsMapClient from '@/components/WeatherAlertsMapClient'
+import WeatherDashboard from '@/components/WeatherDashboard'
 import { Lightbulb, Sun } from 'lucide-react'
 
 export default async function WeatherPage() {
@@ -101,10 +100,7 @@ export default async function WeatherPage() {
             </p>
           </div>
         ) : (
-          <>
-            <WeatherAlertsMapClient weather={weatherData} />
-            <WeatherResultsDisplay weather={weatherData} />
-          </>
+          <WeatherDashboard weather={weatherData} />
         )}
       </section>
 
