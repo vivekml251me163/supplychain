@@ -114,11 +114,16 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
       <MapContainer
         center={validOriginal.length > 0 ? [validOriginal[0].lat, validOriginal[0].lng] : validBest.length > 0 ? [validBest[0].lat, validBest[0].lng] : [10.0, 80.0]}
         zoom={4}
-        style={{ height: '500px', width: '100%' }}
+        minZoom={2}
+        maxZoom={18}
+        maxBounds={[[-90, -180], [90, 180]]}
+        style={{ height: '100%', width: '100%' }}
+        className="h-[350px] sm:h-[500px]"
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          noWrap={true}
         />
 
         {/* Original sea route - RED dashed curved */}
