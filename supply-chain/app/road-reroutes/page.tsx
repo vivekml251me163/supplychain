@@ -71,23 +71,19 @@ export default async function RoadReroutesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-gray-50">
-                      <div>
-                        <div className="text-xs text-gray-500 mb-1 font-medium">Route Type</div>
-                        <div className="font-semibold text-gray-800 capitalize">{assignment.routeType || 'N/A'}</div>
-                      </div>
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
                       <div>
                         <div className="text-xs text-gray-500 mb-1 font-medium">Quantity</div>
                         <div className="font-semibold text-gray-800">{assignment.assignedQuantity} units</div>
                       </div>
+                      <div className="text-right text-xs text-gray-400 font-medium">
+                        Assigned: {new Date(assignment.assignedAt || '').toLocaleDateString()}
+                      </div>
                     </div>
                     
-                    <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
-                      <span className="text-xs text-gray-400">
-                        {new Date(assignment.assignedAt || '').toLocaleDateString()}
-                      </span>
-                      <span className="text-sm font-semibold text-blue-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        View Details →
+                    <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-center">
+                      <span className="text-sm font-semibold text-blue-600 flex items-center gap-1 group-hover:text-blue-700 transition-colors w-full justify-center bg-blue-50/50 hover:bg-blue-100 py-2 rounded-lg">
+                        View Details <span className="group-hover:translate-x-1 transition-transform">→</span>
                       </span>
                     </div>
                   </div>
@@ -129,15 +125,20 @@ export default async function RoadReroutesPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-gray-200/60">
-                      <div>
-                        <div className="text-xs text-gray-500 mb-1 font-medium">Route Type</div>
-                        <div className="font-medium text-gray-700 capitalize">{assignment.routeType || 'N/A'}</div>
-                      </div>
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200/60">
                       <div>
                         <div className="text-xs text-gray-500 mb-1 font-medium">Quantity</div>
                         <div className="font-medium text-gray-700">{assignment.assignedQuantity} units</div>
                       </div>
+                      
+                      {assignment.completedAt && (
+                        <div className="text-right">
+                          <div className="text-xs text-emerald-500 mb-1 font-semibold uppercase tracking-wider">Completed</div>
+                          <div className="text-sm font-semibold text-gray-700">
+                            {new Date(assignment.completedAt || '').toLocaleDateString()}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Link>

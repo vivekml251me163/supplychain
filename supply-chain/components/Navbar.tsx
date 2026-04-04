@@ -106,6 +106,14 @@ export default function Navbar() {
             </Link>
           )}
 
+          <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
+            Ship Reroutes
+          </Link>
+
+          <Link href="/road-reroutes" className={navLinkClass(pathname?.includes('/road-reroutes'))}>
+            Road Reroutes
+          </Link>
+
           <Link href="/zones" className={navLinkClass(pathname?.includes('/zones'))}>
             Zones
           </Link>
@@ -114,13 +122,7 @@ export default function Navbar() {
             Weather
           </Link>
 
-          <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
-            Ship Reroutes
-          </Link>
-
-          <Link href="/road-reroutes" className={navLinkClass(pathname?.includes('/road-reroutes'))}>
-            Road Reroutes
-          </Link>
+          
         </div>
 
         {/* Right - Auth + Hamburger */}
