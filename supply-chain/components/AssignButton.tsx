@@ -55,7 +55,7 @@ export default function AssignButton({
       </Button>
 
       {success && (
-        <span className="ml-3 text-sm text-green-600">✓ Assigned successfully!</span>
+        <span className="ml-3 text-sm text-green-600">Assigned successfully!</span>
       )}
 
       {open && (
@@ -83,8 +83,8 @@ export default function AssignButton({
               onChange={e => setRouteType(e.target.value)}
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
             >
-              <option value="roads">Roads 🚛</option>
-              <option value="ships">Ships 🚢</option>
+              <option value="roads">Roads</option>
+              <option value="ships">Ships</option>
             </select>
           </div>
 

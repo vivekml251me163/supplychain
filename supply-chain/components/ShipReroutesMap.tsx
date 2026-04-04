@@ -377,17 +377,17 @@ export default function ShipReroutesMap({ reroutes }: ShipReroutesMapProps) {
                 <div className="space-y-1">
                   {selectedRoute.affectedByWeather ? (
                     <div className="p-1 bg-orange-50 border border-orange-200 rounded text-[10px]">
-                      <p className="font-bold text-orange-700">🌪️ Weather</p>
+                      <p className="font-bold text-orange-700">Weather</p>
                     </div>
                   ) : (
-                    <div className="text-[10px] text-gray-500">✓ No weather impact</div>
+                    <div className="text-[10px] text-gray-500">No weather impact</div>
                   )}
                   {selectedRoute.affectedByNews ? (
                     <div className="p-1 bg-blue-50 border border-blue-200 rounded text-[10px]">
-                      <p className="font-bold text-blue-700">📰 News</p>
+                      <p className="font-bold text-blue-700">News</p>
                     </div>
                   ) : (
-                    <div className="text-[10px] text-gray-500">✓ No news impact</div>
+                    <div className="text-[10px] text-gray-500">No news impact</div>
                   )}
                 </div>
               </div>

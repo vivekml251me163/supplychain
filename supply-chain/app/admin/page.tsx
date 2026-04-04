@@ -7,6 +7,7 @@ import VerifyButton from '@/components/VerifyButton'
 import DeleteButton from '@/components/DeleteButton'
 import RoleSelector from '@/components/RoleSelector'
 import Link from 'next/link'
+import { Check } from 'lucide-react'
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
@@ -69,8 +70,8 @@ export default async function AdminPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {u.isVerified ? (
-                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                      ✓ Verified
+                    <span className="flex items-center gap-1 text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                      <Check className="w-3 h-3" /> Verified
                     </span>
                   ) : (
                     <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
@@ -105,8 +106,8 @@ export default async function AdminPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {u.isVerified ? (
-                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                      ✓ Verified
+                    <span className="flex items-center gap-1 text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                      <Check className="w-3 h-3" /> Verified
                     </span>
                   ) : (
                     <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">

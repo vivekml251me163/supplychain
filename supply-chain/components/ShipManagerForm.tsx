@@ -91,7 +91,7 @@ export default function ShipManagerForm({ onRerouteSelect }: ShipManagerFormProp
       {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
       {lastSearchedId && !error && (
         <p className="text-sm text-green-600 mt-2">
-          ✓ Ship ID {lastSearchedId} loaded
+          Ship ID {lastSearchedId} loaded
         </p>
       )}
     </div>

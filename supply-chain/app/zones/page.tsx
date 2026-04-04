@@ -1,6 +1,7 @@
 import { db } from '@/db/index'
 import { shipwayResults } from '@/db/schema'
 import AffectedZonesMapClient from '@/components/AffectedZonesMapClient'
+import { Lightbulb, Search } from 'lucide-react'
 
 export default async function ZonesPage() {
   const zones = await db.select().from(shipwayResults)
@@ -69,16 +70,16 @@ export default async function ZonesPage() {
               </div>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-4 pt-4 border-t border-gray-200">
-            💡 Click any zone tile or map circle to focus. Use map controls to zoom and navigate.
+          <p className="text-xs flex items-center text-gray-500 mt-4 pt-4 border-t border-gray-200">
+            <Lightbulb className="w-4 h-4 mr-2 text-amber-500" /> Click any zone tile or map circle to focus. Use map controls to zoom and navigate.
           </p>
         </div>
 
         {/* Map + tiles component */}
         {zones.length === 0 ? (
           <div className="text-center py-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 border-dashed">
-            <div className="mx-auto w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
-              <span className="text-2xl">🔍</span>
+            <div className="mx-auto w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-gray-400">
+              <Search className="w-8 h-8" />
             </div>
             <p className="text-gray-600 text-lg font-semibold mb-1">No affected zones detected yet</p>
             <p className="text-gray-400 text-sm">

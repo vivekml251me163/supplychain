@@ -175,7 +175,7 @@ export default function AssignmentDetailClient({
                       assignment.workDone ? 'text-green-600' : 'text-orange-600'
                     }`}
                   >
-                    {assignment.workDone ? '✓ Completed' : '⏳ In Progress'}
+                    {assignment.workDone ? 'Completed' : 'In Progress'}
                   </p>
                 </div>
                 {assignment.completedAt && (

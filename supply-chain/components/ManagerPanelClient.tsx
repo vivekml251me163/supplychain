@@ -43,7 +43,7 @@ export default function ManagerPanelClient({
               <p className="text-gray-600 mt-2">Manage delivery routes and monitor driver assignments across your operations</p>
             </div>
             <span className="inline-flex items-center px-4 py-2 rounded-full font-bold text-xs bg-green-100 text-green-800">
-              ✓ SYSTEM STATUS: OPTIMAL
+              SYSTEM STATUS: OPTIMAL
             </span>
           </div>
         </div>
@@ -225,11 +225,11 @@ export default function ManagerPanelClient({
                       <td className="px-8 py-4">
                         {detail.assignment?.workDone ? (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                            ✓ Completed
+                            Completed
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
-                            ⏳ In Transit
+                            In Transit
                           </span>
                         )}
                       </td>

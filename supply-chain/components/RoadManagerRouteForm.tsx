@@ -135,7 +135,7 @@ export default function RoadManagerRouteForm() {
 
       {success && (
         <div className="bg-green-50 border border-green-200 text-green-600 text-sm p-4 rounded-lg mb-4">
-          ✓ Route created successfully! The ML system will assign a driver shortly.
+          Route created successfully! The ML system will assign a driver shortly.
         </div>
       )}
 

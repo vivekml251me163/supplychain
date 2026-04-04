@@ -61,7 +61,7 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
 
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-white">
-        <h2 className="text-gray-800 text-lg font-bold">🚢 Ship Route Optimization</h2>
+        <h2 className="text-gray-800 text-lg font-bold">Ship Route Optimization</h2>
         <p className="text-gray-500 text-sm">Live sea route analysis based on current conditions</p>
       </div>
 
@@ -100,7 +100,7 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
 
         {/* Destination port marker */}
         <Marker position={[originalRoute[originalRoute.length - 1].lat, originalRoute[originalRoute.length - 1].lng]}>
-          <Popup>🏁 Destination Port - Singapore</Popup>
+          <Popup>Destination Port - Singapore</Popup>
         </Marker>
 
       </MapContainer>
@@ -119,7 +119,7 @@ export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: Ship
 
       {/* Reasons panel */}
       <div className="p-4 bg-white">
-        <h3 className="text-gray-800 font-bold mb-3">⚠️ Why Route Changed</h3>
+        <h3 className="text-gray-800 font-bold mb-3">Why Route Changed</h3>
         <div className="flex flex-col gap-2">
           {reasons.map((reason, i) => (
             <div key={i} className="flex items-start gap-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200">

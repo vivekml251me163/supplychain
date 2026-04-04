@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Button from "@/components/Button";
+import { Map, MapPin, CloudSun, Users, CheckCircle, Shield } from "lucide-react";
 
 export default function Page() {
   return (
@@ -199,15 +200,15 @@ export default function Page() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: '🗺️', title: 'Smart Route Planning', desc: 'AI-powered algorithms optimize delivery routes for maximum efficiency' },
-              { icon: '📍', title: 'Real-time Tracking', desc: 'Live GPS monitoring with intuitive maps and comprehensive analytics' },
-              { icon: '🌤️', title: 'Weather Integration', desc: 'Real-time weather alerts and route recommendations' },
-              { icon: '👥', title: 'Role-Based Access', desc: 'Granular permissions for Admin, Manager, and Driver roles' },
-              { icon: '✅', title: 'Work Completion', desc: 'Verify deliveries with driver confirmations and status tracking' },
-              { icon: '🔒', title: 'Enterprise Security', desc: 'NextAuth, verified accounts, encryption, and role-based management' }
+              { icon: <Map className="w-8 h-8 text-emerald-600" />, title: 'Smart Route Planning', desc: 'AI-powered algorithms optimize delivery routes for maximum efficiency' },
+              { icon: <MapPin className="w-8 h-8 text-emerald-600" />, title: 'Real-time Tracking', desc: 'Live GPS monitoring with intuitive maps and comprehensive analytics' },
+              { icon: <CloudSun className="w-8 h-8 text-emerald-600" />, title: 'Weather Integration', desc: 'Real-time weather alerts and route recommendations' },
+              { icon: <Users className="w-8 h-8 text-emerald-600" />, title: 'Role-Based Access', desc: 'Granular permissions for Admin, Manager, and Driver roles' },
+              { icon: <CheckCircle className="w-8 h-8 text-emerald-600" />, title: 'Work Completion', desc: 'Verify deliveries with driver confirmations and status tracking' },
+              { icon: <Shield className="w-8 h-8 text-emerald-600" />, title: 'Enterprise Security', desc: 'NextAuth, verified accounts, encryption, and role-based management' }
             ].map((feature, idx) => (
               <div key={idx} className="group relative bg-white rounded-lg p-8 border border-slate-100 hover:border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div className="text-3xl mb-4">{feature.icon}</div>
+                <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 poppins-semibold">{feature.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed poppins-regular">{feature.desc}</p>
               </div>

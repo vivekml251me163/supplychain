@@ -125,7 +125,7 @@ export default function WeatherResultsDisplay({ weather }: WeatherResultsDisplay
                 <button
                   className="flex items-center justify-between w-full text-xs font-semibold text-gray-700 hover:text-gray-900 transition"
                 >
-                  <span>⚠️ Impact & Consequence</span>
+                  <span>Impact & Consequence</span>
                   <span className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▾</span>
                 </button>
 

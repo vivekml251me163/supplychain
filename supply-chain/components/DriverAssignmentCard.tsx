@@ -72,7 +72,7 @@ export default function DriverAssignmentCard({
                   : 'bg-yellow-100 text-yellow-800'
               }`}
             >
-              {assignment.workDone ? '✓ Completed' : 'In Progress'}
+              {assignment.workDone ? 'Completed' : 'In Progress'}
             </span>
             <Link
               href={`/driver/assignment/${assignment.id}`}

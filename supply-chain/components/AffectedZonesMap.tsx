@@ -162,9 +162,9 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
               </span>
               <span style="font-size:13px;font-weight:800;color:${color}">${zone.severity}/5</span>
             </div>
-            <p style="font-size:12px;font-weight:700;color:#111827;margin:0 0 5px;letter-spacing:0.5px">📋 AI Summary</p>
+            <p style="font-size:12px;font-weight:700;color:#111827;margin:0 0 5px;letter-spacing:0.5px">AI Summary</p>
             <p style="font-size:13px;font-weight:600;color:#1f2937;margin:0 0 12px;line-height:1.3 ;padding:8px;border-radius:6px">${zone.aiSummary}</p>
-            <p style="font-size:12px;font-weight:600;color:#111827;margin:0 0 5px;letter-spacing:0.5px">⚠️ CONSEQUENCE</p>
+            <p style="font-size:12px;font-weight:600;color:#111827;margin:0 0 5px;letter-spacing:0.5px">CONSEQUENCE</p>
             <p style="font-size:13px;font-weight:600;color:#1f2937;margin:0 0 12px;line-height:1.3;padding:8px;border-radius:6px">${zone.consequence}</p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:10px;border-top:1px solid #e5e7eb">
               <div>
@@ -228,7 +228,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
         <div className="absolute top-4 right-4 z-[1000] bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-200 shadow-md">
           <p className="text-xs font-semibold text-gray-700">
             {selectedId !== null
-              ? '✓ Zone selected · click map to clear'
+              ? 'Selected · click map to clear'
               : `${mapZones.length} zone${mapZones.length !== 1 ? 's' : ''} · click to focus`}
           </p>
         </div>
