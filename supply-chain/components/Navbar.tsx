@@ -100,11 +100,7 @@ export default function Navbar() {
             </>
           )}
 
-          {session && (user?.isVerified || user?.role === 'admin') && (
-            <Link href="/routes" className={navLinkClass(pathname?.includes('/routes'))}>
-              Routes
-            </Link>
-          )}
+          
 
           <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
             Ship Reroutes

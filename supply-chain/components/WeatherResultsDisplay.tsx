@@ -12,6 +12,9 @@ interface WeatherResult {
   severity: number
   confidence: number
   createdAt: string
+  locationName?: string | null
+  latitude?: number | null
+  longitude?: number | null
 }
 
 interface WeatherResultsDisplayProps {
@@ -110,8 +113,11 @@ export default function WeatherResultsDisplay({ weather }: WeatherResultsDisplay
               </p>
 
               {/* Stats row */}
+              <p className="text-xs font-bold text-gray-800 mb-1 flex items-center gap-1">
+                📍 {item.locationName || 'Unknown Location'}
+              </p>
               <p className="text-xs text-gray-500 mb-3">
-                {item.radiusKm.toFixed(0)} km radius · {confidencePct}% confidence
+                Coverage: {item.radiusKm.toFixed(0)} km radius · {confidencePct}% confidence
               </p>
 
               {/* Expandable consequence section */}

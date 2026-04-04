@@ -1,9 +1,23 @@
+import { eq } from 'drizzle-orm'
 import { db } from '@/db/index'
-import { weatherResults } from '@/db/schema'
+import { weatherResults, weather } from '@/db/schema'
 import WeatherResultsDisplay from '@/components/WeatherResultsDisplay'
+import WeatherAlertsMapClient from '@/components/WeatherAlertsMapClient'
 
 export default async function WeatherPage() {
-  const weather = await db.select().from(weatherResults)
+  const weatherData = await db.select({
+    id: weatherResults.id,
+    weatherId: weatherResults.weatherId,
+    aiSummary: weatherResults.aiSummary,
+    consequence: weatherResults.consequence,
+    radiusKm: weatherResults.radiusKm,
+    severity: weatherResults.severity,
+    confidence: weatherResults.confidence,
+    createdAt: weatherResults.createdAt,
+    locationName: weather.locationName,
+    latitude: weather.latitude,
+    longitude: weather.longitude
+  }).from(weatherResults).leftJoin(weather, eq(weatherResults.weatherId, weather.id))
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -26,9 +40,9 @@ export default async function WeatherPage() {
             </div>
             <div className="w-full md:w-auto flex flex-col md:items-end justify-center shrink-0 bg-blue-50 md:bg-transparent p-4 md:p-0 rounded-xl md:rounded-none mt-4 md:mt-0">
               <div className="flex items-center gap-4">
-                <span className="text-4xl md:text-5xl font-black tracking-tighter text-gray-900">{weather.length}</span>
+                <span className="text-4xl md:text-5xl font-black tracking-tighter text-gray-900">{weatherData.length}</span>
                 <div className="flex flex-col">
-                  <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-amber-600">Active Alert{weather.length !== 1 ? 's' : ''}</span>
+                  <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-amber-600">Active Alert{weatherData.length !== 1 ? 's' : ''}</span>
                   <span className="text-xs md:text-sm font-medium text-gray-500">Detected in real-time</span>
                 </div>
               </div>
@@ -75,7 +89,7 @@ export default async function WeatherPage() {
         </div>
 
         {/* Weather alerts component */}
-        {weather.length === 0 ? (
+        {weatherData.length === 0 ? (
           <div className="text-center py-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 border-dashed">
             <div className="mx-auto w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
               <span className="text-2xl">☀️</span>
@@ -86,7 +100,10 @@ export default async function WeatherPage() {
             </p>
           </div>
         ) : (
-          <WeatherResultsDisplay weather={weather} />
+          <>
+            <WeatherAlertsMapClient weather={weatherData} />
+            <WeatherResultsDisplay weather={weatherData} />
+          </>
         )}
       </section>
 
