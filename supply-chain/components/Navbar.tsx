@@ -230,24 +230,32 @@ export default function Navbar() {
           {/* Hamburger Button (Mobile / Tablet only — hidden on lg+) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition focus:outline-none"
+            className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition focus:outline-none relative"
             aria-label="Toggle mobile menu"
           >
-            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
+            <svg 
+              className={`w-5 h-5 text-gray-700 absolute transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'opacity-0 rotate-90 scale-50' : 'opacity-100 rotate-0 scale-100'}`} 
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg 
+              className={`w-5 h-5 text-gray-700 absolute transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-50'}`} 
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
       </div>
 
       {/* ── Mobile Dropdown ── */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200 bg-white shadow-md">
-          <div className="max-w-7xl mx-auto px-4 py-3 space-y-1">
+      <div 
+        className={`lg:hidden bg-white overflow-hidden transition-all duration-300 ease-in-out ${
+          mobileMenuOpen ? 'max-h-[800px] opacity-100 border-t border-gray-200 shadow-md' : 'max-h-0 opacity-0 border-t-0 shadow-none'
+        }`}
+      >
+        <div className={`max-w-7xl mx-auto px-4 py-3 space-y-1 transition-all duration-300 ${mobileMenuOpen ? 'translate-y-0' : '-translate-y-4'}`}>
 
             {/* Nav links */}
             {!session ? (
@@ -346,7 +354,6 @@ export default function Navbar() {
             )}
           </div>
         </div>
-      )}
     </nav>
   )
 }

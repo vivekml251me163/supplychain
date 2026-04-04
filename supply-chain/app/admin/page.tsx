@@ -32,22 +32,22 @@ export default async function AdminPage() {
       </p>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-10">
-        <div className="bg-purple-50 border border-purple-100 rounded-xl p-4">
-          <p className="text-xs text-purple-500 mb-1">Total Managers</p>
-          <p className="text-2xl font-semibold text-purple-700">{managers.length}</p>
+      <div className="grid grid-cols-4 gap-8 mb-14 mt-4">
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-purple-600">Total Managers</p>
+          <p className="text-5xl font-black tracking-tighter text-gray-900">{managers.length}</p>
         </div>
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-          <p className="text-xs text-blue-500 mb-1">Total Drivers</p>
-          <p className="text-2xl font-semibold text-blue-700">{drivers.length}</p>
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-blue-600">Total Drivers</p>
+          <p className="text-5xl font-black tracking-tighter text-gray-900">{drivers.length}</p>
         </div>
-        <div className="bg-teal-50 border border-teal-100 rounded-xl p-4">
-          <p className="text-xs text-teal-500 mb-1">Ship Routes</p>
-          <p className="text-2xl font-semibold text-teal-700">{allShips.length}</p>
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-teal-600">Ship Routes</p>
+          <p className="text-5xl font-black tracking-tighter text-gray-900">{allShips.length}</p>
         </div>
-        <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
-          <p className="text-xs text-orange-500 mb-1">Road Routes</p>
-          <p className="text-2xl font-semibold text-orange-700">{allRoads.length}</p>
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-orange-600">Road Routes</p>
+          <p className="text-5xl font-black tracking-tighter text-gray-900">{allRoads.length}</p>
         </div>
       </div>
 

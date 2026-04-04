@@ -24,12 +24,12 @@ export default async function ZonesPage() {
                 Real-time AI analysis of disruption zones powered by weather and news data. Severity: 0–5
               </p>
             </div>
-            <div className="flex flex-col items-end gap-3 shrink-0">
-              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
-                <span className="text-4xl font-black text-blue-600">{zones.length}</span>
+            <div className="flex flex-col items-end justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl font-black tracking-tighter text-gray-900">{zones.length}</span>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-widest text-blue-600">Zone{zones.length !== 1 ? 's' : ''}</span>
-                  <span className="text-xs text-blue-500">Detected</span>
+                  <span className="text-sm font-bold uppercase tracking-wider text-blue-600">Affected Zone{zones.length !== 1 ? 's' : ''}</span>
+                  <span className="text-sm font-medium text-gray-500">Detected in real-time</span>
                 </div>
               </div>
             </div>

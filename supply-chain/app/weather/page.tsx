@@ -24,12 +24,12 @@ export default async function WeatherPage() {
                 Real-time AI analysis of weather events and their impact on supply chain operations. Severity: 0–5
               </p>
             </div>
-            <div className="flex flex-col items-end gap-3 shrink-0">
-              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
-                <span className="text-4xl font-black text-amber-600">{weather.length}</span>
+            <div className="flex flex-col items-end justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl font-black tracking-tighter text-gray-900">{weather.length}</span>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-widest text-amber-600">Alert{weather.length !== 1 ? 's' : ''}</span>
-                  <span className="text-xs text-amber-500">Detected</span>
+                  <span className="text-sm font-bold uppercase tracking-wider text-amber-600">Active Alert{weather.length !== 1 ? 's' : ''}</span>
+                  <span className="text-sm font-medium text-gray-500">Detected in real-time</span>
                 </div>
               </div>
             </div>

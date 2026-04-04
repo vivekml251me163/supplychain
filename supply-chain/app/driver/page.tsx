@@ -62,21 +62,23 @@ export default async function DriverPage() {
         {currentDriver && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Location Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-6 border border-blue-200">
-              <h2 className="text-lg font-semibold text-blue-900 mb-3">Your Current Location</h2>
-              <div className="space-y-3">
-                <div className="bg-white rounded-lg p-4">
-                  <p className="text-sm text-gray-600">Latitude</p>
-                  <p className="text-2xl font-bold text-blue-600">{currentDriver.lat.toFixed(2)}</p>
-                </div>
-                <div className="bg-white rounded-lg p-4">
-                  <p className="text-sm text-gray-600">Longitude</p>
-                  <p className="text-2xl font-bold text-blue-600">{currentDriver.lon.toFixed(2)}</p>
+            <div className="flex flex-col justify-center p-2 mb-4">
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-blue-600 mb-1">Your Current Location</h2>
+                <p className="text-xs font-medium text-gray-500 mb-6">
+                  Last updated: {currentDriver.updatedAt ? new Date(currentDriver.updatedAt).toLocaleString() : 'N/A'}
+                </p>
+                <div className="flex gap-12">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Latitude</p>
+                    <p className="text-4xl font-black tracking-tighter text-gray-900">{currentDriver.lat.toFixed(2)}</p>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Longitude</p>
+                    <p className="text-4xl font-black tracking-tighter text-gray-900">{currentDriver.lon.toFixed(2)}</p>
+                  </div>
                 </div>
               </div>
-              <p className="text-xs text-blue-700 mt-4">
-                Last updated: {currentDriver.updatedAt ? new Date(currentDriver.updatedAt).toLocaleString() : 'N/A'}
-              </p>
             </div>
 
             {/* Profile Update Card */}

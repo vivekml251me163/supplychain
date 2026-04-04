@@ -43,12 +43,12 @@ export default async function ShipReroutesPage() {
                 AI-optimized routes for ships based on weather and news impacts. View reroute details and map visualization.
               </p>
             </div>
-            <div className="flex flex-col items-end gap-3 shrink-0">
-              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                <span className="text-4xl font-black text-blue-600">{reroutes.length}</span>
+            <div className="flex flex-col items-end justify-center shrink-0">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl font-black tracking-tighter text-gray-900">{reroutes.length}</span>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-widest text-blue-600">Reroute{reroutes.length !== 1 ? 's' : ''}</span>
-                  <span className="text-xs text-blue-500">Active</span>
+                  <span className="text-sm font-bold uppercase tracking-wider text-blue-600">Active Reroute{reroutes.length !== 1 ? 's' : ''}</span>
+                  <span className="text-sm font-medium text-gray-500">Tracking in real-time</span>
                 </div>
               </div>
             </div>
