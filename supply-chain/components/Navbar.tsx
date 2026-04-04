@@ -65,9 +65,7 @@ export default function Navbar() {
 
         {/* Left - Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <div className="h-8 w-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs group-hover:shadow-md transition poppins-bold">
-            SC
-          </div>
+          <img src="/logo_1.png" alt="SupplyChain Logo" className="h-8 w-8 object-contain rounded-md group-hover:shadow-md transition" />
           <span className="text-lg font-bold text-gray-900 hidden sm:inline tracking-tight poppins-bold">SupplyChain</span>
         </Link>
 
