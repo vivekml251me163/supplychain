@@ -82,13 +82,16 @@ export default function ManagerPanelClient({
           </div>
         </div>
 
-        {/* Create New Assignment Section */}
         <div className="mb-12">
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="mb-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-bold shadow-md transition transition-all"
+            className={`mb-6 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-all ${
+              showCreateForm 
+                ? 'bg-red-600 hover:bg-red-700' 
+                : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
+            }`}
           >
-            {showCreateForm ? '✕ Close Form' : '➕ Create New Assignment'}
+            {showCreateForm ? '✕ Close Form' : 'Create New Assignment'}
           </button>
 
           {showCreateForm && (

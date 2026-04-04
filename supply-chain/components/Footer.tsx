@@ -10,12 +10,10 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-5 mb-12">
           {/* Company Info */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold poppins-bold">
-                SC
-              </div>
-              <span className="font-bold text-white poppins-bold">SupplyChain</span>
-            </div>
+            <Link href="/" className="flex items-center gap-2 mb-4 hover:opacity-90 transition">
+              <img src="/logo_processed.png" alt="SupplyChain Logo" className="h-9 w-9 object-contain rounded-md bg-white p-0.5" />
+              <span className="text-xl font-bold text-white tracking-tight poppins-bold">SupplyChain</span>
+            </Link>
             <p className="text-sm text-gray-400 leading-relaxed poppins-regular">
               Optimize your logistics with intelligent route planning and real-time tracking.
             </p>
