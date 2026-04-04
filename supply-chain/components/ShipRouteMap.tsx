@@ -49,13 +49,23 @@ function interpolateRoute(points: RoutePoint[], steps: number = 10): RoutePoint[
 
 export default function ShipRouteMap({ originalRoute, bestRoute, reasons }: ShipRouteMapProps) {
 
-  // Validate route data — it may come as a JSON string or be malformed
+  // Validate route data — it may come as a JSON string, array of arrays, or array of objects
   const parseRoute = (route: any): RoutePoint[] => {
     try {
       const parsed = typeof route === 'string' ? JSON.parse(route) : route
       if (!Array.isArray(parsed) || parsed.length === 0) return []
-      // Validate each point has lat/lng
-      return parsed.filter((p: any) => p && typeof p.lat === 'number' && typeof p.lng === 'number')
+      // Handle both formats: {lat, lng} objects and [lat, lng] arrays
+      return parsed
+        .map((p: any) => {
+          if (Array.isArray(p) && p.length >= 2 && typeof p[0] === 'number' && typeof p[1] === 'number') {
+            return { lat: p[0], lng: p[1] }
+          }
+          if (p && typeof p.lat === 'number' && typeof p.lng === 'number') {
+            return { lat: p.lat, lng: p.lng }
+          }
+          return null
+        })
+        .filter((p: RoutePoint | null): p is RoutePoint => p !== null)
     } catch {
       return []
     }
