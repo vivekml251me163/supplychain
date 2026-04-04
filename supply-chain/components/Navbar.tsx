@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import Button from './Button'
 
 export default function Navbar() {
@@ -13,6 +13,9 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const navContainerRef = useRef<HTMLDivElement>(null)
+  const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number } | null>(null)
+  const [indicatorReady, setIndicatorReady] = useState(false)
 
   const isManagerPanel = pathname?.includes('/manager')
   const isDriverPanel = pathname?.includes('/driver')
@@ -34,8 +37,36 @@ export default function Navbar() {
     setMobileMenuOpen(false)
   }, [pathname])
 
+  // Measure active nav link position for sliding indicator
+  const updateIndicator = useCallback(() => {
+    if (!navContainerRef.current) return
+    const activeLink = navContainerRef.current.querySelector('[data-active="true"]') as HTMLElement | null
+    if (activeLink) {
+      const containerRect = navContainerRef.current.getBoundingClientRect()
+      const linkRect = activeLink.getBoundingClientRect()
+      setIndicatorStyle({
+        left: linkRect.left - containerRect.left,
+        width: linkRect.width,
+      })
+      // Enable transitions after first paint so it doesn't animate on initial load
+      requestAnimationFrame(() => setIndicatorReady(true))
+    } else {
+      setIndicatorStyle(null)
+    }
+  }, [pathname])
+
+  useEffect(() => {
+    setIndicatorReady(false)
+    updateIndicator()
+  }, [pathname, updateIndicator])
+
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicator)
+    return () => window.removeEventListener('resize', updateIndicator)
+  }, [updateIndicator])
+
   const navLinkClass = (isActive: boolean) =>
-    `text-sm font-medium transition poppins-medium ${
+    `text-sm font-medium transition-colors duration-200 poppins-medium py-1 ${
       isActive
         ? 'text-emerald-600'
         : 'text-gray-600 hover:text-gray-900'
@@ -59,7 +90,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="w-full border-b border-gray-200 bg-white sticky top-0 z-50">
+    <nav className="w-full border-b border-gray-200/60 bg-white sticky top-0 z-50">
       {/* Top Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
 
@@ -70,7 +101,7 @@ export default function Navbar() {
         </Link>
 
         {/* Middle - Nav Links (Desktop only) */}
-        <div className="hidden lg:flex items-center gap-12 flex-1 ml-16">
+        <div className="hidden lg:flex items-center gap-12 flex-1 ml-16 relative" ref={navContainerRef}>
           {!session ? (
             <Link href="/" className={navLinkClass(pathname === '/')}>
               Home
@@ -78,22 +109,22 @@ export default function Navbar() {
           ) : (
             <>
               {user?.role === 'manager' && user?.isVerified && (
-                <Link href="/manager/road" className={navLinkClass(isManagerPanel)}>
+                <Link href="/manager/road" className={navLinkClass(isManagerPanel)} data-active={isManagerPanel}>
                   My Panel
                 </Link>
               )}
               {user?.role === 'manager_ship' && user?.isVerified && (
-                <Link href="/manager/ship" className={navLinkClass(isManagerPanel)}>
+                <Link href="/manager/ship" className={navLinkClass(isManagerPanel)} data-active={isManagerPanel}>
                   My Panel
                 </Link>
               )}
               {user?.role === 'driver' && user?.isVerified && (
-                <Link href="/driver" className={navLinkClass(isDriverPanel)}>
+                <Link href="/driver" className={navLinkClass(isDriverPanel)} data-active={isDriverPanel}>
                   My Panel
                 </Link>
               )}
               {user?.role === 'admin' && (
-                <Link href="/admin" className={navLinkClass(isAdminPanel)}>
+                <Link href="/admin" className={navLinkClass(isAdminPanel)} data-active={isAdminPanel}>
                   My Panel
                 </Link>
               )}
@@ -102,23 +133,33 @@ export default function Navbar() {
 
           
 
-          <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))}>
+          <Link href="/ship-reroutes" className={navLinkClass(pathname?.includes('/ship-reroutes'))} data-active={pathname?.includes('/ship-reroutes')}>
             Ship Reroutes
           </Link>
 
-          <Link href="/road-reroutes" className={navLinkClass(pathname?.includes('/road-reroutes'))}>
+          <Link href="/road-reroutes" className={navLinkClass(pathname?.includes('/road-reroutes'))} data-active={pathname?.includes('/road-reroutes')}>
             Road Reroutes
           </Link>
 
-          <Link href="/zones" className={navLinkClass(pathname?.includes('/zones'))}>
+          <Link href="/zones" className={navLinkClass(pathname?.includes('/zones'))} data-active={pathname?.includes('/zones')}>
             Zones
           </Link>
 
-          <Link href="/weather" className={navLinkClass(pathname?.includes('/weather'))}>
+          <Link href="/weather" className={navLinkClass(pathname?.includes('/weather'))} data-active={pathname?.includes('/weather')}>
             Weather
           </Link>
 
-          
+          {/* Sliding active indicator */}
+          {indicatorStyle && (
+            <span
+              className="absolute bottom-0 h-[2.5px] rounded-full bg-emerald-500"
+              style={{
+                left: indicatorStyle.left,
+                width: indicatorStyle.width,
+                transition: indicatorReady ? 'left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+              }}
+            />
+          )}
         </div>
 
         {/* Right - Auth + Hamburger */}
