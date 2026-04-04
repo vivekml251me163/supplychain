@@ -188,6 +188,132 @@ export default async function Page() {
         </section>
       )}
 
+      {/* ── Explore Tools Section (visible to all) ── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 rounded-full px-3 py-1.5 text-xs font-semibold tracking-tight poppins-semibold mb-4">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+              Live Tools
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight poppins-bold">
+              Explore our intelligence tools
+            </h2>
+            <p className="text-lg text-gray-500 max-w-xl mx-auto poppins-regular">
+              Real-time data, smart alerts, and dynamic rerouting — all at your fingertips.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {/* Weather Tile */}
+            <Link
+              href="/weather"
+              className="group relative rounded-2xl overflow-hidden border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-cyan-50 hover:shadow-2xl hover:shadow-sky-200/50 hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col"
+            >
+              {/* Glow blob */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-sky-300/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+
+              {/* Icon */}
+              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-400 to-cyan-500 flex items-center justify-center mb-6 shadow-lg shadow-sky-300/40 group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                    d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                </svg>
+              </div>
+
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 poppins-bold">Weather Intelligence</h3>
+                <p className="text-gray-500 text-sm leading-relaxed poppins-regular mb-5">
+                  Monitor live weather conditions across all active routes. Get automated storm alerts, wind forecasts, and visibility reports to keep shipments safe.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {['Live Radar', 'Storm Alerts', 'Wind Data', 'Forecasts'].map(tag => (
+                    <span key={tag} className="text-xs font-medium bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full poppins-medium">{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center gap-2 text-sky-600 font-semibold text-sm poppins-semibold group-hover:gap-3 transition-all duration-200">
+                Open Weather
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* Zones Tile */}
+            <Link
+              href="/zones"
+              className="group relative rounded-2xl overflow-hidden border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-purple-50 hover:shadow-2xl hover:shadow-violet-200/50 hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col"
+            >
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-violet-300/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+
+              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg shadow-violet-300/40 group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              </div>
+
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 poppins-bold">Shipping Zones</h3>
+                <p className="text-gray-500 text-sm leading-relaxed poppins-regular mb-5">
+                  Visualize geographic shipping zones, coverage areas, and regional boundaries. Optimize zone assignments and identify coverage gaps across your network.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {['Zone Mapping', 'Coverage', 'Boundaries', 'Analytics'].map(tag => (
+                    <span key={tag} className="text-xs font-medium bg-violet-100 text-violet-700 px-2.5 py-1 rounded-full poppins-medium">{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center gap-2 text-violet-600 font-semibold text-sm poppins-semibold group-hover:gap-3 transition-all duration-200">
+                Explore Zones
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* Ship Reroutes Tile */}
+            <Link
+              href="/ship-reroutes"
+              className="group relative rounded-2xl overflow-hidden border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-orange-50 hover:shadow-2xl hover:shadow-amber-200/50 hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col"
+            >
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-300/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+
+              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-6 shadow-lg shadow-amber-300/40 group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </div>
+
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 poppins-bold">Ship Reroutes</h3>
+                <p className="text-gray-500 text-sm leading-relaxed poppins-regular mb-5">
+                  Dynamically reroute maritime vessels in response to weather disruptions, port congestion, or priority changes — with instant crew notifications.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {['Auto-Reroute', 'Port Alerts', 'AI Paths', 'Crew Notify'].map(tag => (
+                    <span key={tag} className="text-xs font-medium bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full poppins-medium">{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center gap-2 text-amber-600 font-semibold text-sm poppins-semibold group-hover:gap-3 transition-all duration-200">
+                View Reroutes
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </Link>
+
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section - Refined with Subtle Border */}
       {!session && (
         <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-slate-950 border-t border-slate-800">
