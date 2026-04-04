@@ -72,20 +72,7 @@ export default async function ShipReroutesPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 mt-20 py-12 px-6 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
-          <div className="flex flex-col gap-2">
-            <span className="text-2xl font-black tracking-tighter text-white">
-              SupplyChain AI
-            </span>
-            <p className="text-xs text-gray-400">Intelligent supply chain optimization</p>
-          </div>
-          <p className="text-xs text-gray-500">
-            Last updated: {new Date().toLocaleString()}
-          </p>
-        </div>
-      </footer>
+      
     </main>
   )
 }
