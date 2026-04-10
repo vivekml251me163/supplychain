@@ -177,7 +177,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
               </div>
             </div>
           </div>
-        `, { maxWidth: 320 })
+        `, { maxWidth: 320, offset: [0, 10] })
 
         circle.addTo(map)
         circlesRef.current.set(zone.id, circle)
@@ -196,7 +196,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
     <div className="w-full bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
 
       {/* ── Map ── */}
-      <div className="relative h-[50vh] min-h-[400px] md:h-[750px] w-full">
+      <div className="relative h-[50vh] min-h-[400px] md:h-[750px] w-full z-10">
 
         {loading && (
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50 animate-pulse">
@@ -208,7 +208,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
         <div ref={containerRef} className="h-full w-full" />
 
         {/* Zoom buttons */}
-        <div className="absolute bottom-6 right-6 z-[1000] flex flex-col gap-2">
+        <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-2">
           <button
             onClick={() => mapRef.current?.zoomIn()}
             className="w-11 h-11 bg-white border border-gray-200 rounded-xl shadow-md flex items-center justify-center text-gray-700 text-lg font-bold hover:bg-gray-50 transition"
@@ -225,7 +225,7 @@ export default function AffectedZonesMap({ zones }: AffectedZonesMapProps) {
         </div>
 
         {/* Status badge */}
-        <div className="absolute top-4 right-4 z-[1000] bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-200 shadow-md">
+        <div className="absolute top-4 right-4 z-20 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-200 shadow-md">
           <p className="text-xs font-semibold text-gray-700">
             {selectedId !== null
               ? 'Selected · click map to clear'
