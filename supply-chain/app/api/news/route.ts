@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db/index'
 import { news } from '@/db/schema'
-import { sql } from 'drizzle-orm'
+import { sql, gt, and } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,6 +18,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ news: [] })
     }
 
+    const twoDaysAgo = new Date()
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+    const twoDaysAgoISO = twoDaysAgo.toISOString()
+
     const results = await db
       .select({
         id: news.id,
@@ -33,7 +37,12 @@ export async function POST(req: NextRequest) {
         pubDate: news.pubDate,
       })
       .from(news)
-      .where(sql`${news.id} IN (${sql.join(validIds.map((id: number) => sql`${id}`), sql`, `)})`)
+      .where(
+        and(
+          sql`${news.id} IN (${sql.join(validIds.map((id: number) => sql`${id}`), sql`, `)})`,
+          gt(news.createdAt, twoDaysAgoISO)
+        )
+      )
 
     // Convert bigint ids to numbers for JSON serialization
     const serializable = results.map(r => ({

@@ -1,10 +1,14 @@
-import { eq } from 'drizzle-orm'
+import { eq, gt } from 'drizzle-orm'
 import { db } from '@/db/index'
 import { weatherResults, weather } from '@/db/schema'
 import WeatherDashboard from '@/components/WeatherDashboard'
 import { Lightbulb, Sun } from 'lucide-react'
 
 export default async function WeatherPage() {
+  const twoDaysAgo = new Date()
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+  const twoDaysAgoISO = twoDaysAgo.toISOString()
+
   const weatherData = await db.select({
     id: weatherResults.id,
     weatherId: weatherResults.weatherId,
@@ -17,7 +21,10 @@ export default async function WeatherPage() {
     locationName: weather.locationName,
     latitude: weather.latitude,
     longitude: weather.longitude
-  }).from(weatherResults).leftJoin(weather, eq(weatherResults.weatherId, weather.id))
+  })
+  .from(weatherResults)
+  .leftJoin(weather, eq(weatherResults.weatherId, weather.id))
+  .where(gt(weatherResults.createdAt, twoDaysAgoISO))
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">

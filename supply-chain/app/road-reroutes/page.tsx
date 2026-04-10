@@ -1,11 +1,15 @@
 import { db } from '@/db/index'
 import { assignments, users } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, gt } from 'drizzle-orm'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
 export default async function RoadReroutesPage() {
+  const twoDaysAgo = new Date()
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+  const twoDaysAgoISO = twoDaysAgo.toISOString()
+
   const allAssignments = await db
     .select({
       id: assignments.id,
@@ -18,6 +22,7 @@ export default async function RoadReroutesPage() {
     })
     .from(assignments)
     .leftJoin(users, eq(assignments.driverId, users.id))
+    .where(gt(assignments.assignedAt, twoDaysAgoISO))
 
   // Sort by assignedAt descending (newest first)
   allAssignments.sort((a, b) => {

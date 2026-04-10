@@ -2,9 +2,16 @@ import { db } from '@/db/index'
 import { shipwayResults } from '@/db/schema'
 import AffectedZonesMapClient from '@/components/AffectedZonesMapClient'
 import { Lightbulb, Search } from 'lucide-react'
+import { gt } from 'drizzle-orm'
 
 export default async function ZonesPage() {
-  const zones = await db.select().from(shipwayResults)
+  const twoDaysAgo = new Date()
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+  const twoDaysAgoISO = twoDaysAgo.toISOString()
+
+  const zones = await db.select()
+    .from(shipwayResults)
+    .where(gt(shipwayResults.createdAt, twoDaysAgoISO))
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">

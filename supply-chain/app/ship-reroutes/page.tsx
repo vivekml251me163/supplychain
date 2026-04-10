@@ -1,16 +1,21 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import { db } from '@/db/index'
 import { shipReroutes } from '@/db/schema'
 import ShipReroutesMapClient from '@/components/ShipReroutesMapClient'
+import { gt } from 'drizzle-orm'
 
 export default async function ShipReroutesPage() {
   const session = await getServerSession(authOptions)
 
+  const twoDaysAgo = new Date()
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+  const twoDaysAgoISO = twoDaysAgo.toISOString()
 
-  // Fetch all ship reroutes
-  const reroutes = await db.select().from(shipReroutes)
+  // Fetch all ship reroutes from last 2 days
+  const reroutes = await db.select()
+    .from(shipReroutes)
+    .where(gt(shipReroutes.createdAt, twoDaysAgoISO))
 
   // Group reroutes by shipId
   type ShipReroute = typeof reroutes[number]
