@@ -32,6 +32,17 @@ interface AssignmentDetailMapProps {
 
 const routeColors = ['#22c55e', '#fb923c', '#ef4444'] // green, orange, red
 
+// Custom marker icons
+const createCustomIcon = (iconColor: string, label: string) => {
+  return L.icon({
+    iconUrl: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='${encodeURIComponent(iconColor)}'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12c0 7 10 11 10 11s10-4 10-11c0-5.52-4.48-10-10-10zm0 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/%3E%3C/svg%3E`,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+    className: 'custom-marker',
+  })
+}
+
 export default function AssignmentDetailMap({
   allRoutes,
   bestRoute,
@@ -94,21 +105,21 @@ export default function AssignmentDetailMap({
               <Polyline
                 positions={leg1.map((p) => [p.lat, p.lon])}
                 color="#6366f1"
-                weight={2}
-                opacity={0.6}
-                dashArray="5 5"
+                weight={5}
+                opacity={0.8}
+                dashArray="8 6"
               />
-              <Marker position={[leg1[0].lat, leg1[0].lon]}>
+              <Marker position={[leg1[0].lat, leg1[0].lon]} icon={createCustomIcon('%233b82f6', 'Driver')}>
                 <Popup>
-                  <div className="text-sm">
-                    <p className="font-semibold">🚗 Driver Location</p>
+                  <div className="text-sm font-semibold">
+                    <p>🚗 Driver Location</p>
                   </div>
                 </Popup>
               </Marker>
-              <Marker position={[leg1[leg1.length - 1].lat, leg1[leg1.length - 1].lon]}>
+              <Marker position={[leg1[leg1.length - 1].lat, leg1[leg1.length - 1].lon]} icon={createCustomIcon('%2310b981', 'Source')}>
                 <Popup>
-                  <div className="text-sm">
-                    <p className="font-semibold">📍 Source Location</p>
+                  <div className="text-sm font-semibold">
+                    <p>📍 Source/Pickup Location</p>
                   </div>
                 </Popup>
               </Marker>
@@ -121,27 +132,31 @@ export default function AssignmentDetailMap({
               key={idx}
               positions={route.data.nodes.map((p) => [p.lat, p.lon])}
               color={route.color}
-              weight={3}
-              opacity={0.8}
-              dashArray={route.data.route_rank === 1 ? 'none' : '8 4'}
+              weight={6}
+              opacity={0.9}
+              dashArray={route.data.route_rank === 1 ? 'none' : '10 6'}
             />
           ))}
 
-          {/* Destination marker */}
-          {allRoutes[0]?.nodes?.length > 0 && (
-            <Marker
-              position={[
-                allRoutes[0].nodes[allRoutes[0].nodes.length - 1].lat,
-                allRoutes[0].nodes[allRoutes[0].nodes.length - 1].lon,
-              ]}
-            >
-              <Popup>
-                <div className="text-sm">
-                  <p className="font-semibold">🎯 Destination Location</p>
-                </div>
-              </Popup>
-            </Marker>
-          )}
+          {/* Destination markers - one for each route */}
+          {routesToDisplay.map((route, idx) => (
+            route.data.nodes?.length > 0 && (
+              <Marker
+                key={`dest-${idx}`}
+                position={[
+                  route.data.nodes[route.data.nodes.length - 1].lat,
+                  route.data.nodes[route.data.nodes.length - 1].lon,
+                ]}
+                icon={createCustomIcon(route.color.substring(1), `Route #${route.data.route_rank}`)}
+              >
+                <Popup>
+                  <div className="text-sm font-semibold">
+                    <p>🏁 Destination - Route #{route.data.route_rank}</p>
+                  </div>
+                </Popup>
+              </Marker>
+            )
+          ))}
         </MapContainer>
 
         {/* Legend */}
