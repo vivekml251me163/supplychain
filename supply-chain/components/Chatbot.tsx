@@ -40,7 +40,7 @@ export default function Chatbot() {
     setCurrentStatus('Thinking...')
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_AGENT_SERVICE_URL}/api/chat/stream`, {
+      const response = await fetch(`/api/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

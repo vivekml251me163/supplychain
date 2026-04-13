@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/chat/:path*",
+      "destination": "http://13.233.142.212:8000/api/chat/:path*"
+    }
+  ]
+}
