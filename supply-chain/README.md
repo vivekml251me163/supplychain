@@ -176,6 +176,3 @@ We welcome frontend contributions! Here are areas where you can help:
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License.
